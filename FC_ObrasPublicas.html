@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flujo de Caja — Obras Públicas</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#0F2D4E;--blue:#1B5091;--mid:#2E75B6;--light:#5B9BD5;
+  --pale:#DEEAF1;--pale2:#EFF4FA;--ink:#111827;--muted:#6B7280;
+  --soft:#9CA3AF;--line:#E5E7EB;--bg:#F8FAFC;--white:#FFFFFF;
+  --pos:#16A34A;--neg:#DC2626;--warn:#D97706;
+}
+body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5;}
+.portal-nav{position:sticky;top:0;z-index:200;height:44px;background:#081D33;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-family:'Inter','Segoe UI',Arial,sans-serif;}
+.portal-nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:#fff;}
+.portal-nav-mark{width:22px;height:22px;background:#2E75B6;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
+.portal-nav-title{font-size:12.5px;font-weight:600;color:#fff;letter-spacing:.2px;}
+.portal-nav-links{display:flex;gap:4px;}
+.portal-nav-links a{font-size:12.5px;color:#93B8D8;text-decoration:none;padding:6px 12px;border-radius:6px;transition:background .15s,color .15s;}
+.portal-nav-links a:hover{background:rgba(255,255,255,.08);color:#fff;}
+.portal-nav-links a.active{background:rgba(255,255,255,.12);color:#fff;font-weight:600;}
+@media (max-width:640px){.portal-nav-title{display:none;}}
+.topbar{background:var(--navy);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:44px;z-index:100;}
+.logo{width:32px;height:32px;background:var(--mid);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;}
+.topbar h1{font-size:14px;font-weight:600;color:#fff;margin-left:12px;}
+.topbar-r{font-size:11px;color:#93B8D8;}
+.upload-btn{display:flex;align-items:center;gap:7px;padding:6px 12px;border:1px solid rgba(255,255,255,.25);border-radius:8px;background:rgba(255,255,255,.08);cursor:pointer;white-space:nowrap;transition:background .15s;}
+.upload-btn:hover{background:rgba(255,255,255,.16);}
+.upload-btn span{font-size:12px;color:#fff;font-weight:500;}
+.upload-btn small{font-size:10px;color:#93B8D8;display:block;margin-top:1px;}
+#fileInput{display:none;}
+.tab-bar{background:var(--white);border-bottom:1px solid var(--line);padding:0 28px;display:flex;position:sticky;top:100px;z-index:99;}
+.tab{padding:14px 20px 12px;font-size:13px;font-weight:500;color:var(--muted);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;}
+.tab:hover{color:var(--blue);}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue);}
+.panel{display:none;padding:24px 28px 48px;}
+.panel.on{display:block;}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;margin-bottom:24px;}
+.kpi{background:var(--white);border:1px solid var(--line);border-left:3px solid var(--line);border-radius:10px;padding:14px 16px;}
+.kpi.kp{border-left-color:var(--pos);}.kpi.kn{border-left-color:var(--neg);}.kpi.kw{border-left-color:var(--warn);}.kpi.kb{border-left-color:var(--mid);}
+.kl{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px;}
+.kv{font-size:22px;font-weight:700;line-height:1;}
+.kv.p{color:var(--pos);}.kv.n{color:var(--neg);}.kv.w{color:var(--warn);}.kv.b{color:var(--navy);}
+.ks{font-size:11px;color:var(--soft);margin-top:4px;}
+.st{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;}
+.st::before{content:'';display:block;width:3px;height:13px;background:var(--mid);border-radius:2px;}
+.g1{margin-bottom:24px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;}
+.cc{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+.cc h3{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:3px;}
+.cc .sub{font-size:11px;color:var(--muted);margin-bottom:12px;}
+.leg{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px;}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+.ld{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.tw{background:var(--white);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:24px;}
+.tb{padding:10px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.tb label{font-size:11px;color:var(--muted);font-weight:500;}
+.tb select{font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font-family:inherit;}
+.badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:99px;background:var(--pale);color:var(--blue);}
+.ts{overflow-x:auto;}
+table{border-collapse:collapse;width:100%;font-size:12px;}
+th{background:var(--navy);color:#fff;padding:7px 10px;font-weight:500;font-size:11px;white-space:nowrap;text-align:center;}
+th.tl{text-align:left;}th.t2{background:var(--blue);}th.t3{background:var(--mid);}th.t4{background:#0D2440;}
+td{padding:5px 10px;border-bottom:1px solid var(--line);white-space:nowrap;}
+td.tn{text-align:left;position:sticky;left:0;z-index:1;background:var(--white);min-width:160px;border-right:1px solid var(--pale);font-weight:500;}
+td.tn.s{font-weight:400;color:var(--muted);font-size:11px;padding-left:20px;}
+td.tv{text-align:right;font-variant-numeric:tabular-nums;}
+td.tv.p{color:var(--pos);}td.tv.n{color:var(--neg);}td.tv.z{color:var(--line);}
+td.ej{background:rgba(27,80,145,.04);}
+tr.sec td{background:var(--pale2);font-weight:600;color:var(--blue);font-size:11px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--pale);}
+tr.sec td.tn{background:var(--pale);}
+tr.tot td{background:var(--pale2);font-weight:700;border-top:2px solid var(--mid);}
+tr.tot td.tn{background:var(--pale);}
+tr.sub td{font-style:italic;font-size:11px;font-weight:500;background:#FAFBFC;}
+tr:not(.sec):not(.tot):hover td{background:#F0F6FF;}
+tr:not(.sec):not(.tot):hover td.tn{background:#E8F1FB;}
+.note{font-size:11px;color:var(--muted);font-style:italic;padding:8px 16px;}
+.sl-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.sl-row label{font-size:12px;color:var(--muted);min-width:205px;}
+.sl-row input{flex:1;}
+.sl-val{font-size:12px;font-weight:500;min-width:55px;text-align:right;color:var(--ink);}
+.div{height:0.5px;background:var(--line);margin:10px 0;}
+.chat-box{min-height:70px;max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.msg-u{background:var(--pale);color:var(--blue);border-radius:8px;padding:8px 12px;font-size:13px;max-width:88%;align-self:flex-end;}
+.msg-a{background:var(--pale2);border:0.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--ink);max-width:92%;align-self:flex-start;}
+.msg-t{color:var(--muted);font-style:italic;}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}.panel{padding:16px}.topbar,.tab-bar{padding:0 16px}}
+</style>
+</head>
+<body>
+
+<nav class="portal-nav">
+  <a href="index.html" class="portal-nav-brand">
+    <span class="portal-nav-mark">PR</span>
+    <span class="portal-nav-title">Portal de Reportes</span>
+  </a>
+  <div class="portal-nav-links">
+    <a href="index.html">Inicio</a>
+    <a href="Reporte_Facturacion.html">Facturación</a>
+    <a href="FC_ObrasPublicas.html" class="active">Flujo de Caja</a>
+  </div>
+</nav>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;">
+    <div class="logo">OP</div>
+    <h1>Flujo de Caja — Obras Públicas</h1>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="upload-btn" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+      <span>📤 Cargar Excel</span>
+      <small>Arrastra o haz clic</small>
+      <input type="file" id="fileInput" accept=".xlsx,.xls">
+    </div>
+    <div class="upload-btn" id="downloadBtn" onclick="downloadHTML()">
+      <span>💾 Descargar HTML</span>
+      <small>Guarda esta versión</small>
+    </div>
+    <div class="topbar-r" id="corteLabel">Corte: 24 jun 2026 · Confidencial</div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab on" onclick="go('res',this)">FC Resumen — O.P.</button>
+  <button class="tab" onclick="go('mes',this)">FC Mes — Junio 2026</button>
+  <button class="tab" onclick="go('sim',this)">Simulador de escenarios</button>
+</div>
+
+<!-- ══ PANEL RESUMEN ══ -->
+<div id="p-res" class="panel on">
+  <div class="kpi-row">
+    <div class="kpi kb"><div class="kl">Portafolio total</div><div class="kv b" id="kpi-portafolio">$701.75B</div><div class="ks">Ingresos contractuales</div></div>
+    <div class="kpi kw"><div class="kl">Flujo neto 2026</div><div class="kv w" id="kpi-flujoneto">−$4.88B</div><div class="ks" id="kpi-flujoneto-s">0 de 12 meses negativos</div></div>
+    <div class="kpi kw"><div class="kl">Ratio Ing/Eg</div><div class="kv w" id="kpi-ratio">0.989</div><div class="ks">Meta ≥ 1.00</div></div>
+    <div class="kpi kw"><div class="kl">Margen portafolio</div><div class="kv w" id="kpi-margen">18.5%</div><div class="ks">Sobre ingresos totales</div></div>
+    <div class="kpi kp"><div class="kl">Pico de caja</div><div class="kv p" id="kpi-pico">$45.41B</div><div class="ks" id="kpi-pico-s">Jul-26</div></div>
+    <div class="kpi kp"><div class="kl">Saldo Dic-26</div><div class="kv p" id="kpi-saldodic">$5.52B</div><div class="ks">Superávit proyectado</div></div>
+    <div class="kpi kw"><div class="kl">Burn rate</div><div class="kv w" id="kpi-burn">$38.23B</div><div class="ks">Promedio egresos/mes</div></div>
+    <div class="kpi kn"><div class="kl">Cash runway</div><div class="kv n" id="kpi-runway">&lt;1 mes</div><div class="ks">Saldo mayo / burn rate</div></div>
+  </div>
+
+  <div class="st">Evolución mensual — 2026</div>
+  <div class="g1 cc">
+    <h3>Ingresos vs. Egresos mensuales (COP Billones)</h3>
+    <p class="sub" id="sub-c1">Julio concentra el mayor ingreso 2026 — saldo máximo de $45.41B en julio</p>
+    <div class="leg"><div class="li"><div class="ld" style="background:#1B5091"></div>Ingresos</div><div class="li"><div class="ld" style="background:#DC2626"></div>Egresos</div></div>
+    <div style="position:relative;height:250px"><canvas id="c1" role="img" aria-label="Ingresos y egresos 2026" style="box-sizing: border-box; display: block; height: 250px; width: 1811px;" width="1811" height="250"></canvas></div>
+  </div>
+  <div class="g2">
+    <div class="cc"><h3>Flujo neto mensual (COP Billones)</h3><p class="sub" id="sub-c2">El portafolio no registra meses con saldo acumulado negativo en 2026</p><div style="position:relative;height:210px"><canvas id="c2" role="img" aria-label="Flujo neto 2026" style="box-sizing: border-box; display: block; height: 210px; width: 878px;" width="878" height="210"></canvas></div></div>
+    <div class="cc"><h3>Saldo acumulado (COP Billones)</h3><p class="sub" id="sub-c3">Saldo mínimo $1.10B en septiembre, cierra diciembre en $5.52B</p><div style="position:relative;height:210px"><canvas id="c3" role="img" aria-label="Saldo acumulado 2026" style="box-sizing: border-box; display: block; height: 210px; width: 878px;" width="878" height="210"></canvas></div></div>
+  </div>
+
+  <div class="st">Análisis de portafolio</div>
+  <div class="g3">
+    <div class="cc"><h3>Participación por proyecto</h3><p class="sub" id="sub-c4">Metro Estadio = 49.1% del portafolio</p><div style="position:relative;height:220px"><canvas id="c4" role="img" aria-label="Participación por proyecto" style="box-sizing: border-box; display: block; height: 220px; width: 567px;" width="567" height="220"></canvas></div></div>
+    <div class="cc"><h3>Margen bruto por proyecto (%)</h3><p class="sub">Verde ≥ 20% · Amarillo ≥ 12% · Rojo &lt;12%</p><div style="position:relative;height:220px"><canvas id="c5" role="img" aria-label="Margen por proyecto" style="box-sizing: border-box; display: block; height: 220px; width: 567px;" width="567" height="220"></canvas></div></div>
+    <div class="cc"><h3>Concentración de ingresos mensual</h3><p class="sub">% del total anual 2026</p><div style="position:relative;height:220px"><canvas id="c6" role="img" aria-label="Concentración mensual" style="box-sizing: border-box; display: block; height: 220px; width: 567px;" width="567" height="220"></canvas></div></div>
+  </div>
+
+  <div class="st">Detalle mensual por proyecto</div>
+  <div class="tw">
+    <div class="tb">
+      <label>Unidad:</label>
+      <select id="r-u" onchange="rT()"><option value="M">Millones (M)</option><option value="B">Billones (B)</option></select>
+      <label>Sección:</label>
+      <select id="r-v" onchange="rT()"><option value="all">Ingresos + Egresos</option><option value="ing">Solo Ingresos</option><option value="eg">Solo Egresos</option></select>
+      <span class="badge" id="r-b">COP Millones</span>
+    </div>
+    <div class="ts"><table id="r-tbl"><thead><tr><th class="tl" style="position:sticky;left:0;z-index:3;min-width:170px;">Proyecto</th><th>Ene-26</th><th>Feb-26</th><th>Mar-26</th><th>Abr-26</th><th>May-26</th><th>Jun-26</th><th>Jul-26</th><th>Ago-26</th><th>Sep-26</th><th>Oct-26</th><th>Nov-26</th><th>Dic-26</th><th class="t4">Total</th></tr></thead><tbody><tr class="sec"><td class="tn" colspan="14">▸ Ingresos</td></tr><tr><td class="tn s">Metro Estadio</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p">20.840</td><td class="tv p">1</td><td class="tv p">121.666</td><td class="tv p">45.580</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p">33.280</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p" style="font-weight:700">221.366</td></tr><tr><td class="tn s">Colegios BQ</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p">9.229</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p">18.326</td><td class="tv z">—</td><td class="tv p">22.240</td><td class="tv z">—</td><td class="tv p">22.240</td><td class="tv p" style="font-weight:700">72.035</td></tr><tr><td class="tn s">Vías Urbanas M1</td><td class="tv p">12.926</td><td class="tv p">12.386</td><td class="tv p">9.421</td><td class="tv z">—</td><td class="tv p">7</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p">8.477</td><td class="tv p">7.907</td><td class="tv p">9.478</td><td class="tv z">—</td><td class="tv p">1.006</td><td class="tv p" style="font-weight:700">61.608</td></tr><tr><td class="tn s">Playas Sta. Verónica</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p">32.789</td><td class="tv p">9.461</td><td class="tv z">—</td><td class="tv p">7.966</td><td class="tv z">—</td><td class="tv p">4.608</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p" style="font-weight:700">54.824</td></tr><tr><td class="tn s">Escenarios Dep.</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p">1</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p">8.404</td><td class="tv z">—</td><td class="tv p">4.960</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p">5.036</td><td class="tv p" style="font-weight:700">18.401</td></tr><tr><td class="tn s">Calle 2</td><td class="tv z">—</td><td class="tv p">1.422</td><td class="tv p">847</td><td class="tv p">791</td><td class="tv p">1.386</td><td class="tv p">3.262</td><td class="tv p">1.230</td><td class="tv p">186</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p" style="font-weight:700">9.124</td></tr><tr><td class="tn s">Hospital Pto.</td><td class="tv p">1.622</td><td class="tv p">1.318</td><td class="tv z">—</td><td class="tv p">280</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p">2.298</td><td class="tv z">—</td><td class="tv p">2.003</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p" style="font-weight:700">7.521</td></tr><tr><td class="tn s">Magangué</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p">900</td><td class="tv p">2.476</td><td class="tv z">—</td><td class="tv p">1.300</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p" style="font-weight:700">4.676</td></tr><tr><td class="tn s">Parques Integrales</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p">1.500</td><td class="tv z">—</td><td class="tv p">1.500</td><td class="tv p" style="font-weight:700">3.000</td></tr><tr><td class="tn s">Metroplús</td><td class="tv p">558</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p">787</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p" style="font-weight:700">1.345</td></tr><tr><td class="tn s">Socios</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p">1</td><td class="tv p">1</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv p" style="font-weight:700">2</td></tr><tr class="tot"><td class="tn">TOTAL INGRESOS</td><td class="tv p" style="font-weight:700">15.105</td><td class="tv p" style="font-weight:700">15.126</td><td class="tv p" style="font-weight:700">10.268</td><td class="tv p" style="font-weight:700">63.931</td><td class="tv p" style="font-weight:700">10.856</td><td class="tv p" style="font-weight:700">125.715</td><td class="tv p" style="font-weight:700">66.378</td><td class="tv p" style="font-weight:700">29.465</td><td class="tv p" style="font-weight:700">19.478</td><td class="tv p" style="font-weight:700">67.798</td><td class="tv p" style="font-weight:700">—</td><td class="tv p" style="font-weight:700">29.782</td><td class="tv p" style="font-weight:700">453.901</td></tr><tr class="sec"><td class="tn" colspan="14">▸ Egresos</td></tr><tr><td class="tn s">Metro Estadio</td><td class="tv n">(879)</td><td class="tv n">(5.472)</td><td class="tv n">(10.036)</td><td class="tv n">(28.717)</td><td class="tv n">(10.679)</td><td class="tv n">(54.701)</td><td class="tv n">(32.147)</td><td class="tv n">(28.316)</td><td class="tv n">(31.302)</td><td class="tv n">(22.531)</td><td class="tv n">(22.439)</td><td class="tv n">(15.635)</td><td class="tv n" style="font-weight:700">262.855</td></tr><tr><td class="tn s">Colegios BQ</td><td class="tv n">(3.760)</td><td class="tv n">(4.050)</td><td class="tv n">(3.541)</td><td class="tv n">(4.641)</td><td class="tv n">(4.937)</td><td class="tv n">(9.159)</td><td class="tv n">(7.984)</td><td class="tv n">(7.453)</td><td class="tv n">(8.381)</td><td class="tv n">(6.930)</td><td class="tv n">(8.294)</td><td class="tv n">(8.270)</td><td class="tv n" style="font-weight:700">77.400</td></tr><tr><td class="tn s">Vías Urbanas M1</td><td class="tv n">(7.300)</td><td class="tv n">(5.033)</td><td class="tv n">(3.938)</td><td class="tv n">(3.715)</td><td class="tv n">(1.262)</td><td class="tv n">(5.031)</td><td class="tv n">(4.801)</td><td class="tv n">(2.348)</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv n" style="font-weight:700">33.428</td></tr><tr><td class="tn s">Playas Sta. Verónica</td><td class="tv n">(2.378)</td><td class="tv n">(3.461)</td><td class="tv n">(2.349)</td><td class="tv n">(6.308)</td><td class="tv n">(6.101)</td><td class="tv n">(4.000)</td><td class="tv n">(2.100)</td><td class="tv n">(2.100)</td><td class="tv n">(2.100)</td><td class="tv n">(500)</td><td class="tv n">(500)</td><td class="tv z">—</td><td class="tv n" style="font-weight:700">31.898</td></tr><tr><td class="tn s">Escenarios Dep.</td><td class="tv n">(406)</td><td class="tv n">(394)</td><td class="tv n">(516)</td><td class="tv n">(865)</td><td class="tv n">(658)</td><td class="tv n">(3.148)</td><td class="tv n">(2.653)</td><td class="tv n">(2.732)</td><td class="tv n">(2.529)</td><td class="tv n">(1.924)</td><td class="tv n">(1.772)</td><td class="tv n">(617)</td><td class="tv n" style="font-weight:700">18.215</td></tr><tr><td class="tn s">Magangué</td><td class="tv n">(36)</td><td class="tv n">(121)</td><td class="tv n">(185)</td><td class="tv n">(669)</td><td class="tv n">(249)</td><td class="tv n">(1.544)</td><td class="tv n">(1.738)</td><td class="tv n">(1.296)</td><td class="tv n">(1.296)</td><td class="tv n">(600)</td><td class="tv n">(600)</td><td class="tv n">(748)</td><td class="tv n" style="font-weight:700">9.082</td></tr><tr><td class="tn s">Calle 2</td><td class="tv n">(14)</td><td class="tv n">(179)</td><td class="tv n">(895)</td><td class="tv n">(1.961)</td><td class="tv n">(385)</td><td class="tv n">(1.522)</td><td class="tv n">(1.200)</td><td class="tv n">(1.200)</td><td class="tv n">(1.200)</td><td class="tv n">(300)</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv n" style="font-weight:700">8.856</td></tr><tr><td class="tn s">Hospital Pto.</td><td class="tv n">(1.745)</td><td class="tv n">(1.367)</td><td class="tv n">(777)</td><td class="tv n">(1.010)</td><td class="tv n">(932)</td><td class="tv n">(2.065)</td><td class="tv n">(450)</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv n" style="font-weight:700">8.346</td></tr><tr><td class="tn s">Parques Integrales</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv n">(15)</td><td class="tv z">—</td><td class="tv n">(502)</td><td class="tv n">(500)</td><td class="tv n">(500)</td><td class="tv n">(500)</td><td class="tv n">(500)</td><td class="tv n">(500)</td><td class="tv n">(500)</td><td class="tv n" style="font-weight:700">3.516</td></tr><tr><td class="tn s">Socios</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv n">(3.290)</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv n" style="font-weight:700">3.290</td></tr><tr><td class="tn s">Metroplús</td><td class="tv n">(347)</td><td class="tv n">(215)</td><td class="tv n">(60)</td><td class="tv n">(47)</td><td class="tv n">(369)</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv n" style="font-weight:700">1.039</td></tr><tr><td class="tn s">Costos Admin.</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv n">(114)</td><td class="tv n">(34)</td><td class="tv n">(402)</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv n" style="font-weight:700">550</td></tr><tr><td class="tn s">Mejoramiento</td><td class="tv n">(140)</td><td class="tv n">(140)</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv n" style="font-weight:700">280</td></tr><tr><td class="tn s">Antares</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv n">(10)</td><td class="tv n">(15)</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv z">—</td><td class="tv n" style="font-weight:700">25</td></tr><tr class="tot"><td class="tn">TOTAL EGRESOS</td><td class="tv n" style="font-weight:700">17.006</td><td class="tv n" style="font-weight:700">20.431</td><td class="tv n" style="font-weight:700">22.297</td><td class="tv n" style="font-weight:700">48.074</td><td class="tv n" style="font-weight:700">25.622</td><td class="tv n" style="font-weight:700">85.363</td><td class="tv n" style="font-weight:700">53.574</td><td class="tv n" style="font-weight:700">45.944</td><td class="tv n" style="font-weight:700">47.309</td><td class="tv n" style="font-weight:700">33.286</td><td class="tv n" style="font-weight:700">34.105</td><td class="tv n" style="font-weight:700">25.770</td><td class="tv n" style="font-weight:700">458.781</td></tr><tr class="sec"><td class="tn" colspan="14">▸ Resumen de caja</td></tr><tr class="sub"><td class="tn">Flujo neto mensual</td><td class="tv n">(1.900)</td><td class="tv n">(5.305)</td><td class="tv n">(12.029)</td><td class="tv p">15.857</td><td class="tv n">(14.766)</td><td class="tv p">40.351</td><td class="tv p">12.805</td><td class="tv n">(16.479)</td><td class="tv n">(27.831)</td><td class="tv p">34.512</td><td class="tv n">(34.105)</td><td class="tv p">4.012</td><td class="tv n" style="font-weight:700">(4.880)</td></tr><tr class="tot"><td class="tn">Saldo acumulado</td><td class="tv p" style="font-weight:700">1.271</td><td class="tv p" style="font-weight:700">1.661</td><td class="tv p" style="font-weight:700">1.370</td><td class="tv p" style="font-weight:700">17.087</td><td class="tv p" style="font-weight:700">2.320</td><td class="tv p" style="font-weight:700">32.605</td><td class="tv p" style="font-weight:700">45.409</td><td class="tv p" style="font-weight:700">28.930</td><td class="tv p" style="font-weight:700">1.099</td><td class="tv p" style="font-weight:700">35.611</td><td class="tv p" style="font-weight:700">1.505</td><td class="tv p" style="font-weight:700">5.517</td><td></td></tr></tbody></table></div>
+    <p class="note">Valores mensuales = suma de las 4 semanas. Negativos en rojo con paréntesis.</p>
+  </div>
+</div>
+
+<!-- ══ PANEL MES ══ -->
+<div id="p-mes" class="panel">
+  <div class="kpi-row">
+    <div class="kpi kb"><div class="kl" id="kpi-mes-label">Saldo inicial junio</div><div class="kv b" id="kpi-mes-s0">$2.32B</div><div class="ks">Acumulado a mayo</div></div>
+    <div class="kpi kp"><div class="kl">Ingresos ejecutados</div><div class="kv p" id="kpi-mes-ie">$125.71B</div><div class="ks">Total mes ejecutado</div></div>
+    <div class="kpi kn"><div class="kl">Egresos ejecutados</div><div class="kv n" id="kpi-mes-ee">$95.43B</div><div class="ks">Total mes ejecutado</div></div>
+    <div class="kpi kp"><div class="kl">Saldo final ejecutado</div><div class="kv p" id="kpi-mes-final">$32.60B</div><div class="ks" id="kpi-mes-final-s">Cierre de junio</div></div>
+  </div>
+
+  <div class="st" id="st-mes-semanas">Acumulado semana a semana — Junio 2026</div>
+  <div class="g2">
+    <div class="cc"><h3>Ingreso acumulado semanal (COP Billones)</h3><p class="sub">Sem 1 concentra casi todo el ingreso del mes</p>
+      <div class="leg"><div class="li"><div class="ld" style="background:#1B5091"></div>Ejecución</div></div>
+      <div style="position:relative;height:220px"><canvas id="c7" role="img" aria-label="Ingreso acumulado semanal" style="box-sizing: border-box; display: block; height: 220px; width: 878px;" width="878" height="220"></canvas></div></div>
+    <div class="cc"><h3>Egreso acumulado semanal (COP Billones)</h3><p class="sub">Evolución del egreso ejecutado en el mes</p>
+      <div class="leg"><div class="li"><div class="ld" style="background:#DC2626"></div>Ejecución</div></div>
+      <div style="position:relative;height:220px"><canvas id="c8" role="img" aria-label="Egreso acumulado semanal" style="box-sizing: border-box; display: block; height: 220px; width: 878px;" width="878" height="220"></canvas></div></div>
+  </div>
+  <div class="g2">
+    <div class="cc"><h3>Saldo de caja acumulado semanal (COP Billones)</h3><p class="sub" id="sub-c9">Ejecución desde saldo inicial $2.32B</p>
+      <div class="leg"><div class="li"><div class="ld" style="background:#1B5091;border-radius:50%"></div>Ejecución</div></div>
+      <div style="position:relative;height:210px"><canvas id="c9" role="img" aria-label="Saldo acumulado semanal" style="box-sizing: border-box; display: block; height: 210px; width: 878px;" width="878" height="210"></canvas></div></div>
+    <div class="cc"><h3>Egresos ejecutados por proyecto — <span id="c10-mes">Junio</span></h3><p class="sub" id="sub-c10">Metro Estadio = 62.7% del egreso del mes</p>
+      <div style="position:relative;height:210px"><canvas id="c10" role="img" aria-label="Egresos junio por proyecto" style="box-sizing: border-box; display: block; height: 210px; width: 878px;" width="878" height="210"></canvas></div></div>
+  </div>
+
+  <div class="st">Detalle semanal — <span id="st-mes-detalle">Junio 2026</span></div>
+  <div class="tw">
+    <div class="tb">
+      <label>Unidad:</label>
+      <select id="m-u" onchange="mT()"><option value="M">Millones (M)</option><option value="B">Billones (B)</option></select>
+      <label>Valores:</label>
+      <select id="m-m" onchange="mT()"><option value="sem">Por semana</option><option value="acum">Acumulado semanal</option></select>
+      <span class="badge" id="m-b">COP Millones</span>
+    </div>
+    <div class="ts"><table id="m-tbl"><thead><tr><th class="tl" style="position:sticky;left:0;z-index:3;min-width:165px">Proyecto</th><th class="t3">Sem 1</th><th class="t3">Sem 2</th><th class="t3">Sem 3</th><th class="t3">Sem 4</th><th class="t3">Total</th></tr></thead><tbody><tr class="sec"><td class="tn" colspan="6">▸ Ingresos</td></tr><tr><td class="tn s">Calle 2</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej">3.262</td><td class="tv p ej" style="font-weight:700">3.262</td></tr><tr><td class="tn s">Metroplús</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej">787</td><td class="tv p ej" style="font-weight:700">787</td></tr><tr><td class="tn s">Metro Estadio</td><td class="tv p ej">121.666</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">121.666</td></tr><tr class="tot"><td class="tn">TOTAL INGRESOS</td><td class="tv p ej" style="font-weight:700">121.666</td><td class="tv p ej" style="font-weight:700">—</td><td class="tv p ej" style="font-weight:700">—</td><td class="tv p ej" style="font-weight:700">4.049</td><td class="tv p ej" style="font-weight:700">125.715</td></tr><tr class="sec"><td class="tn" colspan="6">▸ Egresos</td></tr><tr><td class="tn s">Socios</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv n ej">3.290</td><td class="tv n ej" style="font-weight:700">3.290</td></tr><tr><td class="tn s">Hospital BQ</td><td class="tv n ej">122</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv n ej" style="font-weight:700">122</td></tr><tr><td class="tn s">Mejoramiento</td><td class="tv  ej">—</td><td class="tv n ej">0</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv n ej" style="font-weight:700">0</td></tr><tr><td class="tn s">Vías Urbanas M1</td><td class="tv n ej">1.949</td><td class="tv n ej">813</td><td class="tv n ej">764</td><td class="tv n ej">2.624</td><td class="tv n ej" style="font-weight:700">6.150</td></tr><tr><td class="tn s">Colegios BQ</td><td class="tv n ej">4.247</td><td class="tv n ej">1.291</td><td class="tv n ej">1.540</td><td class="tv n ej">3.743</td><td class="tv n ej" style="font-weight:700">10.822</td></tr><tr><td class="tn s">Hospital Pto.</td><td class="tv n ej">1.133</td><td class="tv n ej">98</td><td class="tv n ej">198</td><td class="tv n ej">1.452</td><td class="tv n ej" style="font-weight:700">2.881</td></tr><tr><td class="tn s">Escenarios Dep.</td><td class="tv n ej">813</td><td class="tv n ej">207</td><td class="tv n ej">285</td><td class="tv n ej">1.945</td><td class="tv n ej" style="font-weight:700">3.250</td></tr><tr><td class="tn s">Playas Sta. Verónica</td><td class="tv n ej">1.478</td><td class="tv n ej">963</td><td class="tv n ej">509</td><td class="tv n ej">1.482</td><td class="tv n ej" style="font-weight:700">4.432</td></tr><tr><td class="tn s">Calle 2</td><td class="tv n ej">757</td><td class="tv n ej">218</td><td class="tv n ej">83</td><td class="tv n ej">987</td><td class="tv n ej" style="font-weight:700">2.045</td></tr><tr><td class="tn s">Metroplús</td><td class="tv n ej">60</td><td class="tv n ej">0</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv n ej" style="font-weight:700">60</td></tr><tr><td class="tn s">Costos Admin.</td><td class="tv  ej">—</td><td class="tv n ej">0</td><td class="tv n ej">402</td><td class="tv  ej">—</td><td class="tv n ej" style="font-weight:700">402</td></tr><tr><td class="tn s">Magangué</td><td class="tv n ej">220</td><td class="tv n ej">86</td><td class="tv n ej">1</td><td class="tv n ej">1.308</td><td class="tv n ej" style="font-weight:700">1.615</td></tr><tr><td class="tn s">Metro Estadio</td><td class="tv n ej">20.399</td><td class="tv n ej">28.497</td><td class="tv n ej">1.959</td><td class="tv n ej">9.006</td><td class="tv n ej" style="font-weight:700">59.860</td></tr><tr><td class="tn s">Escenarios Baq</td><td class="tv n ej">1</td><td class="tv n ej">1</td><td class="tv  ej">—</td><td class="tv n ej">500</td><td class="tv n ej" style="font-weight:700">502</td></tr><tr class="tot"><td class="tn">TOTAL EGRESOS</td><td class="tv n ej" style="font-weight:700">31.179</td><td class="tv n ej" style="font-weight:700">32.173</td><td class="tv n ej" style="font-weight:700">5.740</td><td class="tv n ej" style="font-weight:700">26.337</td><td class="tv n ej" style="font-weight:700">95.430</td></tr><tr class="sec"><td class="tn" colspan="6">▸ Saldo de caja</td></tr><tr class="sub"><td class="tn">Flujo neto semanal</td><td class="tv p ej">90.486</td><td class="tv n ej">(32.173)</td><td class="tv n ej">(5.740)</td><td class="tv n ej">(22.288)</td><td class="tv p ej" style="font-weight:700">30.284</td></tr><tr class="tot"><td class="tn">Saldo acumulado</td><td class="tv p ej" style="font-weight:700">92.807</td><td class="tv p ej" style="font-weight:700">60.634</td><td class="tv p ej" style="font-weight:700">54.893</td><td class="tv p ej" style="font-weight:700">32.605</td><td></td></tr></tbody></table></div>
+    <p class="note">Solo flujo ejecutado. "Acumulado" muestra saldo corriente desde inicio de mes.</p>
+  </div>
+</div>
+
+<!-- ══ PANEL SIMULADOR ══ -->
+<div id="p-sim" class="panel">
+  <div style="margin-bottom:20px;">
+    <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px;">
+      Simulador de escenarios
+      <span id="sc-lbl" style="font-size:11px;font-weight:600;padding:2px 9px;border-radius:99px;background:#E5E7EB;color:#6B7280;margin-left:8px;">Base</span>
+    </div>
+    <div style="font-size:12px;color:var(--muted);">Ajustá los parámetros y consultale al asistente cómo impactan en la liquidez del portafolio.</div>
+  </div>
+
+  <div class="kpi-row" style="margin-bottom:20px;">
+    <div class="kpi kw"><div class="kl">Flujo neto 2026</div><div class="kv w" id="sk1">−$4.87B</div><div class="ks" id="sd1" style="color: var(--pos);">▲ +0.01B vs base</div></div>
+    <div class="kpi kp"><div class="kl">Saldo mín. (peor mes)</div><div class="kv p" id="sk2">$1.10B</div><div class="ks" id="sd2" style="color: var(--pos);">▲ +0.00B vs base</div></div>
+    <div class="kpi kp"><div class="kl">Meses en déficit</div><div class="kv p" id="sk3">0 / 12</div><div class="ks" id="sd3" style="color: var(--pos);">▲ 0 mes(es)</div></div>
+    <div class="kpi kn"><div class="kl">Cash runway</div><div class="kv n" id="sk4">&lt;1 mes</div><div class="ks" id="sd4" style="color: var(--neg);">Crítico</div></div>
+  </div>
+
+  <div class="g2" style="margin-bottom:20px;">
+    <!-- PANEL IZQUIERDO: Ajustes por proyecto + globales -->
+    <div class="cc" style="display:flex;flex-direction:column;gap:0;">
+
+      <!-- Sección: Ajustes por proyecto -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div class="st" style="margin:0;border:0;padding:0;">Ajustes por proyecto</div>
+        <button onclick="sReset()" style="font-size:11px;padding:3px 12px;color:var(--muted);">↺ Reiniciar todo</button>
+      </div>
+
+      <!-- Selector proyecto -->
+      <div class="sl-row" style="margin-bottom:8px;">
+        <label style="min-width:70px;">Proyecto</label>
+        <select id="s-proj" onchange="onProjChange()" style="flex:1;font-size:12px;"><option value="">— Seleccioná un proyecto —</option><option value="Metro Estadio">Metro Estadio</option><option value="Colegios BQ">Colegios BQ</option><option value="Vías Urbanas M1">Vías Urbanas M1</option><option value="Playas Sta. Verónica">Playas Sta. Verónica</option><option value="Escenarios Dep.">Escenarios Dep.</option><option value="Calle 2">Calle 2</option><option value="Hospital Pto.">Hospital Pto.</option><option value="Magangué">Magangué</option><option value="Parques Integrales">Parques Integrales</option><option value="Metroplús">Metroplús</option><option value="Socios">Socios</option></select>
+      </div>
+
+      <!-- Mini gráfica del proyecto -->
+      <div id="mini-chart-wrap" style="display:none;background:var(--pale2);border-radius:8px;padding:10px 12px;margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-size:11px;color:var(--muted);">Ingresos proyectados 2026</span>
+          <span style="font-size:11px;font-weight:600;color:var(--ink);" id="mini-total"></span>
+        </div>
+        <div id="mini-bars" style="display:flex;align-items:flex-end;gap:3px;height:65px;"></div>
+        <div style="display:flex;gap:3px;margin-top:4px;" id="mini-labels"></div>
+        <div style="font-size:10px;color:var(--soft);margin-top:6px;">Barras opacas = meses sin cobro · Clic en una barra para seleccionar ese mes</div>
+      </div>
+
+      <!-- Selector mes -->
+      <div id="mes-row" style="display:none;" class="sl-row">
+        <label style="min-width:70px;">Mes</label>
+        <select id="s-mes" onchange="onMesChange()" style="flex:1;font-size:12px;">
+          <option value="">— Seleccioná un mes —</option>
+        </select>
+        <span id="mes-base-val" style="font-size:11px;color:var(--muted);white-space:nowrap;"></span>
+      </div>
+
+      <!-- Slider % cobro -->
+      <div id="pct-row" style="display:none;" class="sl-row">
+        <label style="min-width:70px;">% a recibir</label>
+        <input type="range" min="0" max="100" step="5" value="100" id="s-pct" oninput="onPctChange()" style="flex:1;">
+        <span style="font-size:13px;font-weight:600;min-width:40px;text-align:right;color:var(--neg);" id="s-pct-val">100%</span>
+      </div>
+      <!-- Slider retraso -->
+      <div id="delay-row" style="display:none;" class="sl-row">
+        <label style="min-width:70px;">Retraso (meses)</label>
+        <input type="range" min="0" max="4" step="1" value="0" id="s-delay" oninput="onPctChange()" style="flex:1;">
+        <span style="font-size:13px;font-weight:600;min-width:40px;text-align:right;color:var(--ink);" id="s-delay-val">0 meses</span>
+      </div>
+
+      <!-- Impacto preview -->
+      <div id="impact-row" style="display:none;font-size:12px;color:var(--muted);margin-bottom:10px;padding:6px 0;">
+        Impacto en caja: <span id="impact-val" style="font-weight:600;color:var(--neg);"></span>
+      </div>
+
+      <!-- Botón agregar -->
+      <div id="add-row" style="display:none;margin-bottom:14px;">
+        <button onclick="addAjuste()" style="font-size:12px;padding:5px 14px;color:var(--blue);border-color:var(--blue);">+ Agregar ajuste</button>
+      </div>
+
+      <!-- Lista de ajustes -->
+      <div id="ajustes-list" style="display:none;">
+        <div style="height:0.5px;background:var(--line);margin-bottom:10px;"></div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Ajustes activos:</div>
+        <div id="ajustes-items"></div>
+      </div>
+
+      <!-- Parámetros globales -->
+      <div style="height:0.5px;background:var(--line);margin:14px 0;"></div>
+      <div class="st" style="margin:0 0 12px 0;border:0;padding:0;">Parámetros globales</div>
+      <div class="sl-row"><label>Sobrecosto egresos (%)</label><input type="range" min="0" max="30" step="1" value="0" id="sl3" oninput="sU()"><span class="sl-val" id="sv3">0%</span></div>
+      <div class="sl-row"><label>Ahorro en egresos (%)</label><input type="range" min="0" max="20" step="1" value="0" id="sl4" oninput="sU()"><span class="sl-val" id="sv4">0%</span></div>
+      <div class="sl-row"><label>Cobros extra Q4 (B)</label><input type="range" min="0" max="50" step="1" value="0" id="sl5" oninput="sU()"><span class="sl-val" id="sv5">$0B</span></div>
+      <div class="sl-row"><label>Crédito puente (B)</label><input type="range" min="0" max="80" step="5" value="0" id="sl6" oninput="sU()"><span class="sl-val" id="sv6">$0B</span></div>
+    </div>
+
+    <!-- PANEL DERECHO: Gráfica -->
+    <div class="cc">
+      <div class="st" style="margin-bottom:14px;">Saldo acumulado mensual</div>
+      <div style="position:relative;height:255px"><canvas id="c-sim" role="img" aria-label="Saldo acumulado escenario vs base" width="878" height="255" style="display: block; box-sizing: border-box; height: 255px; width: 878px;"></canvas></div>
+      <div style="display:flex;gap:16px;margin-top:10px;font-size:11px;color:var(--muted);">
+        <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:20px;height:0;border-top:2px dashed #9CA3AF;"></span>Base</span>
+        <span style="display:flex;align-items:center;gap:5px;"><div class="ld" style="background:#1B5091;"></div>Escenario</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat -->
+  <div class="cc">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div class="st" style="margin:0;border:0;padding:0;">Consultá sobre el escenario activo</div>
+      <button onclick="document.getElementById('chat').innerHTML='';" style="font-size:11px;padding:3px 12px;color:var(--muted);">🗑 Borrar consultas</button>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+      <button onclick="sAsk('En que mes entra el portafolio en deficit con este escenario?')" style="font-size:11px;padding:4px 10px;">¿Cuándo entra en déficit?</button>
+      <button onclick="sAsk('Cuanto credito necesito para no quedar en negativo ningun mes?')" style="font-size:11px;padding:4px 10px;">¿Cuánto crédito necesito?</button>
+      <button onclick="sAsk('Cual es el mes mas critico y por que?')" style="font-size:11px;padding:4px 10px;">Mes más crítico</button>
+      <button onclick="sAsk('Que tan sensible es el portafolio a un retraso en Metro Estadio?')" style="font-size:11px;padding:4px 10px;">Sensibilidad Metro Estadio</button>
+      <button onclick="sAsk('Que recomendas para mejorar la liquidez en el segundo semestre?')" style="font-size:11px;padding:4px 10px;">Recomendaciones</button>
+    </div>
+    <div class="chat-box" id="chat">
+      <div class="msg-a">Hola. Ajustá los parámetros y preguntame lo que necesitás. Tengo acceso a todos los números del portafolio en tiempo real.</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="ci" placeholder="Escribí tu pregunta sobre el escenario..." onkeydown="if(event.key==='Enter')sSend()" style="flex:1;font-size:13px;">
+      <button onclick="sSend()" style="font-size:13px;padding:0 18px;white-space:nowrap;">Enviar ↗</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+// ── RAW DATA (COP pesos exactos del Excel) ──
+// ── RAW DATA (COP pesos exactos del Excel) — mutable, se sobreescribe al cargar un nuevo archivo ──
+/* DATA_START */
+let DATA = {"IT":[15105431806,15125878121.104237,10267959907,63930848570.12,10856106620.61,125714528504.76526,66378492807.697495,29464645926.425274,19477521252.206768,67797767754.727104,0,29781706926.736725],"ET":[17005825261.51248,20431321382.587997,22297096005.04,48073629014.94,25622380960.16,85363213301.06468,53573989813.90173,45944063289.036194,47308562102.89181,33285959237.196247,34105400658.216682,25769756839.687748],"AC":[1271285759.548437,1660906734.4564362,1369527116.2807198,17086746671.46072,2320472331.910721,32604829407.02701,45409332400.82277,28929915038.21185,1098874187.5268097,35610682705.05766,1505282046.8409805,5517232133.889957],"ING_P":{"Socios":[0,0,0,668077.3600000001,847862.91,0,0,0,0,0,0,0],"Vías Urbanas M1":[12925669021,12385797539.104237,9421210574,291818,7353801,0,0,8476602038.079841,7906780419.05079,9477913899.71002,0,1006149072.5911905],"Colegios BQ":[0,0,0,9229192596.470001,366559,0,0,18325633441,0,22239853855.017082,0,22239853855.01712],"Hospital Pto.":[1622262785,1317804058,0,280000000,0,0,2298238281.731854,0,2002637626.165145,0,0,0],"Escenarios Dep.":[0,0,0,1235215,0,0,8404000000,0,4959971928.606052,0,0,5035703999.128413],"Playas Sta. Verónica":[0,0,0,32788943964.09,9460825451,0,7966360604.97722,0,4608131278.38478,0,0,0],"Calle 2":[0,1422276524,846749333,790658204,1386123179,3261979172.3152504,1229893920.98842,186410447.34543407,0,0,0,0],"Metroplús":[557500000,0,0,746.3100000000001,351.62,786999253.69,0,0,0,0,0,0],"Magangué":[0,0,0,0,0,0,900000000,2476000000,0,1300000000,0,0],"Metro Estadio":[0,0,0,20839857948.89,589416.0800000001,121665550078.76001,45580000000,0,0,33280000000,0,0],"Parques Integrales":[0,0,0,0,0,0,0,0,0,1500000000,0,1500000000]},"EG_P":{"Socios":[0,0,0,226130.57000000004,152282.72,3290019946,0,0,0,0,0,0],"Mejoramiento":[140000000,140000000,0,0,0,0,0,0,0,0,0,0],"Vías Urbanas M1":[7300078631.108,5032708004.158,3938239154.44,3714912728.69,1262456719.6100001,5030594974.839999,4801164585.473355,2347688323.21869,0,0,0,0],"Colegios BQ":[3760379265.8962398,4049561637.108234,3541089089.5600004,4640988300.08,4936676161.84,9159146598.552914,7984445116.53812,7452653010.84601,8381155213.97614,6930279920.6843195,8294386175.01411,8269652677.03311],"Hospital Pto.":[1744716525.1,1367153151.4199996,776848053.24,1010047256.46,932312416,2064774642.5500007,450354173.66199994,0,0,0,0,0],"Escenarios Dep.":[406128158,394199060,516473232.2,865125296.75,658116470.69,3147790482.080785,2653112153.4578032,2732216911.1210933,2529144481.7907467,1924401000.146327,1771694331.6161728,616905398.8198981],"Playas Sta. Verónica":[2378235252.4082394,3460814794.901766,2349154711.91,6307836749.41,6101482543.700001,3999999999.999995,2100000000,2100000000,2100000000,500000000,500000000,0],"Calle 2":[14239485,178673428,894604965.0900002,1961326049.98,385206773.73,1522334390.0609999,1200000000,1200000000,1200000000,300000000,0,0],"Metroplús":[347000000,215000000,59880117.5,47314251.23,369442603.2,18122.2,0,0,0,0,0,0],"Costos Admin.":[0,0,0,114147761.98,34098575,401600000,0,0,0,0,0,0],"Magangué":[35601900,121020996,185188480.82,669334414.06,248786589.28,1544213303.8799999,1737582567.5809999,1295842657.98,1295842657.98,600000000,600000000,748270600],"Metro Estadio":[879446044,5472190311,10035618200.28,28717285926.73,10678666744.39,54701156504.89999,32147331217.18945,28315662385.8704,31302419749.14492,22531278316.3656,22439320151.5864,15634928163.83474],"Antares":[0,0,0,10344000,14983080,0,0,0,0,0,0,0],"Parques Integrales":[0,0,0,14740149,0,501564336,500000000,500000000,500000000,500000000,500000000,500000000]},"PR_NAMES":["Metro Estadio","Colegios BQ","Vías Urbanas M1","Playas Sta. Verónica","Escenarios Dep.","Calle 2","Hospital Pto.","Magangué","Metroplús"],"PR_MARGIN":[16.7,15.5,20.9,48,25.2,2.9,7.6,26.1,25.7],"PRIV_M":[221366,72035,61608,54824,18401,9124,7521,4676,1345],"IP":[98704458978,0,3261979172.3152504,4113505156.8116403],"EP":[15512728384.49544,23037590977.16545,22693285698.265446,13531804612.388348],"IE":[121665550078.76001,0,0,4048978426.0052505],"EE":[31179370223.989998,32173117000.28,5740377491.14,26337306716.238968],"S0":2320472331.91072,"MIG":{"Escenarios Dep.":{"p":[0,0,0,2426505903.12164],"e":[0,0,0,0]},"Calle 2":{"p":[0,0,3261979172.3152504,0],"e":[0,0,0,3261979172.3152504]},"Metroplús":{"p":[0,0,0,786999253.69],"e":[0,0,0,786999253.69]},"Magangué":{"p":[0,0,0,900000000],"e":[0,0,0,0]},"Metro Estadio":{"p":[98704458978,0,0,0],"e":[121665550078.76001,0,0,0]}},"MEG":{"Socios":{"p":[0,0,11000000000,244000000],"e":[0,0,0,3290019946]},"Hospital BQ":{"p":[0,0,0,0],"e":[122177457.87,0,0,0]},"Mejoramiento":{"p":[0,0,0,0],"e":[0,1,0,0]},"Vías Urbanas M1":{"p":[1023646669.2900009,1000000000,1000000000,2006948305.5499954],"e":[1948776615.17,813035966.78,764290991,2623811787.1757135]},"Colegios BQ":{"p":[1843201524,2000000000,2500000000,2815945074.5529],"e":[4247401294.47,1291232086.84,1540200003.4,3742883504.128627]},"Hospital Pto.":{"p":[120000000,103707018,488644818.9999981,339085046.00000393],"e":[1133337759.55,97609798,198338200,1452056397.285715]},"Escenarios Dep.":{"p":[955165548.77019,680874977.770198,680874977.770198,830874977.770198],"e":[813178215.9,207062731.29,284899970,1944754700.890785]},"Playas Sta. Verónica":{"p":[900000000,1110000000,1010000000,980000000],"e":[1478381983.66,962542324.2,508980842.74,1482224536.685709]},"Calle 2":{"p":[309280847.5152491,311017847.51525,311017847.51525,591017847.51525],"e":[756686870.93,218451125.08,82501266,987255694.336715]},"Metroplús":{"p":[0,0,0,0],"e":[59505048,18122.2,0,0]},"Costos Admin.":{"p":[0,0,0,0],"e":[0,1,401600000,0]},"Magangué":{"p":[352271101.91999865,345971100.9800003,345971100.9800003,500000000],"e":[219964633.82,85729520.23,879030,1308331185.83]},"Metro Estadio":{"p":[10009162693,17486020032.9,5356776953,5223933361],"e":[20398896008.62,28496935323.66,1958687188,9005968963.9057]},"Escenarios Baq":{"p":[0,0,0,0],"e":[1064336,500000,0,500000000]}},"mesActualNombre":"Junio","mesActualIdx":5,"corte":"24 jun 2026","TOTAL_PORTAFOLIO":701746005555.4762,"TOTAL_EGRESOS_PORTAFOLIO":572148621379.4657};
+/* DATA_END */
+const MS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const MS_FULL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const WK=['Sem 1','Sem 2','Sem 3','Sem 4'];
+const TC='#6B7280',GC='rgba(0,0,0,.05)';
+
+// fN: format raw COP pesos for display
+// unit 'M' = Millones (divide by 1e6, integer with locale)
+// unit 'B' = Billones (divide by 1e9, 2 decimals)
+function fN(val,unit){
+  if(!val||val===0)return '—';
+  const neg=val<0,abs=Math.abs(val);
+  const str=unit==='B'?(abs/1e9).toFixed(2):Math.round(abs/1e6).toLocaleString('es-CO');
+  return (neg?'(':'')+ str +(neg?')':'');
+}
+function cN(v,unit){
+  if(!v||Math.abs(v)<(unit==='B'?5e6:500000))return '<td class="tv z">—</td>';
+  const neg=v<0;
+  return '<td class="tv '+(neg?'n':'p')+'">'+(neg?'(':'')+fN(Math.abs(v),unit)+(neg?')':'')+'</td>';
+}
+function csm(a){let s=0;return a.map(v=>(s+=v,s));}
+function mAcum(ig,eg,s){let x=s;return ig.map((v,i)=>(x+=v-eg[i],x));}
+
+const bo={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.dataset.label+': $'+Math.abs(c.parsed.y).toFixed(2)+'B'}}},scales:{x:{ticks:{color:TC,font:{size:11},autoSkip:false,maxRotation:0},grid:{color:GC},border:{display:false}},y:{ticks:{color:TC,font:{size:11},callback:v=>'$'+v+'B'},grid:{color:GC},border:{display:false}}}};
+const mo={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.dataset.label+': $'+c.parsed.y.toFixed(2)+'B'}}},scales:{x:{ticks:{color:TC,font:{size:11}},grid:{color:GC},border:{display:false}},y:{ticks:{color:TC,font:{size:11},callback:v=>'$'+v+'B'},grid:{color:GC},border:{display:false}}}};
+
+const charts={};
+function destroyChart(id){ if(charts[id]){ charts[id].destroy(); charts[id]=null; } }
+
+function buildCharts(){
+  const d=DATA;
+  const NT=d.IT.map((v,i)=>v-d.ET[i]);
+  const IT_B=d.IT.map(v=>+(v/1e9).toFixed(2));
+  const ET_B=d.ET.map(v=>+(v/1e9).toFixed(2));
+  const NT_B=NT.map(v=>+(v/1e9).toFixed(2));
+  const AC_B=d.AC.map(v=>+(v/1e9).toFixed(2));
+  const CP=IT_B.map(v=>+(v/IT_B.reduce((a,b)=>a+b,0)*100).toFixed(1));
+
+  ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10'].forEach(destroyChart);
+
+  charts.c1=new Chart(document.getElementById('c1'),{type:'bar',data:{labels:MS,datasets:[{label:'Ingresos',data:IT_B,backgroundColor:'#1B5091',borderRadius:3,barPercentage:.75},{label:'Egresos',data:ET_B,backgroundColor:'#DC2626',borderRadius:3,barPercentage:.75}]},options:bo});
+  charts.c2=new Chart(document.getElementById('c2'),{type:'bar',data:{labels:MS,datasets:[{label:'Flujo neto',data:NT_B,backgroundColor:NT_B.map(v=>v>=0?'#16A34A':'#DC2626'),borderRadius:3,barPercentage:.65}]},options:{...bo,plugins:{...bo.plugins,tooltip:{callbacks:{label:c=>' Neto: '+(c.parsed.y>=0?'+':'')+'$'+c.parsed.y.toFixed(2)+'B'}}}}});
+  charts.c3=new Chart(document.getElementById('c3'),{type:'line',data:{labels:MS,datasets:[{label:'Saldo',data:AC_B,borderColor:'#1B5091',borderWidth:2,backgroundColor:'rgba(27,80,145,.08)',fill:true,tension:.35,pointBackgroundColor:AC_B.map(v=>v>=0?'#1B5091':'#DC2626'),pointRadius:5,pointBorderWidth:0}]},options:{...bo,plugins:{...bo.plugins,tooltip:{callbacks:{label:c=>' Saldo: $'+c.parsed.y.toFixed(2)+'B'}}}}});
+  charts.c4=new Chart(document.getElementById('c4'),{type:'doughnut',data:{labels:d.PR_NAMES,datasets:[{data:d.PRIV_M,backgroundColor:['#0F2D4E','#1B5091','#2E75B6','#5B9BD5','#8DAACD','#A9C4E0','#C5D9F0','#DEEAF1','#F5F9FD'],borderWidth:1,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.label+': $'+c.parsed.toLocaleString('es-CO')+'M'}}}}});
+  charts.c5=new Chart(document.getElementById('c5'),{type:'bar',data:{labels:d.PR_NAMES.map(n=>n.length>13?n.slice(0,13)+'…':n),datasets:[{label:'Margen',data:d.PR_MARGIN,backgroundColor:d.PR_MARGIN.map(v=>v>=20?'#16A34A':v>=12?'#D97706':'#DC2626'),borderRadius:3,barPercentage:.7}]},options:{...bo,indexAxis:'y',scales:{x:{ticks:{color:TC,font:{size:11},callback:v=>v+'%'},grid:{color:GC},border:{display:false},min:0,max:Math.max(45,...d.PR_MARGIN)+5},y:{ticks:{color:TC,font:{size:10}},grid:{display:false},border:{display:false}}},plugins:{...bo.plugins,tooltip:{callbacks:{label:c=>' Margen: '+c.parsed.x.toFixed(1)+'%'}}}}});
+  charts.c6=new Chart(document.getElementById('c6'),{type:'bar',data:{labels:MS,datasets:[{label:'% ingreso anual',data:CP,backgroundColor:CP.map(v=>v>20?'#1B5091':v>8?'#5B9BD5':'#8DAACD'),borderRadius:3,barPercentage:.7}]},options:{...bo,scales:{x:{ticks:{color:TC,font:{size:11},autoSkip:false,maxRotation:0},grid:{color:GC},border:{display:false}},y:{ticks:{color:TC,font:{size:11},callback:v=>v+'%'},grid:{color:GC},border:{display:false}}},plugins:{...bo.plugins,tooltip:{callbacks:{label:c=>' '+c.parsed.y.toFixed(1)+'% del ingreso anual'}}}}});
+
+  const ICE=csm(d.IE),ECE=csm(d.EE);
+  const ACEM=mAcum(d.IE,d.EE,d.S0);
+  charts.c7=new Chart(document.getElementById('c7'),{type:'bar',data:{labels:WK,datasets:[{label:'Ejecución',data:ICE.map(v=>+(v/1e9).toFixed(2)),backgroundColor:'#1B5091',borderRadius:3,barPercentage:.8}]},options:mo});
+  charts.c8=new Chart(document.getElementById('c8'),{type:'bar',data:{labels:WK,datasets:[{label:'Ejecución',data:ECE.map(v=>+(v/1e9).toFixed(2)),backgroundColor:'#DC2626',borderRadius:3,barPercentage:.8}]},options:mo});
+  charts.c9=new Chart(document.getElementById('c9'),{type:'line',data:{labels:['Inicio',...WK],datasets:[{label:'Ejecución',data:[+(d.S0/1e9).toFixed(2),...ACEM.map(v=>+(v/1e9).toFixed(2))],borderColor:'#1B5091',borderWidth:2,pointRadius:5,pointBackgroundColor:ACEM.map(v=>v>=0?'#1B5091':'#DC2626'),fill:false,tension:.3}]},options:mo});
+  const EJD=Object.entries(d.MEG).map(([n,x])=>({n,t:x.e.reduce((a,b)=>a+b,0)})).filter(x=>x.t>0).sort((a,b)=>b.t-a.t);
+  charts.c10=new Chart(document.getElementById('c10'),{type:'doughnut',data:{labels:EJD.map(x=>x.n),datasets:[{data:EJD.map(x=>+(x.t/1e9).toFixed(2)),backgroundColor:['#0F2D4E','#1B5091','#2E75B6','#5B9BD5','#8DAACD','#A9C4E0','#C5D9F0','#DEEAF1'],borderWidth:1,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.label+': $'+c.parsed.toFixed(2)+'B'}}}}});
+}
+
+function fmtB(v){ const s=Math.abs(v)/1e9; return (v<0?'−':'')+'$'+s.toFixed(2)+'B'; }
+
+function renderKPIs(){
+  const d=DATA;
+  const NT=d.IT.map((v,i)=>v-d.ET[i]);
+  const AC=d.AC;
+  const itTot=d.IT.reduce((a,b)=>a+b,0), etTot=d.ET.reduce((a,b)=>a+b,0);
+  const negMonths=AC.filter(v=>v<0).length;
+  const ratio=etTot? (itTot/etTot):0;
+  const portTotal = d.TOTAL_PORTAFOLIO||itTot;
+  const portEgresos = d.TOTAL_EGRESOS_PORTAFOLIO!=null ? d.TOTAL_EGRESOS_PORTAFOLIO : etTot;
+  const margen = portTotal? ((portTotal-portEgresos)/portTotal*100):0;
+  const peakIdx=AC.indexOf(Math.max(...AC));
+  const burn = etTot/12;
+  const runway = burn? (AC[4]/burn):0; // saldo de mayo / burn rate, igual que el original
+
+  document.getElementById('kpi-portafolio').textContent = fmtB(d.TOTAL_PORTAFOLIO||itTot);
+  document.getElementById('kpi-flujoneto').textContent = fmtB(NT.reduce((a,b)=>a+b,0));
+  document.getElementById('kpi-flujoneto-s').textContent = negMonths+' de 12 meses negativos';
+  document.getElementById('kpi-ratio').textContent = ratio.toFixed(3);
+  document.getElementById('kpi-margen').textContent = margen.toFixed(1)+'%';
+  document.getElementById('kpi-pico').textContent = fmtB(AC[peakIdx]);
+  document.getElementById('kpi-pico-s').textContent = MS[peakIdx]+'-26';
+  document.getElementById('kpi-saldodic').textContent = fmtB(AC[11]);
+  document.getElementById('kpi-burn').textContent = fmtB(burn);
+  document.getElementById('kpi-runway').textContent = runway>0 ? (runway<1?'<1 mes':runway.toFixed(1)+' meses') : '<1 mes';
+
+  document.getElementById('sub-c1').textContent = MS_FULL[peakIdx].replace(/^./,c=>c.toUpperCase())+' concentra el mayor ingreso 2026 — saldo máximo de '+fmtB(AC[peakIdx])+' en '+MS_FULL[peakIdx];
+  document.getElementById('sub-c2').textContent = negMonths===0 ? 'El portafolio no registra meses con saldo acumulado negativo en 2026' : (negMonths+' mes(es) con saldo acumulado negativo en 2026');
+  const minIdx=AC.indexOf(Math.min(...AC));
+  document.getElementById('sub-c3').textContent = 'Saldo mínimo '+fmtB(AC[minIdx])+' en '+MS_FULL[minIdx]+', cierra diciembre en '+fmtB(AC[11]);
+  const topShare = (d.PRIV_M[0]/d.PRIV_M.reduce((a,b)=>a+b,0)*100).toFixed(1);
+  document.getElementById('sub-c4').textContent = d.PR_NAMES[0]+' = '+topShare+'% del portafolio';
+
+  // FC Mes
+  const ieTot=d.IE.reduce((a,b)=>a+b,0), eeTot=d.EE.reduce((a,b)=>a+b,0);
+  const saldoFinal=d.S0+ieTot-eeTot;
+  document.getElementById('kpi-mes-label').textContent='Saldo inicial '+d.mesActualNombre.toLowerCase();
+  document.getElementById('kpi-mes-s0').textContent=fmtB(d.S0);
+  document.getElementById('kpi-mes-ie').textContent=fmtB(ieTot);
+  document.getElementById('kpi-mes-ee').textContent=fmtB(eeTot);
+  document.getElementById('kpi-mes-final').textContent=fmtB(saldoFinal);
+  document.getElementById('kpi-mes-final-s').textContent='Cierre de '+d.mesActualNombre.toLowerCase();
+  document.getElementById('st-mes-semanas').textContent='Acumulado semana a semana — '+d.mesActualNombre+' 2026';
+  document.getElementById('st-mes-detalle').textContent=d.mesActualNombre+' 2026';
+  document.getElementById('c10-mes').textContent=d.mesActualNombre;
+  document.getElementById('sub-c9').textContent='Ejecución desde saldo inicial '+fmtB(d.S0);
+  const EJD=Object.entries(d.MEG).map(([n,x])=>({n,t:x.e.reduce((a,b)=>a+b,0)})).filter(x=>x.t>0).sort((a,b)=>b.t-a.t);
+  if(EJD.length){
+    const sh=(EJD[0].t/EJD.reduce((a,b)=>a+b.t,0)*100).toFixed(1);
+    document.getElementById('sub-c10').textContent=EJD[0].n+' = '+sh+'% del egreso del mes';
+  }
+  document.getElementById('corteLabel').textContent='Corte: '+DATA.corte+' · Confidencial';
+}
+
+
+// ── TABLA RESUMEN ──
+function rT(){
+  const u=document.getElementById('r-u').value;
+  const v=document.getElementById('r-v').value;
+  document.getElementById('r-b').textContent='COP '+(u==='M'?'Millones':'Billones');
+  const d=DATA;
+  const NT=d.IT.map((x,i)=>x-d.ET[i]);
+  const ING_ORDER=Object.entries(d.ING_P).sort((a,b)=>b[1].reduce((x,y)=>x+y,0)-a[1].reduce((x,y)=>x+y,0)).map(e=>e[0]);
+  const EG_ORDER=Object.entries(d.EG_P).sort((a,b)=>b[1].reduce((x,y)=>x+y,0)-a[1].reduce((x,y)=>x+y,0)).map(e=>e[0]);
+  const C=MS.length;
+  let h=`<thead><tr><th class="tl" style="position:sticky;left:0;z-index:3;min-width:170px;">Proyecto</th>${MS.map(m=>'<th>'+m+'-26</th>').join('')}<th class="t4">Total</th></tr></thead><tbody>`;
+  if(v!=='eg'){
+    h+='<tr class="sec"><td class="tn" colspan="'+(C+2)+'">▸ Ingresos</td></tr>';
+    ING_ORDER.forEach(n=>{
+      const dt=d.ING_P[n]||Array(12).fill(0);
+      const tot=dt.reduce((a,b)=>a+b,0);
+      if(!tot)return;
+      h+='<tr><td class="tn s">'+n+'</td>'+dt.map(x=>cN(x,u)).join('')+'<td class="tv p" style="font-weight:700">'+fN(tot,u)+'</td></tr>';
+    });
+    const itot=d.IT.reduce((a,b)=>a+b,0);
+    h+='<tr class="tot"><td class="tn">TOTAL INGRESOS</td>'+d.IT.map(x=>'<td class="tv p" style="font-weight:700">'+fN(x,u)+'</td>').join('')+'<td class="tv p" style="font-weight:700">'+fN(itot,u)+'</td></tr>';
+  }
+  if(v!=='ing'){
+    h+='<tr class="sec"><td class="tn" colspan="'+(C+2)+'">▸ Egresos</td></tr>';
+    EG_ORDER.forEach(n=>{
+      const dt=d.EG_P[n]||Array(12).fill(0);
+      const tot=dt.reduce((a,b)=>a+b,0);
+      if(!tot)return;
+      h+='<tr><td class="tn s">'+n+'</td>'+dt.map(x=>cN(-x,u)).join('')+'<td class="tv n" style="font-weight:700">'+fN(tot,u)+'</td></tr>';
+    });
+    const etot=d.ET.reduce((a,b)=>a+b,0);
+    h+='<tr class="tot"><td class="tn">TOTAL EGRESOS</td>'+d.ET.map(x=>'<td class="tv n" style="font-weight:700">'+fN(x,u)+'</td>').join('')+'<td class="tv n" style="font-weight:700">'+fN(etot,u)+'</td></tr>';
+  }
+  h+='<tr class="sec"><td class="tn" colspan="'+(C+2)+'">▸ Resumen de caja</td></tr>';
+  h+='<tr class="sub"><td class="tn">Flujo neto mensual</td>'+NT.map(x=>'<td class="tv '+(x>=0?'p':'n')+'">'+fN(x,u)+'</td>').join('')+'<td class="tv '+(NT.reduce((a,b)=>a+b,0)>=0?'p':'n')+'" style="font-weight:700">'+fN(NT.reduce((a,b)=>a+b,0),u)+'</td></tr>';
+  h+='<tr class="tot"><td class="tn">Saldo acumulado</td>'+d.AC.map(x=>'<td class="tv '+(x>=0?'p':'n')+'" style="font-weight:700">'+fN(x,u)+'</td>').join('')+'<td></td></tr>';
+  h+='</tbody>';
+  document.getElementById('r-tbl').innerHTML=h;
+}
+
+// ── TABLA MES ──
+function mT(){
+  const u=document.getElementById('m-u').value;
+  const ia=document.getElementById('m-m').value==='acum';
+  document.getElementById('m-b').textContent='COP '+(u==='M'?'Millones':'Billones');
+  const d=DATA;
+  const ACEM=mAcum(d.IE,d.EE,d.S0);
+  function gD(a){if(!ia)return a;const r=[];let s=0;for(const v of a){s+=v;r.push(s);}return r;}
+  const ieD=gD(d.IE),eeD=gD(d.EE);
+  const ieT=d.IE.reduce((a,b)=>a+b,0),eeT=d.EE.reduce((a,b)=>a+b,0);
+  let h='<thead><tr><th class="tl" style="position:sticky;left:0;z-index:3;min-width:165px">Proyecto</th>'+['Sem 1','Sem 2','Sem 3','Sem 4','Total'].map(w=>'<th class="t3">'+w+'</th>').join('')+'</tr></thead><tbody>';
+  h+='<tr class="sec"><td class="tn" colspan="6">▸ Ingresos</td></tr>';
+  Object.entries(d.MIG).forEach(([n,x])=>{
+    const ed=gD(x.e);
+    const et=ia?ed[3]:x.e.reduce((a,b)=>a+b,0);
+    if(!et)return;
+    h+='<tr><td class="tn s">'+n+'</td>'+ed.map(v=>'<td class="tv '+(v>0?'p':'')+' ej">'+( v>0?fN(v,u):'—')+'</td>').join('')+'<td class="tv p ej" style="font-weight:700">'+fN(et,u)+'</td></tr>';
+  });
+  h+='<tr class="tot"><td class="tn">TOTAL INGRESOS</td>'+ieD.map(v=>'<td class="tv p ej" style="font-weight:700">'+fN(v,u)+'</td>').join('')+'<td class="tv p ej" style="font-weight:700">'+fN(ieT,u)+'</td></tr>';
+  h+='<tr class="sec"><td class="tn" colspan="6">▸ Egresos</td></tr>';
+  Object.entries(d.MEG).forEach(([n,x])=>{
+    const ed=gD(x.e);
+    const et=ia?ed[3]:x.e.reduce((a,b)=>a+b,0);
+    h+='<tr><td class="tn s">'+n+'</td>'+ed.map(v=>'<td class="tv '+(v>0?'n':'')+' ej">'+( v>0?fN(v,u):'—')+'</td>').join('')+'<td class="tv n ej" style="font-weight:700">'+fN(et,u)+'</td></tr>';
+  });
+  h+='<tr class="tot"><td class="tn">TOTAL EGRESOS</td>'+eeD.map(v=>'<td class="tv n ej" style="font-weight:700">'+fN(v,u)+'</td>').join('')+'<td class="tv n ej" style="font-weight:700">'+fN(eeT,u)+'</td></tr>';
+  h+='<tr class="sec"><td class="tn" colspan="6">▸ Saldo de caja</td></tr>';
+  const cE=d.IE.map((v,i)=>v-d.EE[i]);
+  const cEd=ia?ACEM:cE;
+  const cET=cE.reduce((a,b)=>a+b,0);
+  h+='<tr class="sub"><td class="tn">Flujo neto semanal</td>'+cEd.map(v=>'<td class="tv '+(v>=0?'p':'n')+' ej">'+fN(v,u)+'</td>').join('')+'<td class="tv '+(cET>=0?'p':'n')+' ej" style="font-weight:700">'+fN(cET,u)+'</td></tr>';
+  h+='<tr class="tot"><td class="tn">Saldo acumulado</td>'+ACEM.map(v=>'<td class="tv '+(v>=0?'p':'n')+' ej" style="font-weight:700">'+fN(v,u)+'</td>').join('')+'<td></td></tr>';
+  h+='</tbody>';
+  document.getElementById('m-tbl').innerHTML=h;
+}
+
+// ── SIMULADOR ──
+let simC=null, simSc={}, ajustes=[];
+let SBA=[],SBI=[],SBE=[],BASE_TOTAL=0,BASE_MIN=0,BASE_DEF=0,BASE_BURN=38.22e9;
+
+// ING_P values in pesos - used for mini chart and delta calculations
+let PROJ_ING_B = {};
+function buildSimBase(){
+  PROJ_ING_B = {};
+  Object.keys(DATA.ING_P).forEach(n => {
+    PROJ_ING_B[n] = (DATA.ING_P[n]||Array(12).fill(0)).map(v => +(v/1e9).toFixed(2));
+  });
+  const sel=document.getElementById('s-proj');
+  if(sel){
+    const order=Object.entries(DATA.ING_P).sort((a,b)=>b[1].reduce((x,y)=>x+y,0)-a[1].reduce((x,y)=>x+y,0)).map(e=>e[0]);
+    sel.innerHTML='<option value="">— Seleccioná un proyecto —</option>'+order.map(n=>'<option value="'+n+'">'+n+'</option>').join('');
+  }
+  SBI=DATA.IT.map(v=>+(v/1e9).toFixed(2));
+  SBE=DATA.ET.map(v=>+(v/1e9).toFixed(2));
+  SBA=DATA.AC.map(v=>+(v/1e9).toFixed(2));
+  const NT=DATA.IT.map((v,i)=>v-DATA.ET[i]);
+  BASE_TOTAL=+(NT.reduce((a,b)=>a+b,0)/1e9).toFixed(2);
+  BASE_MIN=+(Math.min(...DATA.AC)/1e9).toFixed(2);
+  BASE_DEF=DATA.AC.filter(v=>v<0).length;
+  BASE_BURN=DATA.ET.reduce((a,b)=>a+b,0)/12;
+}
+buildSimBase();
+
+function onProjChange() {
+  const proj = document.getElementById('s-proj').value;
+  const miniWrap = document.getElementById('mini-chart-wrap');
+  const mesRow   = document.getElementById('mes-row');
+  const pctRow   = document.getElementById('pct-row');
+  const impactRow= document.getElementById('impact-row');
+  const addRow   = document.getElementById('add-row');
+
+  if (!proj) {
+    miniWrap.style.display='none'; mesRow.style.display='none';
+    pctRow.style.display='none'; impactRow.style.display='none'; addRow.style.display='none';
+    return;
+  }
+
+  const data = PROJ_ING_B[proj] || Array(12).fill(0);
+  const total = data.reduce((a,b)=>a+b,0);
+  const maxVal = Math.max(...data, 0.01);
+
+  // Mini chart
+  document.getElementById('mini-total').textContent = '$' + total.toFixed(2) + 'B';
+  const barsEl   = document.getElementById('mini-bars');
+  const labelsEl = document.getElementById('mini-labels');
+  barsEl.innerHTML = '';
+  labelsEl.innerHTML = '';
+
+  data.forEach((v, i) => {
+    const hasVal = v > 0;
+    const h = hasVal ? Math.max(Math.round(v/maxVal*58), 4) : 4;
+    const bar = document.createElement('div');
+    bar.style.cssText = `flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:${hasVal?'pointer':'default'};`;
+    bar.innerHTML = `
+      <span style="font-size:9px;color:var(--muted);height:14px;display:flex;align-items:flex-end;">${hasVal?'$'+v.toFixed(1)+'B':''}</span>
+      <div style="width:100%;height:${h}px;background:#1B5091;opacity:${hasVal?1:0.18};border-radius:3px 3px 0 0;transition:opacity .15s;" id="bar-${i}"></div>`;
+    if (hasVal) {
+      bar.onclick = () => selectMes(i);
+    }
+    barsEl.appendChild(bar);
+
+    const lbl = document.createElement('div');
+    lbl.style.cssText = 'flex:1;text-align:center;font-size:9px;color:var(--soft);';
+    lbl.id = 'lbl-' + i;
+    lbl.textContent = MS[i].slice(0,3);
+    labelsEl.appendChild(lbl);
+  });
+
+  // Populate mes selector (only months with cobro)
+  const mesSelect = document.getElementById('s-mes');
+  mesSelect.innerHTML = '<option value="">— Seleccioná un mes —</option>';
+  data.forEach((v, i) => {
+    if (v > 0) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = MS[i] + ' 2026  ($' + v.toFixed(2) + 'B)';
+      mesSelect.appendChild(opt);
+    }
+  });
+
+  miniWrap.style.display = 'block';
+  mesRow.style.display   = 'flex';
+  pctRow.style.display   = 'none';
+  impactRow.style.display= 'none';
+  addRow.style.display   = 'none';
+  document.getElementById('s-pct').value = 100;
+  document.getElementById('s-pct-val').textContent = '100%';
+  mesSelect.value = '';
+}
+
+function selectMes(idx) {
+  const mesSelect = document.getElementById('s-mes');
+  const proj = document.getElementById('s-proj').value;
+  const data = PROJ_ING_B[proj] || Array(12).fill(0);
+  if (data[idx] === 0) return;
+  mesSelect.value = idx;
+  onMesChange();
+}
+
+function onMesChange() {
+  const mesIdx = document.getElementById('s-mes').value;
+  const proj   = document.getElementById('s-proj').value;
+  if (!mesIdx && mesIdx !== 0) {
+    document.getElementById('pct-row').style.display='none';
+    document.getElementById('impact-row').style.display='none';
+    document.getElementById('add-row').style.display='none';
+    return;
+  }
+  const data = PROJ_ING_B[proj] || Array(12).fill(0);
+  const base = data[parseInt(mesIdx)];
+
+  // Highlight selected bar
+  for (let i=0;i<12;i++) {
+    const bar = document.getElementById('bar-'+i);
+    const lbl = document.getElementById('lbl-'+i);
+    if (!bar) continue;
+    const isSelected = i === parseInt(mesIdx);
+    bar.style.opacity = data[i]>0 ? (isSelected?1:0.4) : 0.18;
+    bar.style.outline = isSelected ? '2px solid #185FA5' : 'none';
+    if (lbl) lbl.style.color = isSelected ? '#185FA5' : 'var(--soft)';
+  }
+
+  document.getElementById('mes-base-val').textContent = 'Base: $' + base.toFixed(2) + 'B';
+  document.getElementById('s-pct').value = 100;
+  document.getElementById('s-pct-val').textContent = '100%';
+  document.getElementById('impact-val').textContent = '$0B';
+  document.getElementById('pct-row').style.display    = 'flex';
+  document.getElementById('delay-row').style.display  = 'flex';
+  document.getElementById('impact-row').style.display = 'block';
+  document.getElementById('add-row').style.display    = 'block';
+  document.getElementById('s-delay').value = 0;
+  document.getElementById('s-delay-val').textContent = '0 meses';
+  onPctChange();
+}
+
+function onPctChange() {
+  const pct    = parseInt(document.getElementById('s-pct').value);
+  const delay  = parseInt(document.getElementById('s-delay').value);
+  const mesIdx = parseInt(document.getElementById('s-mes').value);
+  const proj   = document.getElementById('s-proj').value;
+  const data   = PROJ_ING_B[proj] || Array(12).fill(0);
+  const base   = data[mesIdx] || 0;
+  // With delay: original month loses full cobro, delayed month gains pct portion
+  const deltaOrig    = -base;                          // original month loses all
+  const deltaDelayed = +((base * pct/100)).toFixed(2); // delayed month gains pct%
+  const netImpact    = +((pct/100 - 1) * base).toFixed(2); // net vs base
+  document.getElementById('s-pct-val').textContent = pct + '%';
+  document.getElementById('s-delay-val').textContent = delay + (delay === 1 ? ' mes' : ' meses');
+  let impactText;
+  if (delay === 0) {
+    impactText = (netImpact >= 0 ? '+' : '') + '$' + netImpact.toFixed(2) + 'B en ' + MS[mesIdx];
+  } else {
+    const targetMes = mesIdx + delay;
+    impactText = '-$' + base.toFixed(2) + 'B en ' + MS[mesIdx] +
+      (targetMes < 12 ? ' → +$' + deltaDelayed.toFixed(2) + 'B en ' + MS[targetMes] : ' (cobro fuera del año)');
+  }
+  document.getElementById('impact-val').textContent = impactText;
+  document.getElementById('impact-val').style.color = netImpact < 0 ? 'var(--neg)' : 'var(--pos)';
+  // Live chart preview
+  sU({ previewProj: proj, previewMes: mesIdx, previewDelay: delay, previewBase: base, previewPct: pct/100 });
+}
+
+function addAjuste() {
+  const proj   = document.getElementById('s-proj').value;
+  const mesIdx = parseInt(document.getElementById('s-mes').value);
+  const pct    = parseInt(document.getElementById('s-pct').value);
+  const delay  = parseInt(document.getElementById('s-delay').value);
+  if (!proj || isNaN(mesIdx)) return;
+
+  const data  = PROJ_ING_B[proj] || Array(12).fill(0);
+  const base  = data[mesIdx] || 0;
+  const delta = +((pct/100 - 1) * base).toFixed(2);
+
+  // Remove existing ajuste for same proj+mes if exists
+  ajustes = ajustes.filter(a => !(a.proj===proj && a.mes===mesIdx));
+  ajustes.push({ proj, mes: mesIdx, pct, delay, base, delta });
+
+  renderAjustes();
+  sU();
+
+  // Reset form
+  document.getElementById('s-proj').value = '';
+  document.getElementById('mini-chart-wrap').style.display='none';
+  document.getElementById('mes-row').style.display='none';
+  document.getElementById('pct-row').style.display='none';
+  document.getElementById('delay-row').style.display='none';
+  document.getElementById('impact-row').style.display='none';
+  document.getElementById('add-row').style.display='none';
+}
+
+function removeAjuste(idx) {
+  ajustes.splice(idx, 1);
+  renderAjustes();
+  sU();
+}
+
+function renderAjustes() {
+  const listEl = document.getElementById('ajustes-list');
+  const itemsEl = document.getElementById('ajustes-items');
+  if (ajustes.length === 0) { listEl.style.display='none'; return; }
+  listEl.style.display = 'block';
+  itemsEl.innerHTML = ajustes.map((a, i) => {
+    const delayTxt = a.delay > 0 ? ` · retraso ${a.delay} mes${a.delay>1?'es':''}` : '';
+    const targetMes = a.mes + (a.delay||0);
+    const entregaEn = a.delay > 0 && targetMes < 12 ? ` → cobra en ${MS[targetMes]}-26` : (a.delay > 0 ? ' (fuera del año)' : '');
+    return `<div style="display:flex;align-items:center;gap:8px;background:var(--pale2);border-radius:8px;padding:6px 10px;margin-bottom:6px;font-size:12px;">
+      <span style="font-weight:500;color:var(--ink);min-width:110px;">${a.proj}</span>
+      <span style="font-size:10px;padding:1px 7px;border-radius:99px;background:var(--pale);color:var(--blue);">${MS[a.mes]}-26</span>
+      <span style="color:var(--muted);flex:1;">al ${a.pct}%${delayTxt}${entregaEn}</span>
+      <span style="font-weight:600;color:${a.delta<0?'var(--neg)':'var(--pos)'};">${a.delta>=0?'+':''}$${a.delta.toFixed(2)}B</span>
+      <button onclick="removeAjuste(${i})" style="font-size:11px;padding:1px 8px;color:var(--muted);">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function sCalc(p, preview) {
+  // Apply project-specific adjustments as deltas
+  const di = Array(12).fill(0);
+  const de = Array(12).fill(0);
+
+  ajustes.forEach(a => {
+    const delay = a.delay || 0;
+    if (delay === 0) {
+      di[a.mes] += a.delta;
+    } else {
+      // Original month loses full cobro
+      di[a.mes] = +(di[a.mes] - a.base).toFixed(2);
+      // Delayed month gains pct% of cobro
+      const targetMes = a.mes + delay;
+      if (targetMes < 12) {
+        di[targetMes] = +(di[targetMes] + a.base * a.pct/100).toFixed(2);
+      }
+    }
+  });
+  // Apply preview (live slider) if provided
+  if (preview && preview.previewProj && !isNaN(preview.previewMes)) {
+    const pd = preview.previewDelay || 0;
+    const pb = preview.previewBase || 0;
+    const pp = preview.previewPct !== undefined ? preview.previewPct : 1;
+    if (pd === 0) {
+      di[preview.previewMes] = +(di[preview.previewMes] + (pp - 1) * pb).toFixed(2);
+    } else {
+      di[preview.previewMes] = +(di[preview.previewMes] - pb).toFixed(2);
+      const tm = preview.previewMes + pd;
+      if (tm < 12) di[tm] = +(di[tm] + pb * pp).toFixed(2);
+    }
+  }
+
+  // Global params
+  for (let i=0;i<12;i++) de[i] = +(SBE[i]*(p.or-p.sv)).toFixed(2);
+  if (p.ex>0) { di[9]+=+(p.ex/3).toFixed(2); di[10]+=+(p.ex/3).toFixed(2); di[11]+=+(p.ex/3).toFixed(2); }
+
+  let cd=0; const ac=[];
+  for (let i=0;i<12;i++) { cd=+(cd+di[i]-de[i]).toFixed(2); ac.push(+(SBA[i]+cd+p.cr).toFixed(2)); }
+  const nt = SBI.map((v,i)=>+(v+di[i]-SBE[i]-de[i]).toFixed(2));
+  return { nt, ac, total:+nt.reduce((a,b)=>a+b,0).toFixed(2), mn:+Math.min(...ac).toFixed(2), nd:ac.filter(v=>v<0).length, rw:ac[4]>0?+(ac[4]/(BASE_BURN||38.22e9)).toFixed(2):0, p };
+}
+
+function sU(preview) {
+  const p = {
+    or: +document.getElementById('sl3').value/100,
+    sv: +document.getElementById('sl4').value/100,
+    ex: +document.getElementById('sl5').value,
+    cr: +document.getElementById('sl6').value,
+  };
+  document.getElementById('sv3').textContent = Math.round(p.or*100)+'%';
+  document.getElementById('sv4').textContent = Math.round(p.sv*100)+'%';
+  document.getElementById('sv5').textContent = '$'+p.ex+'B';
+  document.getElementById('sv6').textContent = '$'+p.cr+'B';
+
+  const hasAjustes = ajustes.length > 0;
+  const isModified = hasAjustes || p.or>0 || p.sv>0 || p.ex>0 || p.cr>0;
+  const lbl = document.getElementById('sc-lbl');
+  lbl.textContent = isModified ? 'Modificado' : 'Base';
+  lbl.style.background = isModified ? '#DCFCE7' : '#E5E7EB';
+  lbl.style.color      = isModified ? '#166534'  : '#6B7280';
+
+  const sc = sCalc(p, preview); simSc = sc;
+  const fB = v => (v<0?'−':'')+'$'+Math.abs(v).toFixed(2)+'B';
+  const setK = (id,txt,cls,dt,ok) => {
+    document.getElementById('sk'+id).textContent=txt;
+    document.getElementById('sk'+id).className='kv '+cls;
+    if(dt!==null){document.getElementById('sd'+id).textContent=dt;document.getElementById('sd'+id).style.color=ok?'var(--pos)':'var(--neg)';}
+  };
+  const nc = v => v>=0?'p':v>-15?'w':'n';
+  const d1=+(sc.total-(BASE_TOTAL)).toFixed(2), d2=+(sc.mn-(BASE_MIN)).toFixed(2), d3=sc.nd-BASE_DEF;
+  setK(1,fB(sc.total),nc(sc.total),(d1>=0?'▲ +':'▼ ')+Math.abs(d1).toFixed(2)+'B vs base',d1>=0);
+  setK(2,fB(sc.mn),nc(sc.mn),(d2>=0?'▲ +':'▼ ')+Math.abs(d2).toFixed(2)+'B vs base',d2>=0);
+  setK(3,sc.nd+' / 12',sc.nd===0?'p':sc.nd<=2?'w':'n',(d3<=0?'▲ ':'▼ ')+Math.abs(d3)+' mes(es)',d3<=0);
+  setK(4,sc.rw>=1?sc.rw.toFixed(2)+' meses':'<1 mes',sc.rw>=2?'p':sc.rw>=1?'w':'n',sc.rw>=1?'Saldo may / burn rate':'Crítico',sc.rw>=1);
+
+  const imp=sc.total>=-38.6, lc=imp?'#16A34A':'#DC2626';
+  const cd={labels:MS,datasets:[
+    {label:'Base',data:SBA,borderColor:'#9CA3AF',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false,tension:.35},
+    {label:'Escenario',data:sc.ac,borderColor:lc,borderWidth:2.5,backgroundColor:sc.ac.map(v=>v>=0?'rgba(22,163,74,.08)':'rgba(220,38,38,.08)'),pointBackgroundColor:sc.ac.map(v=>v>=0?'#16A34A':'#DC2626'),pointRadius:4,fill:true,tension:.35}
+  ]};
+  const co={responsive:true,maintainAspectRatio:false,animation:{duration:200},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.dataset.label+': $'+c.parsed.y.toFixed(2)+'B'}}},
+    scales:{x:{ticks:{color:TC,font:{size:11},autoSkip:false,maxRotation:0},grid:{color:GC},border:{display:false}},
+            y:{ticks:{color:TC,font:{size:11},callback:v=>'$'+v+'B'},grid:{color:GC},border:{display:false}}}};
+  if(simC){simC.data=cd;simC.update('none');}else{simC=new Chart(document.getElementById('c-sim'),{type:'line',data:cd,options:co});}
+}
+
+function sReset() {
+  ajustes = [];
+  renderAjustes();
+  ['sl3','sl4','sl5','sl6'].forEach((id,i)=>{document.getElementById(id).value=[0,0,0,0][i];});
+  document.getElementById('s-proj').value='';
+  document.getElementById('mini-chart-wrap').style.display='none';
+  document.getElementById('mes-row').style.display='none';
+  document.getElementById('pct-row').style.display='none';
+  document.getElementById('delay-row').style.display='none';
+  document.getElementById('impact-row').style.display='none';
+  document.getElementById('add-row').style.display='none';
+  document.getElementById('s-delay').value=0;
+  sU();
+}
+
+function sCtx() {
+  const p=simSc.p||{}, sc=simSc;
+  const NT=DATA.IT.map((v,i)=>v-DATA.ET[i]);
+  const SBI=DATA.IT.map(v=>+(v/1e9).toFixed(2));
+  const ajustesDesc = ajustes.length>0 ? ajustes.map(a=>{const d=a.delay||0;return `${a.proj} ${MS[a.mes]}: ${a.pct}%${d>0?' retraso '+d+'m':''} (${a.delta>=0?'+':''}$${a.delta.toFixed(2)}B)`;}).join(', ') : 'ninguno';
+  return 'PORTAFOLIO (COP Billones): Ingresos base 2026: $'+(DATA.IT.reduce((a,b)=>a+b)/1e9).toFixed(2)+'B. Egresos base: $'+(DATA.ET.reduce((a,b)=>a+b)/1e9).toFixed(2)+'B. Flujo neto base: $'+(NT.reduce((a,b)=>a+b)/1e9).toFixed(2)+'B.'+
+  ' Ingresos base: '+SBI.map((v,i)=>MS[i]+':$'+v+'B').join(', ')+'.'+
+  ' AJUSTES POR PROYECTO: '+ajustesDesc+'.'+
+  ' PARÁMETROS GLOBALES: sobrecosto '+(Math.round((p.or||0)*100))+'%, ahorro '+(Math.round((p.sv||0)*100))+'%, extra Q4 $'+(p.ex||0)+'B, credito $'+(p.cr||0)+'B.'+
+  ' RESULTADOS: flujo neto $'+sc.total+'B, saldo min $'+sc.mn+'B, meses deficit '+sc.nd+'/12.'+
+  ' Saldo mensual: '+((sc.ac||[]).map((v,i)=>MS[i]+':$'+v+'B').join(', '))+'.';
+}
+
+async function sAsk(q){document.getElementById('ci').value=q;await sSend();}
+async function sSend(){
+  const ci=document.getElementById('ci');const q=ci.value.trim();if(!q)return;ci.value='';
+  const ch=document.getElementById('chat');
+  ch.innerHTML+='<div class="msg-u">'+q+'</div>';
+  const tk=document.createElement('div');tk.className='msg-a';tk.style.fontStyle='italic';tk.style.color='var(--muted)';tk.textContent='Analizando el escenario...';ch.appendChild(tk);ch.scrollTop=ch.scrollHeight;
+  try{
+    const r=await fetch('https://dry-base-11f6.osbetu98.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'system',content:'Sos un consultor financiero senior especializado en flujo de caja de proyectos de infraestructura publica en Colombia. Respondé de forma concisa, directa y orientada a la toma de decisiones gerenciales. Usa COP Billones. Menciona meses especificos. Maximo 4-5 oraciones. Sin markdown. Solo parrafo. En espanol.'},{role:'user',content:sCtx()+' PREGUNTA: '+q}]})});
+    const data=await r.json();
+    tk.style.fontStyle='normal';
+    if(data.error){tk.style.color='var(--neg)';tk.textContent='Error API: '+data.error.message;}
+    else if(data.choices?.[0]?.message?.content){tk.style.color='var(--ink)';tk.textContent=data.choices[0].message.content;}
+    else{tk.style.color='var(--neg)';tk.textContent='Respuesta inesperada: '+JSON.stringify(data).slice(0,200);}
+  }catch(e){tk.style.color='var(--neg)';tk.style.fontStyle='normal';tk.textContent='Error de conexión: '+e.message;}
+  ch.scrollTop=ch.scrollHeight;
+}
+
+function go(id,btn){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.getElementById('p-'+id).classList.add('on');
+  if(id==='sim'&&!simC)sU();
+}
+
+// ════════════════════════════════════════════════════════════════
+// CARGA DE EXCEL — lee "FC Resumen - O.P." y "FC Mes" y reconstruye DATA
+// ════════════════════════════════════════════════════════════════
+const MESES_ES=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const NAME_MAP={
+  "DISTRITO: VIAS URBANAS BQ - MODULO 1":"Vías Urbanas M1",
+  "DISTRITO: COLEGIOS BQ":"Colegios BQ",
+  "E.S.E HOSPITAL DE PUERTO COLOMBIA":"Hospital Pto.",
+  "P.D.O: ESCENARIOS DEPORTIVOS":"Escenarios Dep.",
+  "P.D.O: ESTABILIZACIÓN DE LAS PLAYAS DE SANTA VERÓNICA":"Playas Sta. Verónica",
+  "CALLE 2 - PUERTO COLOMBIA":"Calle 2",
+  "METROPOLITANO - METROPLUS":"Metroplús",
+  "METROPOLITANO (DISEÑOS)":"Metroplús",
+  "GOB. BOLIVAR: PARQ. LAS AMERICAS MAGANGUÉ":"Magangué",
+  "DISTRITO: METRO ESTADIO":"Metro Estadio",
+  "SOCIOS":"Socios","MEJORAMIENTO":"Mejoramiento","COSTOS DE ADMINISTRACIÓN":"Costos Admin.",
+  "ANTARES":"Antares","PARQUES INTEGRALES":"Parques Integrales","ESCENARIOS BAQ":"Escenarios Baq","HOSPITAL BQ":"Hospital BQ"
+};
+const PROJECT_EXCLUDE=new Set(["Socios","Antares","Parques Integrales","Mejoramiento","Hospital BQ","Costos Admin.","Escenarios Baq"]);
+function cleanName(n){ n=(n||'').toString().trim(); return NAME_MAP[n.toUpperCase()] || NAME_MAP[n] || n; }
+
+function cellAt(ws,r,c){ const ref=XLSX.utils.encode_cell({r:r-1,c:c-1}); const cell=ws[ref]; return cell?cell.v:null; }
+function colCount(ws){ const ref=XLSX.utils.decode_range(ws['!ref']); return ref.e.c+1; }
+function rowCount(ws){ const ref=XLSX.utils.decode_range(ws['!ref']); return ref.e.r+1; }
+
+function parseFCResumen(ws){
+  const HDR_ROW=6;
+  const maxC=colCount(ws), maxR=rowCount(ws);
+  // localizar columna 'Ejecutado'
+  let ejecCol=null;
+  for(let c=1;c<=maxC;c++){ if(String(cellAt(ws,HDR_ROW,c)||'').trim()==='Ejecutado'){ ejecCol=c; break; } }
+  if(!ejecCol) throw new Error('No se encontró la columna "Ejecutado" en la fila de encabezados de "FC Resumen - O.P."');
+  // las 12 columnas-ancla de mes después de Ejecutado
+  const anchors=[];
+  for(let c=ejecCol+1;c<=maxC && anchors.length<12;c++){
+    const v=cellAt(ws,HDR_ROW,c);
+    if(MESES_ES.includes(v)) anchors.push(c);
+  }
+  if(anchors.length!==12) throw new Error('No se encontraron los 12 meses de 2026 en "FC Resumen - O.P." (encontrados: '+anchors.length+')');
+  const ranges=anchors.map((a,i)=> i+1<12 ? [a,anchors[i+1]-1] : [a,a]);
+  const monthSum=(row)=> ranges.map(([a,b])=>{ let s=0; for(let c=a;c<=b;c++){ s+=(cellAt(ws,row,c)||0); } return s; });
+
+  // las 2 filas "OBRAS PUBLICAS:" (ingresos y egresos)
+  const obrasRows=[];
+  for(let r=1;r<=maxR;r++){ if(String(cellAt(ws,r,3)||'').trim()==='OBRAS PUBLICAS:') obrasRows.push(r); }
+  if(obrasRows.length<2) throw new Error('No se encontraron las 2 filas "OBRAS PUBLICAS:" en "FC Resumen - O.P."');
+  const [ingTotalRow,egTotalRow]=obrasRows;
+
+  const IT=monthSum(ingTotalRow), ET=monthSum(egTotalRow);
+
+  // fila "Flujo de Caja Acum."
+  let acRow=null;
+  for(let r=1;r<=maxR;r++){ const v=String(cellAt(ws,r,3)||cellAt(ws,r,2)||''); if(v.toUpperCase().includes('FLUJO DE CAJA ACUM.')){ acRow=r; break; } }
+  const AC = acRow ? monthSum(acRow) : null;
+  if(!AC) throw new Error('No se encontró la fila "Flujo de Caja Acum." en "FC Resumen - O.P."');
+
+  // filas de proyectos individuales (hasta la primera fila en blanco)
+  function projectRows(startRow){
+    const rows=[]; 
+    for(let r=startRow+1;r<=maxR;r++){
+      const name=cellAt(ws,r,3);
+      if(!name) break;
+      rows.push([r,String(name).trim()]);
+    }
+    return rows;
+  }
+  const ingRows=projectRows(ingTotalRow).filter(([r])=>r<egTotalRow);
+  const egRows=projectRows(egTotalRow);
+
+  const ING_P={}, EG_P={};
+  ingRows.forEach(([r,name])=>{
+    const vals=monthSum(r);
+    if(vals.some(v=>v)) ING_P[cleanName(name)]=vals;
+  });
+  egRows.forEach(([r,name])=>{
+    const vals=monthSum(r);
+    if(vals.some(v=>v)) EG_P[cleanName(name)]=vals;
+  });
+
+  // columnas FCL, INGRESO, Año 2026 (por nombre de encabezado)
+  function findCol(label){ for(let c=1;c<=maxC;c++){ if(String(cellAt(ws,HDR_ROW,c)||'').trim()===label) return c; } return null; }
+  const colFCL=findCol('FCL'), colIngreso=findCol('INGRESO'), colAnio2026=findCol('Año 2026');
+
+  // portafolio total = suma de todos los años (Año 2025+2026+2027+2028) de la fila de ingresos OBRAS PUBLICAS
+  const anioColsLabels=['Año 2025','Año 2026','Año 2027','Año 2028'];
+  let TOTAL_PORTAFOLIO=0, TOTAL_EGRESOS_PORTAFOLIO=0;
+  anioColsLabels.forEach(lbl=>{
+    const c=findCol(lbl);
+    if(c){
+      TOTAL_PORTAFOLIO+=(cellAt(ws,ingTotalRow,c)||0);
+      TOTAL_EGRESOS_PORTAFOLIO+=(cellAt(ws,egTotalRow,c)||0);
+    }
+  });
+  const prList=[];
+  ingRows.forEach(([r,name])=>{
+    const cn=cleanName(name);
+    if(PROJECT_EXCLUDE.has(cn)) return;
+    const ingreso=colIngreso?(cellAt(ws,r,colIngreso)||0):0;
+    if(!ingreso) return;
+    const fcl=colFCL?(cellAt(ws,r,colFCL)||0):0;
+    const anio=colAnio2026?(cellAt(ws,r,colAnio2026)||0):0;
+    prList.push([cn, anio/1e6, ingreso?(fcl/ingreso*100):0]);
+  });
+  prList.sort((a,b)=>b[1]-a[1]);
+  const PR_NAMES=prList.map(x=>x[0]);
+  const PRIV_M=prList.map(x=>+x[1].toFixed(0));
+  const PR_MARGIN=prList.map(x=>+x[2].toFixed(1));
+
+  return {IT,ET,AC,ING_P,EG_P,PR_NAMES,PRIV_M,PR_MARGIN,TOTAL_PORTAFOLIO,TOTAL_EGRESOS_PORTAFOLIO};
+}
+
+function parseFCMes(ws){
+  const maxR=rowCount(ws);
+  const obrasRows=[];
+  for(let r=1;r<=maxR;r++){ if(String(cellAt(ws,r,2)||'').trim()==='OBRAS PUBLICAS:') obrasRows.push(r); }
+  if(obrasRows.length<2) throw new Error('No se encontraron las 2 filas "OBRAS PUBLICAS:" en "FC Mes"');
+  const [ingRow,egRow]=obrasRows;
+  const S0=cellAt(ws,4,2)||0;
+  const labelB2=String(cellAt(ws,2,2)||'');
+  let mesNombre='Junio', mesIdx=5;
+  for(let i=0;i<MESES_ES.length;i++){ if(labelB2.toUpperCase().includes(MESES_ES[i].toUpperCase())){ mesNombre=MESES_ES[i]; mesIdx=i; break; } }
+
+  function projectRows(startRow){
+    const rows=[];
+    for(let r=startRow+1;r<=maxR;r++){
+      const name=cellAt(ws,r,2);
+      if(!name) break;
+      rows.push([r,String(name).trim()]);
+    }
+    return rows;
+  }
+  const ingRows=projectRows(ingRow).filter(([r])=>r<egRow);
+  const egRows=projectRows(egRow);
+  const COLS=[3,4,5,6,9,10,11,12]; // C,D,E,F,I,J,K,L (1-indexed)
+  function weeks(r){ return COLS.map(c=>cellAt(ws,r,c)||0); }
+
+  const IP=[0,0,0,0],EP=[0,0,0,0],IE=[0,0,0,0],EE=[0,0,0,0];
+  const MIG={}, MEG={};
+  ingRows.forEach(([r,name])=>{
+    const v=weeks(r); const p=v.slice(0,4), e=v.slice(4,8);
+    if(p.some(x=>x)||e.some(x=>x)) MIG[cleanName(name)]={p,e};
+    for(let i=0;i<4;i++){ IP[i]+=p[i]; IE[i]+=e[i]; }
+  });
+  egRows.forEach(([r,name])=>{
+    const v=weeks(r); const p=v.slice(0,4), e=v.slice(4,8);
+    if(p.some(x=>x)||e.some(x=>x)) MEG[cleanName(name)]={p,e};
+    for(let i=0;i<4;i++){ EP[i]+=p[i]; EE[i]+=e[i]; }
+  });
+
+  return {IP,EP,IE,EE,S0,MIG,MEG,mesNombre,mesIdx};
+}
+
+function formatCorte(){
+  const now=new Date();
+  const meses3=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return now.getDate()+' '+meses3[now.getMonth()]+' '+now.getFullYear();
+}
+
+function processWorkbook(wb){
+  const wsRes=wb.Sheets['FC Resumen - O.P.'];
+  const wsMes=wb.Sheets['FC Mes'];
+  if(!wsRes) throw new Error('El archivo no tiene una hoja llamada "FC Resumen - O.P."');
+  if(!wsMes) throw new Error('El archivo no tiene una hoja llamada "FC Mes"');
+  const resData=parseFCResumen(wsRes);
+  const mesData=parseFCMes(wsMes);
+
+  DATA.IT=resData.IT; DATA.ET=resData.ET; DATA.AC=resData.AC;
+  DATA.ING_P=resData.ING_P; DATA.EG_P=resData.EG_P;
+  DATA.PR_NAMES=resData.PR_NAMES; DATA.PRIV_M=resData.PRIV_M; DATA.PR_MARGIN=resData.PR_MARGIN;
+  DATA.TOTAL_PORTAFOLIO=resData.TOTAL_PORTAFOLIO;
+  DATA.TOTAL_EGRESOS_PORTAFOLIO=resData.TOTAL_EGRESOS_PORTAFOLIO;
+  DATA.IP=mesData.IP; DATA.EP=mesData.EP; DATA.IE=mesData.IE; DATA.EE=mesData.EE;
+  DATA.S0=mesData.S0; DATA.MIG=mesData.MIG; DATA.MEG=mesData.MEG;
+  DATA.mesActualNombre=mesData.mesNombre; DATA.mesActualIdx=mesData.mesIdx;
+  DATA.corte=formatCorte();
+
+  buildSimBase();
+  buildCharts();
+  renderKPIs();
+  rT(); mT();
+  ajustes=[]; if(typeof renderAjustes==='function') renderAjustes();
+  const sp=document.getElementById('s-proj'); if(sp) sp.value='';
+  if(typeof onProjChange==='function') onProjChange();
+  if(simC){ sU(); }
+}
+
+function handleExcelFile(file){
+  const zone=document.getElementById('uploadZone');
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array',cellDates:false});
+      processWorkbook(wb);
+      zone.querySelector('span').textContent='✅ Cargado: '+file.name.slice(0,28);
+      setTimeout(()=>{ zone.querySelector('span').textContent='📤 Cargar Excel'; },4000);
+    }catch(err){
+      alert('No se pudo procesar el Excel: '+err.message);
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function downloadHTML(){
+  try{
+    let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const dataJson = JSON.stringify(DATA).replace(/<\/script/gi,'<\\/script');
+    const newBlock = '/* DATA_START */\nlet DATA = '+dataJson+';\n/* DATA_END */';
+    const re = /\/\* DATA_START \*\/[\s\S]*?\/\* DATA_END \*\//;
+    if(!re.test(html)){ throw new Error('No se encontró el bloque de datos en el HTML actual.'); }
+    html = html.replace(re, newBlock);
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const now = new Date();
+    const stamp = now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0');
+    a.href = url;
+    a.download = 'FC_ObrasPublicas_Dashboard_'+stamp+'.html';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    const btn=document.getElementById('downloadBtn');
+    const sp=btn.querySelector('span'); const orig=sp.textContent;
+    sp.textContent='✅ Descargado';
+    setTimeout(()=>{ sp.textContent=orig; },3000);
+  }catch(err){
+    alert('No se pudo generar la descarga: '+err.message);
+    console.error(err);
+  }
+}
+
+const fileInput=document.getElementById('fileInput');
+fileInput.addEventListener('change',e=>{
+  if(e.target.files&&e.target.files[0]) handleExcelFile(e.target.files[0]);
+});
+const zone=document.getElementById('uploadZone');
+zone.addEventListener('click',e=>{ if(e.target===fileInput) return; });
+zone.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();zone.style.background='rgba(255,255,255,.22)';});
+zone.addEventListener('dragleave',e=>{e.preventDefault();e.stopPropagation();zone.style.background='rgba(255,255,255,.08)';});
+zone.addEventListener('drop',e=>{
+  e.preventDefault();e.stopPropagation();zone.style.background='rgba(255,255,255,.08)';
+  const f=e.dataTransfer.files&&e.dataTransfer.files[0];
+  if(f) handleExcelFile(f);
+});
+
+// ── Inicialización ──
+buildCharts();
+renderKPIs();
+rT();mT();
+</script>
+
+
+</body></html>

@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seguimiento de Facturación por Proyecto</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+.portal-nav{position:sticky;top:0;z-index:200;height:44px;background:#081D33;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-family:'Inter','Segoe UI',Arial,sans-serif;}
+.portal-nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:#fff;}
+.portal-nav-mark{width:22px;height:22px;background:#2E75B6;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
+.portal-nav-title{font-size:12.5px;font-weight:600;color:#fff;letter-spacing:.2px;}
+.portal-nav-links{display:flex;gap:4px;}
+.portal-nav-links a{font-size:12.5px;color:#93B8D8;text-decoration:none;padding:6px 12px;border-radius:6px;transition:background .15s,color .15s;}
+.portal-nav-links a:hover{background:rgba(255,255,255,.08);color:#fff;}
+.portal-nav-links a.active{background:rgba(255,255,255,.12);color:#fff;font-weight:600;}
+@media (max-width:640px){.portal-nav-title{display:none;}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
+.header{padding:0.85rem 1.5rem;border-bottom:0.5px solid #ddd;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.header-left h1{font-size:18px;font-weight:500}
+.header-left p{font-size:13px;color:#666;margin-top:2px}
+.upload-btn{display:flex;align-items:center;gap:7px;padding:6px 12px;border:1px solid #bbb;border-radius:8px;background:#f8f8f6;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background .15s}
+.upload-btn:hover{background:#eeeee9;border-color:#999}
+.upload-btn i{font-size:15px;color:#555}
+.upload-btn span{font-size:12px;color:#444;font-weight:500}
+.upload-btn small{font-size:11px;color:#888;display:block;margin-top:1px}
+#fileInput{display:none}
+.controls{padding:0.75rem 1.5rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:0.5px solid #ddd;background:#fff}
+.controls label{font-size:12px;color:#888;margin-right:4px}
+.pill-group{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:12px;padding:4px 10px;border-radius:20px;border:0.5px solid #ccc;cursor:pointer;background:#fff;color:#666;transition:all .15s;user-select:none}
+.pill.active{border-color:transparent;color:#fff}
+.pill[data-proj="VIAS"].active{background:#185FA5}
+.pill[data-proj="HOSPITAL"].active{background:#3B6D11}
+.pill[data-proj="COLEGIOS"].active{background:#854F0B}
+.pill[data-proj="PLAYAS"].active{background:#533AB7}
+.pill[data-proj="METROPOLITANO"].active{background:#993556}
+.pill[data-proj="ALL"].active{background:#5F5E5A}
+.kpi-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:1rem 1.5rem;background:#fff}
+.kpi{background:#f5f5f3;border-radius:8px;padding:0.85rem 1rem}
+.kpi .label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.kpi .value{font-size:20px;font-weight:500;color:#1a1a1a}
+.kpi .sub{font-size:11px;color:#888;margin-top:2px}
+.section{padding:0 1.5rem 1rem;background:#fff;margin-top:8px}
+.section-title{font-size:12px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;padding-top:0.75rem}
+.chart-wrap{position:relative;width:100%}
+.progress-table{width:100%;border-collapse:collapse;font-size:13px}
+.progress-table th{font-size:11px;color:#888;font-weight:500;text-align:left;padding:4px 8px 6px;border-bottom:0.5px solid #ddd}
+.progress-table th:not(:first-child){text-align:right}
+.progress-table td{padding:8px;border-bottom:0.5px solid #ddd;vertical-align:middle;color:#1a1a1a}
+.progress-table td:not(:first-child){text-align:right}
+.bar-bg{height:6px;border-radius:3px;background:#e5e5e3;overflow:hidden;min-width:60px}
+.bar-fill{height:100%;border-radius:3px;transition:width .4s}
+.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
+.badge.verde{background:#EAF3DE;color:#3B6D11}
+.badge.amarillo{background:#FAEEDA;color:#854F0B}
+.badge.rojo{background:#FCEBEB;color:#A32D2D}
+.legend-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#888}
+.legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.divider{height:0.5px;background:#ddd;margin:0 1.5rem}
+.last-updated{font-size:11px;color:#888;padding:0.5rem 1.5rem 1rem;text-align:right;background:#fff}
+/* Tabs */
+.tabs{display:flex;border-bottom:1px solid #ddd;background:#fff;padding:0 1.5rem}
+.tab{font-size:13px;padding:10px 16px;cursor:pointer;color:#888;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;user-select:none}
+.tab.active{color:#1a1a1a;border-bottom-color:#185FA5;font-weight:500}
+.tab-content{display:none}
+.tab-content.active{display:block}
+/* Data table */
+.data-table-wrap{padding:1rem 1.5rem 1.5rem;overflow-x:auto;max-height:600px;overflow-y:auto}
+.data-table{width:100%;border-collapse:collapse;font-size:12px}
+.data-table th{font-size:11px;color:#888;font-weight:500;text-align:left;padding:6px 10px;border-bottom:1px solid #ddd;white-space:nowrap;background:#f8f8f6;position:sticky;top:0;z-index:1}
+.data-table td{padding:6px 10px;border-bottom:0.5px solid #eee;color:#1a1a1a;white-space:nowrap}
+.data-table tr:hover td{background:#f5f5f3}
+.data-table td.num{text-align:right;font-variant-numeric:tabular-nums}
+.data-table td.expo{color:#854F0B;text-align:right;font-weight:500}
+.filter-row{display:flex;gap:10px;align-items:center;padding:0.75rem 1.5rem 0;flex-wrap:wrap;background:#fff}
+.filter-row input{font-size:12px;padding:5px 10px;border:1px solid #ddd;border-radius:6px;outline:none;width:220px}
+.filter-row input:focus{border-color:#185FA5}
+.row-count{font-size:12px;color:#888}
+/* Datos tab layout */
+.datos-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;padding:1rem 1.5rem 0;background:#fff}
+.datos-card{background:#f5f5f3;border-radius:8px;padding:0.75rem 1rem;border-left:3px solid #ddd}
+.datos-card .dc-label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:3px}
+.datos-card .dc-proj{font-size:12px;font-weight:500;color:#1a1a1a;margin-bottom:6px}
+.datos-card .dc-row{display:flex;justify-content:space-between;font-size:11px;margin-top:2px}
+.datos-card .dc-row span:first-child{color:#888}
+.datos-card .dc-row span:last-child{font-weight:500;color:#1a1a1a}
+.datos-card .dc-row.expo span:last-child{color:#854F0B}
+.datos-card .dc-bar{height:4px;border-radius:2px;background:#e5e5e3;margin-top:6px;overflow:hidden}
+.datos-card .dc-bar-fill{height:100%;border-radius:2px}
+.datos-filters{display:flex;gap:14px;align-items:flex-end;padding:0.75rem 1.5rem;background:#fff;flex-wrap:wrap;border-bottom:0.5px solid #ddd}
+.datos-filter-group{display:flex;flex-direction:column;gap:4px}
+.datos-filter-group label{font-size:11px;color:#888;font-weight:500}
+.datos-filter-group input[type="date"]{font-size:12px;padding:5px 8px;border:1px solid #ddd;border-radius:6px;outline:none;color:#1a1a1a}
+.datos-filter-group input[type="date"]:focus{border-color:#185FA5}
+</style>
+</head>
+<body>
+
+<nav class="portal-nav">
+  <a href="index.html" class="portal-nav-brand">
+    <span class="portal-nav-mark">PR</span>
+    <span class="portal-nav-title">Portal de Reportes</span>
+  </a>
+  <div class="portal-nav-links">
+    <a href="index.html">Inicio</a>
+    <a href="Reporte_Facturacion.html" class="active">Facturación</a>
+    <a href="FC_ObrasPublicas.html">Flujo de Caja</a>
+  </div>
+</nav>
+
+<div class="header">
+  <div class="header-left">
+    <h1><i class="ti ti-report-money" aria-hidden="true" style="margin-right:6px;vertical-align:-2px"></i>Seguimiento de facturación por proyecto</h1>
+    <p id="lastUpdate">Datos cargados desde archivo: RELACION_FACTURACION.xlsx</p>
+  </div>
+  <div class="upload-btn" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+    <i class="ti ti-upload" aria-hidden="true"></i>
+    <div>
+      <span>Cargar Excel</span>
+      <small>Arrastra o haz clic</small>
+    </div>
+    <input type="file" id="fileInput" accept=".xlsx,.xls">
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" id="tab-dashboard" onclick="switchTab('dashboard')">📊 Dashboard</div>
+  <div class="tab" id="tab-datos" onclick="switchTab('datos')">📋 Datos</div>
+</div>
+
+<div class="controls">
+  <label>Proyectos:</label>
+  <div class="pill-group" id="pillGroup">
+    <div class="pill active" data-proj="ALL">Todos</div>
+    <div class="pill active" data-proj="VIAS">Vías</div>
+    <div class="pill active" data-proj="HOSPITAL">Hospital</div>
+    <div class="pill active" data-proj="COLEGIOS">Colegios</div>
+    <div class="pill active" data-proj="PLAYAS">Playas</div>
+    <div class="pill active" data-proj="METROPOLITANO">Metropolitano</div>
+  </div>
+</div>
+
+<div class="tab-content active" id="content-dashboard">
+
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="label"><i class="ti ti-file-invoice" aria-hidden="true"></i> Total contratado</div>
+    <div class="value" id="kpiContrato">—</div>
+    <div class="sub" id="kpiProyectos">—</div>
+  </div>
+  <div class="kpi">
+    <div class="label"><i class="ti ti-check" aria-hidden="true"></i> Total facturado</div>
+    <div class="value" id="kpiFacturado">—</div>
+    <div class="sub" id="kpiPct">—</div>
+  </div>
+  <div class="kpi">
+    <div class="label" style="color:#854F0B"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Exposición total</div>
+    <div class="value" id="kpiExposicion" style="color:#854F0B">—</div>
+    <div class="sub" id="kpiExpPct">—</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-title">Avance de facturación por proyecto</div>
+  <div class="legend-row">
+    <div class="legend-item"><div class="legend-dot" style="background:#185FA5"></div>Facturado</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#EF9F27"></div>Exposición (por facturar)</div>
+  </div>
+  <div class="chart-wrap" id="barWrap" style="height:260px">
+    <canvas id="barChart" role="img" aria-label="Gráfica de barras apiladas mostrando facturado vs exposición por proyecto">Facturación por proyecto.</canvas>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-title">Detalle por proyecto</div>
+  <table class="progress-table" id="detailTable">
+    <thead>
+      <tr>
+        <th>Proyecto</th>
+        <th>Contrato</th>
+        <th>Facturado</th>
+        <th>Exposición</th>
+        <th>% Avance</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-title">Evolución de facturación acumulada</div>
+  <div class="legend-row" id="lineLegend"></div>
+  <div class="chart-wrap" id="lineWrap" style="height:320px">
+    <canvas id="lineChart" role="img" aria-label="Gráfica de evolución de facturación acumulada por proyecto">Evolución de facturación acumulada por proyecto.</canvas>
+  </div>
+</div>
+
+<div class="last-updated" id="updatedTs"></div>
+
+</div><!-- end content-dashboard -->
+
+<div class="tab-content" id="content-datos">
+
+  <!-- Cuadro resumen -->
+  <div class="datos-summary" id="datosSummary"></div>
+
+  <!-- Filtros -->
+  <div class="datos-filters">
+    <div class="datos-filter-group">
+      <label>Proyecto</label>
+      <div class="pill-group" id="dataPillGroup">
+        <div class="pill active" style="background:#5F5E5A;color:#fff;border-color:transparent" onclick="toggleAllDataProjs(this)">Todos</div>
+      </div>
+    </div>
+    <div class="datos-filter-group">
+      <label>Desde</label>
+      <input type="date" id="filterFrom" onchange="filterDataTable()">
+    </div>
+    <div class="datos-filter-group">
+      <label>Hasta</label>
+      <input type="date" id="filterTo" onchange="filterDataTable()">
+    </div>
+    <div class="datos-filter-group">
+      <label>&nbsp;</label>
+      <button onclick="clearDataFilters()" style="font-size:12px;padding:5px 12px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;color:#555">Limpiar filtros</button>
+    </div>
+    <span class="row-count" id="rowCount" style="align-self:flex-end;padding-bottom:4px"></span>
+  </div>
+
+  <!-- Tabla -->
+  <div class="data-table-wrap">
+    <table class="data-table" id="dataTable">
+      <thead>
+        <tr>
+          <th>Proyecto</th>
+          <th>Fecha factura</th>
+          <th>No. Factura</th>
+          <th style="text-align:right">V. Contrato</th>
+          <th style="text-align:right">Ejecutado acum.</th>
+          <th style="text-align:right">Exposición</th>
+        </tr>
+      </thead>
+      <tbody id="dataTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+const PROJ_COLORS = {
+  VIAS:'#185FA5', HOSPITAL:'#3B6D11', COLEGIOS:'#854F0B',
+  PLAYAS:'#533AB7', METROPOLITANO:'#993556'
+};
+const EXPO_COLOR = '#EF9F27';
+const PROJ_NAMES = {VIAS:'Vías',HOSPITAL:'Hospital',COLEGIOS:'Colegios',PLAYAS:'Playas',METROPOLITANO:'Metropolitano'};
+
+const excelDateToJs = n => {
+  if(!n || isNaN(n)) return null;
+  const d = new Date((n - 25569) * 86400000);
+  return isNaN(d.getTime()) ? null : d;
+};
+const fmt = v => {
+  if(v==null||isNaN(v)) return '—';
+  const abs=Math.abs(v);
+  if(abs>=1e9) return '$'+(v/1e9).toFixed(1)+' MM';
+  if(abs>=1e6) return '$'+(v/1e6).toFixed(1)+' M';
+  return '$'+Math.round(v).toLocaleString('es-CO');
+};
+const pct = (a,b) => b>0 ? Math.round(a/b*100) : 0;
+
+let allData = {}, timelineData = {};
+let activeProjs = new Set(['VIAS','HOSPITAL','COLEGIOS','PLAYAS','METROPOLITANO']);
+let barChartInst = null, lineChartInst = null;
+
+function loadDefaultData(){
+  allData = {
+    VIAS:          {contrato:52085450531,    facturado:51289237101, exposicion:796213430},
+    HOSPITAL:      {contrato:13197369373,    facturado:12677557070, exposicion:519812303},
+    COLEGIOS:      {contrato:111327609605,   facturado:20717464570, exposicion:90610145035},
+    PLAYAS:        {contrato:66547295616,    facturado:64212616488, exposicion:2334679129},
+    METROPOLITANO: {contrato:173020000000,   facturado:141531169404,exposicion:31488830596}
+  };
+  timelineData = {
+    VIAS:[
+      {date:new Date(2025,9,23),  acum:0},
+      {date:new Date(2025,9,24),  acum:10281737404},
+      {date:new Date(2025,11,26), acum:25337628899},
+      {date:new Date(2026,1,10),  acum:40337628899},
+      {date:new Date(2026,2,24),  acum:51211919433},
+      {date:new Date(2026,2,27),  acum:51289237101}
+    ],
+    HOSPITAL:[
+      {date:new Date(2026,0,6),  acum:0},
+      {date:new Date(2026,0,7),  acum:3379714137},
+      {date:new Date(2026,1,3),  acum:6125139256},
+      {date:new Date(2026,2,11), acum:8137535916},
+      {date:new Date(2026,4,5),  acum:12677557070}
+    ],
+    COLEGIOS:[
+      {date:new Date(2025,9,8),   acum:0},
+      {date:new Date(2025,9,8),   acum:8182750},
+      {date:new Date(2025,10,21), acum:6504197214},
+      {date:new Date(2025,10,21), acum:9978252277},
+      {date:new Date(2026,2,26),  acum:12299181919},
+      {date:new Date(2026,2,26),  acum:16175375779},
+      {date:new Date(2026,2,26),  acum:20717464570}
+    ],
+    PLAYAS:[
+      {date:new Date(2025,11,12), acum:0},
+      {date:new Date(2025,11,12), acum:8490935939},
+      {date:new Date(2026,2,12),  acum:30708357466},
+      {date:new Date(2026,3,20),  acum:51090805875},
+      {date:new Date(2026,4,19),  acum:64212616488}
+    ],
+    METROPOLITANO:[
+      {date:new Date(2025,11,1), acum:0},
+      {date:new Date(2026,5,1),  acum:28467192767},
+      {date:new Date(2026,5,1),  acum:69794162954},
+      {date:new Date(2026,5,1),  acum:141531169404}
+    ]
+  };
+  renderAll();
+  document.getElementById('updatedTs').textContent='Datos base: jun 2026 | Fuente: RELACION_FACTURACION.xlsx';
+}
+
+function renderAll(){
+  const active=[...activeProjs].filter(p=>allData[p]);
+  if(active.length===0){
+    // Limpiar KPIs
+    document.getElementById('kpiContrato').textContent='—';
+    document.getElementById('kpiFacturado').textContent='—';
+    document.getElementById('kpiExposicion').textContent='—';
+    document.getElementById('kpiProyectos').textContent='0 proyectos seleccionados';
+    document.getElementById('kpiPct').textContent='—';
+    document.getElementById('kpiExpPct').textContent='—';
+    // Limpiar tabla
+    document.getElementById('tableBody').innerHTML='';
+    // Destruir gráficas
+    if(barChartInst){barChartInst.destroy();barChartInst=null;}
+    if(lineChartInst){lineChartInst.destroy();lineChartInst=null;}
+    return;
+  }
+  renderKPIs(active);
+  renderBar(active);
+  renderTable(active);
+  renderLine(active);
+}
+
+function renderKPIs(active){
+  let totC=0,totF=0,totE=0;
+  active.forEach(p=>{const d=allData[p];if(d){totC+=d.contrato||0;totF+=d.facturado||0;totE+=d.exposicion||0;}});
+  document.getElementById('kpiContrato').textContent=fmt(totC);
+  document.getElementById('kpiFacturado').textContent=fmt(totF);
+  document.getElementById('kpiExposicion').textContent=fmt(totE);
+  document.getElementById('kpiProyectos').textContent=active.length+' proyecto'+(active.length!==1?'s':'')+' seleccionado'+(active.length!==1?'s':'');
+  const p=pct(totF,totC);
+  document.getElementById('kpiPct').textContent=p+'% del portafolio';
+  document.getElementById('kpiExpPct').textContent=(100-p)+'% por facturar';
+}
+
+function renderBar(active){
+  if(barChartInst){barChartInst.destroy();}
+  const labels=active.map(p=>PROJ_NAMES[p]||p);
+  const facturado=active.map(p=>+((allData[p]?.facturado||0)/1e9).toFixed(2));
+  const exposicion=active.map(p=>+((allData[p]?.exposicion||0)/1e9).toFixed(2));
+  const colors=active.map(p=>PROJ_COLORS[p]||'#888');
+  document.getElementById('barWrap').style.height=Math.max(200,active.length*52+60)+'px';
+  barChartInst=new Chart(document.getElementById('barChart'),{
+    type:'bar',
+    data:{labels,datasets:[
+      {label:'Facturado (MM$)',data:facturado,backgroundColor:colors,borderRadius:3,borderSkipped:false},
+      {label:'Exposición (MM$)',data:exposicion,backgroundColor:EXPO_COLOR,borderRadius:3,borderSkipped:false}
+    ]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': $'+ctx.parsed.x.toFixed(1)+' MM'}}},
+      scales:{
+        x:{stacked:true,ticks:{callback:v=>'$'+v.toFixed(0)+' MM'},grid:{color:'rgba(0,0,0,0.06)'}},
+        y:{stacked:true,ticks:{font:{size:12}}}
+      }
+    }
+  });
+}
+
+function renderTable(active){
+  const tbody=document.getElementById('tableBody');
+  tbody.innerHTML='';
+  active.forEach(p=>{
+    const d=allData[p];
+    if(!d) return;
+    const pc=pct(d.facturado,d.contrato);
+    const badge=pc>=90?'<span class="badge verde">Avanzado</span>':pc>=50?'<span class="badge amarillo">En curso</span>':'<span class="badge rojo">Inicial</span>';
+    const color=PROJ_COLORS[p]||'#888';
+    tbody.innerHTML+=`<tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${color};margin-right:6px;vertical-align:1px"></span><strong>${PROJ_NAMES[p]||p}</strong></td>
+      <td>${fmt(d.contrato)}</td>
+      <td>${fmt(d.facturado)}</td>
+      <td style="color:#854F0B">${fmt(d.exposicion)}</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">${pc}%</span><div class="bar-bg"><div class="bar-fill" style="width:${pc}%;background:${color}"></div></div></div></td>
+      <td>${badge}</td>
+    </tr>`;
+  });
+}
+
+function renderLine(active){
+  if(lineChartInst){lineChartInst.destroy();}
+  const legend=document.getElementById('lineLegend');
+  legend.innerHTML='';
+
+  const fmt$=v=>{
+    if(v==null||isNaN(v)) return '$0';
+    if(v>=1e9) return '$'+(v/1e9).toFixed(1)+'B';
+    if(v>=1e6) return '$'+(v/1e6).toFixed(0)+'MM';
+    return '$'+Math.round(v).toLocaleString('es-CO');
+  };
+
+  /* ---- Caso: un solo proyecto ---- */
+  if(active.length===1){
+    const p=active[0];
+    const pts=timelineData[p];
+    const d=allData[p];
+    const color=PROJ_COLORS[p]||'#E87B3B';
+    const contrato=d?d.contrato:0;
+
+    // Ordenar por fecha y acum — mantener todos los puntos
+    const cleanPts=[...pts].sort((a,b)=>{
+      const dt=a.date-b.date;
+      return dt!==0?dt:a.acum-b.acum;
+    });
+
+    const labels=cleanPts.map((pt,i)=>{
+      const fv='FV '+(i);
+      const fecha=pt.date.toLocaleDateString('es-CO',{day:'2-digit',month:'2-digit',year:'numeric'});
+      return fv+'\n'+fecha;
+    });
+    const acumData=cleanPts.map(pt=>pt.acum);
+    const expoData=cleanPts.map(pt=>Math.max(0, contrato - pt.acum));
+    const contratoLine=cleanPts.map(()=>contrato);
+
+    legend.innerHTML=`
+      <div class="legend-item"><div class="legend-dot" style="background:${color}99;border:1.5px solid ${color}"></div>Facturado acum.</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(200,200,200,0.4);border:1.5px solid #aaa"></div>Exposición C.</div>
+      <div class="legend-item" style="gap:5px"><div style="width:22px;border-top:2px dashed #444;flex-shrink:0"></div><span>V. Contrato</span></div>`;
+
+    lineChartInst=new Chart(document.getElementById('lineChart'),{
+      type:'line',
+      data:{
+        labels,
+        datasets:[
+          {
+            label:'Exposición C.',
+            data:contratoLine,
+            borderColor:'rgba(160,160,160,0.0)',
+            backgroundColor:'rgba(210,210,210,0.38)',
+            borderWidth:0, pointRadius:0,
+            fill:true, tension:0, order:3
+          },
+          {
+            label:'Facturado',
+            data:acumData,
+            borderColor:color,
+            backgroundColor:color+'99',
+            borderWidth:2,
+            pointRadius:4, pointBackgroundColor:color, pointHoverRadius:6,
+            fill:true, tension:0, order:2
+          },
+          {
+            label:'V. Contrato',
+            data:contratoLine,
+            borderColor:'#444',
+            backgroundColor:'transparent',
+            borderWidth:1.5, borderDash:[6,4],
+            pointRadius:0, fill:false, tension:0, order:1
+          }
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        interaction:{mode:'index', intersect:false},
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            callbacks:{
+              title:items=>{
+                const i=items[0].dataIndex;
+                return 'FV '+i+' — '+cleanPts[i].date.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});
+              },
+              label:item=>{
+                const i=item.dataIndex;
+                if(item.dataset.label==='Facturado')     return ' Facturado acum: '+fmt$(acumData[i]);
+                if(item.dataset.label==='Exposición C.') return ' Exposición:      '+fmt$(expoData[i]);
+                if(item.dataset.label==='V. Contrato')   return ' V. Contrato:     '+fmt$(contrato);
+                return '';
+              }
+            }
+          }
+        },
+        scales:{
+          x:{
+            grid:{color:'rgba(0,0,0,0.04)'},
+            ticks:{font:{size:10}, maxRotation:0}
+          },
+          y:{
+            ticks:{callback:v=>fmt$(v), font:{size:10}},
+            grid:{color:'rgba(0,0,0,0.06)'}, min:0
+          }
+        }
+      }
+    });
+    return;
+  }
+
+  /* ---- Caso: varios proyectos — área apilada total igual al Excel ---- */
+  // Recopilar todos los timestamps únicos de todos los proyectos activos
+  const allMs=new Set();
+  active.forEach(p=>(timelineData[p]||[]).forEach(pt=>allMs.add(pt.date.getTime())));
+  const sortedMs=[...allMs].sort((a,b)=>a-b);
+
+  // Para cada proyecto, función que interpola el acumulado en un timestamp
+  const acumAtFor=p=>{
+    const pts=[...timelineData[p]||[]].sort((a,b)=>a.date-b.date);
+    return ms=>{ let last=0; for(const pt of pts){ if(pt.date.getTime()<=ms) last=pt.acum; else break; } return last; };
+  };
+
+  // Calcular totales consolidados por timestamp
+  // El contrato acumulado sube escalonadamente cuando cada proyecto "arranca" (primer punto)
+  const contratoAcumAt=ms=>{
+    let total=0;
+    active.forEach(p=>{
+      const pts=[...timelineData[p]||[]].sort((a,b)=>a.date-b.date);
+      if(pts.length>0 && pts[0].date.getTime()<=ms) total+=(allData[p]?.contrato||0);
+    });
+    return total;
+  };
+
+  const totalContrato=active.reduce((s,p)=>(allData[p]?.contrato||0)+s, 0);
+  const facturadoTotal=sortedMs.map(ms=>active.reduce((s,p)=>s+acumAtFor(p)(ms),0));
+  const expoTotal=sortedMs.map((_,i)=>Math.max(0, contratoAcumAt(sortedMs[i]) - facturadoTotal[i]));
+  const contratoTotal=sortedMs.map(ms=>contratoAcumAt(ms));
+
+  // Color base: mezclar colores de proyectos activos → usar el primero como referencia o naranja
+  const baseColor = active.length===1 ? PROJ_COLORS[active[0]] : '#E87B3B';
+
+  const datasets=[
+    // Área gris = valor total contrato (fondo)
+    {
+      type:'line', label:'Contrato total',
+      data:sortedMs.map((ms,i)=>({x:ms, y:contratoTotal[i]})),
+      borderColor:'rgba(150,150,150,0)',
+      backgroundColor:'rgba(210,210,210,0.32)',
+      borderWidth:0, pointRadius:0,
+      fill:true, tension:0, order:3, _type:'cont'
+    },
+    // Área naranja = facturado acumulado total
+    {
+      type:'line', label:'Facturado acum.',
+      data:sortedMs.map((ms,i)=>({x:ms, y:facturadoTotal[i]})),
+      borderColor:baseColor,
+      backgroundColor:baseColor+'99',
+      borderWidth:2, pointRadius:3, pointHoverRadius:6,
+      pointBackgroundColor:baseColor,
+      fill:true, tension:0, order:2, _type:'fact'
+    },
+
+    // Línea punteada fina = contrato acumulado (techo)
+    {
+      type:'line', label:'Contrato acum.',
+      data:sortedMs.map((ms,i)=>({x:ms, y:contratoTotal[i]})),
+      borderColor:'rgba(80,80,80,0.55)',
+      backgroundColor:'transparent',
+      borderWidth:1.5, borderDash:[3,3],
+      pointRadius:0, fill:false, tension:0, order:1, _type:'cont2'
+    }
+  ];
+
+  legend.innerHTML=`
+    <div class="legend-item"><div class="legend-dot" style="background:${baseColor}99;border:1.5px solid ${baseColor}"></div>Fact. acum.</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(210,210,210,0.55);border:1px solid #bbb"></div>Exposición (área)</div>
+    <div class="legend-item" style="gap:5px"><div style="width:20px;border-top:1.5px dashed rgba(80,80,80,0.55);flex-shrink:0"></div><span>Contrato acum.</span></div>`;
+
+  const fmtAxis=v=>{
+    if(v>=1e12) return '$'+(v/1e12).toFixed(1)+'T';
+    if(v>=1e9)  return '$'+(v/1e9).toFixed(0)+'B';
+    if(v>=1e6)  return '$'+(v/1e6).toFixed(0)+'MM';
+    return '$0';
+  };
+
+  lineChartInst=new Chart(document.getElementById('lineChart'),{
+    data:{datasets},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index', intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            title:items=>{
+              const ms=items[0].parsed.x;
+              return new Date(ms).toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});
+            },
+            label:item=>{
+              const i=item.dataIndex;
+              if(item.dataset._type==='fact')  return ' Facturado acum.: '+fmt$(facturadoTotal[i]);
+              if(item.dataset._type==='expo')  return ' Exposición:       '+fmt$(expoTotal[i]);
+              if(item.dataset._type==='cont2') return ' Contrato acum.:   '+fmt$(contratoTotal[i]);
+              return '';
+            }
+          }
+        }
+      },
+      scales:{
+        x:{
+          type:'time',
+          time:{unit:'month', displayFormats:{month:'MM/yy'}},
+          ticks:{font:{size:10}, maxRotation:0},
+          grid:{color:'rgba(0,0,0,0.04)'}
+        },
+        y:{
+          ticks:{callback:fmtAxis, font:{size:10}},
+          grid:{color:'rgba(0,0,0,0.06)'}, min:0
+        }
+      }
+    }
+  });
+}
+
+loadDefaultData();function parseXlsx(file){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array', cellDates:true, cellNF:false, cellText:false});
+
+      /* Buscar hoja Consolidado o la primera disponible */
+      const sheetName=wb.SheetNames.find(s=>s.toLowerCase().includes('consolidado'))||wb.SheetNames[0];
+      const ws=wb.Sheets[sheetName];
+
+      /* sheet_to_json con header:1 para leer todas las filas como arrays */
+      const rawRows=XLSX.utils.sheet_to_json(ws,{header:1, defval:null, raw:true});
+
+      /* Encontrar la fila de encabezados (la que tenga "PROYECTO") */
+      let headerIdx=rawRows.findIndex(r=>r.some(c=>c&&c.toString().trim().toUpperCase()==='PROYECTO'));
+      if(headerIdx<0){ alert('No se encontró columna PROYECTO en la hoja '+sheetName); return; }
+      const headers=rawRows[headerIdx].map(h=>h?h.toString().trim().toUpperCase():'');
+
+      const col=name=>{
+        const variants=Array.isArray(name)?name:[name];
+        for(const v of variants){
+          // Exact match first (trimmed)
+          let i=headers.findIndex(h=>h===v);
+          if(i>=0) return i;
+          // Starts-with match
+          i=headers.findIndex(h=>h.startsWith(v));
+          if(i>=0) return i;
+        }
+        return -1;
+      };
+
+      const cProj  = col('PROYECTO');
+      const cFecha = col(['FECHA FACTURA','FECHA']);
+      const cCont  = col(['VALOR CONTRATO','V. CONTRATO','CONTRATO ACUMULADO','CONTRATO']);
+      const cAcum  = col(['EJECUTADO','FACT. ACUM.','FACTURADO']);
+      const cExpo  = col(['EXPOSICION','EXPOSICION C.']);
+
+      if(cProj<0||cFecha<0){ alert('Columnas requeridas no encontradas. Verifica que la hoja tenga PROYECTO y FECHA FACTURA.'); return; }
+
+      /* Parsear fecha — SheetJS sin raw devuelve strings formateados o números seriales */
+      const parseDate=v=>{
+        if(!v) return null;
+        if(typeof v==='number') return excelDateToJs(v);
+        if(v instanceof Date) return isNaN(v.getTime())?null:new Date(v.getFullYear(),v.getMonth(),v.getDate());
+        const s=v.toString().trim();
+        const isoMatch=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if(isoMatch) return new Date(+isoMatch[1],+isoMatch[2]-1,+isoMatch[3]);
+        const dmyMatch=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+        if(dmyMatch) return new Date(+dmyMatch[3],+dmyMatch[2]-1,+dmyMatch[1]);
+        // Formato "23-Oct-2025" o similar
+        const d=new Date(s);
+        return isNaN(d.getTime())?null:new Date(d.getFullYear(),d.getMonth(),d.getDate());
+      };
+
+      const newData={}, newTimeline={};
+
+      /* Parsear número — maneja: número puro, string con puntos/comas como separadores */
+      const parseNum=v=>{
+        if(v===null||v===undefined||v==='') return 0;
+        if(typeof v==='number') return v;
+        // Quitar todo excepto dígitos, punto y signo negativo
+        // Detectar si es formato colombiano (1.234.567,89) o anglosajón (1,234,567.89)
+        const s=v.toString().trim().replace(/\s/g,'');
+        // Si tiene coma como último separador decimal → formato colombiano
+        const lastComma=s.lastIndexOf(',');
+        const lastDot=s.lastIndexOf('.');
+        let clean;
+        if(lastComma>lastDot){
+          // Formato: 1.234.567,89 → quitar puntos, reemplazar coma por punto
+          clean=s.replace(/\./g,'').replace(',','.');
+        } else {
+          // Formato: 1,234,567.89 → quitar comas
+          clean=s.replace(/,/g,'');
+        }
+        return parseFloat(clean)||0;
+      };
+
+      for(let i=headerIdx+1;i<rawRows.length;i++){
+        const r=rawRows[i];
+        const proj=(r[cProj]||'').toString().trim().toUpperCase();
+        if(!proj||proj==='PROYECTO'||proj==='') continue;
+
+        const fecha=parseDate(r[cFecha]);
+        const contrato=parseNum(r[cCont]);
+        const acum=parseNum(r[cAcum]);
+        const expo=parseNum(r[cExpo]);
+
+        if(!newData[proj]) newData[proj]={contrato:0,facturado:0,exposicion:0};
+        if(contrato>newData[proj].contrato) newData[proj].contrato=contrato;
+        if(acum>newData[proj].facturado)    newData[proj].facturado=acum;
+        if(expo>0)                          newData[proj].exposicion=expo;
+
+        if(fecha && acum>=0){
+          if(!newTimeline[proj]) newTimeline[proj]=[];
+          newTimeline[proj].push({date:fecha, acum});
+        }
+      }
+
+      const found=Object.keys(newData).filter(p=>newData[p].contrato>0||newData[p].facturado>0);
+      if(found.length===0){ alert('No se encontraron proyectos con datos en la hoja '+sheetName+'.'); return; }
+
+      /* Reemplazar datos completos */
+      found.forEach(p=>{
+        allData[p]=newData[p];
+        if(newTimeline[p]&&newTimeline[p].length>0){
+          /* Ordenar por fecha+acum — NO deduplicar porque misma fecha puede tener acum diferente (varias facturas mismo día) */
+          timelineData[p]=[...newTimeline[p]].sort((a,b)=>{
+            const dt=a.date-b.date;
+            return dt!==0?dt:a.acum-b.acum;
+          });
+        }
+        /* Agregar al selector de pills si es nuevo */
+        if(!PROJ_COLORS[p]) PROJ_COLORS[p]='#888888';
+        if(!PROJ_NAMES[p])  PROJ_NAMES[p]=p.charAt(0)+p.slice(1).toLowerCase();
+      });
+
+      /* Activar todos los proyectos encontrados */
+      activeProjs = new Set(found);
+
+      /* Reconstruir pills */
+      const pillGroup=document.getElementById('pillGroup');
+      found.forEach(p=>{
+        if(!PROJ_COLORS[p]) PROJ_COLORS[p]='#888888';
+        if(!PROJ_NAMES[p])  PROJ_NAMES[p]=p.charAt(0)+p.slice(1).toLowerCase();
+        const existing=pillGroup.querySelector(`[data-proj="${p}"]`);
+        if(!existing){
+          const pill=document.createElement('div');
+          pill.className='pill active';
+          pill.dataset.proj=p;
+          pill.textContent=PROJ_NAMES[p];
+          pillGroup.appendChild(pill);
+          pill.addEventListener('click',pillClickHandler);
+        } else {
+          existing.classList.add('active');
+        }
+      });
+      document.querySelectorAll('.pill[data-proj]:not([data-proj="ALL"])').forEach(pill=>{
+        if(!found.includes(pill.dataset.proj)) pill.classList.remove('active');
+      });
+      const allPill=document.querySelector('.pill[data-proj="ALL"]');
+      if(allPill) allPill.classList.add('active');
+
+      document.getElementById('lastUpdate').textContent='Datos cargados desde: '+file.name;
+      document.getElementById('updatedTs').textContent='Última actualización: '+new Date().toLocaleString('es-CO');
+      setTimeout(()=>renderAll(), 100);
+
+    }catch(err){
+      console.error(err);
+      alert('Error al leer el archivo: '+err.message+'\n\nAsegúrate de que sea un .xlsx válido con hoja "Consolidado".');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function pillClickHandler(){
+  const proj=this.dataset.proj;
+  const allProjs=[...document.querySelectorAll('.pill[data-proj]:not([data-proj="ALL"])')].map(p=>p.dataset.proj);
+  const allPill=document.querySelector('.pill[data-proj="ALL"]');
+
+  if(proj==='ALL'){
+    const allActive=activeProjs.size===allProjs.length;
+    if(allActive){
+      // Desactivar todos
+      activeProjs.clear();
+      document.querySelectorAll('.pill[data-proj]').forEach(p=>p.classList.remove('active'));
+    } else {
+      // Activar todos
+      activeProjs=new Set(allProjs);
+      document.querySelectorAll('.pill[data-proj]').forEach(p=>p.classList.add('active'));
+    }
+  } else {
+    if(activeProjs.has(proj)){
+      if(activeProjs.size===1) return;
+      activeProjs.delete(proj);
+      this.classList.remove('active');
+    } else {
+      activeProjs.add(proj);
+      this.classList.add('active');
+    }
+    // Sincronizar Todos
+    activeProjs.size===allProjs.length ? allPill.classList.add('active') : allPill.classList.remove('active');
+  }
+  renderAll();
+}
+
+/* ---- Tabs ---- */
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('content-'+name).classList.add('active');
+  // Mostrar filtro de proyectos solo en dashboard
+  document.querySelector('.controls').style.display = name==='dashboard' ? '' : 'none';
+  if(name==='datos') renderDataTab();
+}
+
+/* ---- Pestaña Datos ---- */
+let allRawRows=[];
+let datosActiveProjs=new Set();
+
+function renderDataTab(){
+  renderSummaryCards();
+  buildDataPills();
+  buildAllRawRows();
+  filterDataTable();
+}
+
+function renderSummaryCards(){
+  const container=document.getElementById('datosSummary');
+  const projs=Object.keys(allData).sort();
+  container.innerHTML=projs.map(p=>{
+    const d=allData[p];
+    const color=PROJ_COLORS[p]||'#888';
+    const name=PROJ_NAMES[p]||p;
+    const pc=d.contrato>0?Math.round(d.facturado/d.contrato*100):0;
+    return `<div class="datos-card" style="border-left-color:${color}">
+      <div class="dc-label">Proyecto</div>
+      <div class="dc-proj">${name}</div>
+      <div class="dc-row"><span>Contrato</span><span>${fmt(d.contrato)}</span></div>
+      <div class="dc-row"><span>Facturado</span><span>${fmt(d.facturado)}</span></div>
+      <div class="dc-row expo"><span>Exposición</span><span>${fmt(d.exposicion)}</span></div>
+      <div class="dc-row"><span>Avance</span><span>${pc}%</span></div>
+      <div class="dc-bar"><div class="dc-bar-fill" style="width:${pc}%;background:${color}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function buildDataPills(){
+  const group=document.getElementById('dataPillGroup');
+  const projs=Object.keys(allData).sort();
+  datosActiveProjs=new Set(projs);
+  // Mantener el botón Todos y regenerar solo los pills de proyectos
+  group.innerHTML=`<div class="pill active" style="background:#5F5E5A;color:#fff;border-color:transparent" onclick="toggleAllDataProjs(this)">Todos</div>`
+    + projs.map(p=>`<div class="pill active" data-dproj="${p}" onclick="toggleDataProj('${p}',this)">${PROJ_NAMES[p]||p}</div>`).join('');
+  // Aplicar colores a los pills de proyectos
+  projs.forEach(p=>{
+    const pill=group.querySelector(`[data-dproj="${p}"]`);
+    if(pill){ pill.style.background=PROJ_COLORS[p]||'#888'; pill.style.color='#fff'; pill.style.borderColor='transparent'; }
+  });
+}
+
+function toggleAllDataProjs(pill){
+  const allProjs=Object.keys(allData);
+  const allActive=datosActiveProjs.size===allProjs.length;
+  if(allActive){
+    datosActiveProjs.clear();
+    document.querySelectorAll('#dataPillGroup .pill[data-dproj]').forEach(p=>{
+      p.classList.remove('active');
+      p.style.background=''; p.style.color=''; p.style.borderColor='';
+    });
+    pill.classList.remove('active');
+    pill.style.background=''; pill.style.color=''; pill.style.borderColor='';
+  } else {
+    datosActiveProjs=new Set(allProjs);
+    document.querySelectorAll('#dataPillGroup .pill[data-dproj]').forEach(p=>{
+      const proj=p.dataset.dproj;
+      p.classList.add('active');
+      p.style.background=PROJ_COLORS[proj]||'#888'; p.style.color='#fff'; p.style.borderColor='transparent';
+    });
+    pill.classList.add('active');
+    pill.style.background='#5F5E5A'; pill.style.color='#fff'; pill.style.borderColor='transparent';
+  }
+  filterDataTable();
+}
+
+function toggleDataProj(p, pill){
+  if(datosActiveProjs.has(p)){
+    if(datosActiveProjs.size===1) return;
+    datosActiveProjs.delete(p);
+    pill.style.background=''; pill.style.color=''; pill.style.borderColor='';
+    pill.classList.remove('active');
+  } else {
+    datosActiveProjs.add(p);
+    pill.style.background=PROJ_COLORS[p]||'#888'; pill.style.color='#fff'; pill.style.borderColor='transparent';
+    pill.classList.add('active');
+  }
+  // Sincronizar botón Todos
+  const todosBtn=document.querySelector('#dataPillGroup .pill:not([data-dproj])');
+  const allProjs=Object.keys(allData);
+  if(todosBtn){
+    if(datosActiveProjs.size===allProjs.length){
+      todosBtn.classList.add('active'); todosBtn.style.background='#5F5E5A'; todosBtn.style.color='#fff'; todosBtn.style.borderColor='transparent';
+    } else {
+      todosBtn.classList.remove('active'); todosBtn.style.background=''; todosBtn.style.color=''; todosBtn.style.borderColor='';
+    }
+  }
+  filterDataTable();
+}
+
+function buildAllRawRows(){
+  allRawRows=[];
+  Object.keys(allData).sort().forEach(p=>{
+    const pts=timelineData[p]||[];
+    const d=allData[p];
+    pts.forEach((pt,i)=>{
+      allRawRows.push({
+        proj:p, name:PROJ_NAMES[p]||p, color:PROJ_COLORS[p]||'#888',
+        fecha:pt.date,
+        fechaStr:pt.date.toLocaleDateString('es-CO',{day:'2-digit',month:'2-digit',year:'numeric'}),
+        factura:'FV '+i,
+        contrato:d.contrato,
+        acum:pt.acum,
+        expo:Math.max(0,d.contrato-pt.acum)
+      });
+    });
+  });
+}
+
+function clearDataFilters(){
+  document.getElementById('filterFrom').value='';
+  document.getElementById('filterTo').value='';
+  datosActiveProjs=new Set(Object.keys(allData));
+  document.querySelectorAll('#dataPillGroup .pill').forEach(pill=>{
+    const p=pill.dataset.dproj;
+    pill.classList.add('active');
+    pill.style.background=PROJ_COLORS[p]||'#888';pill.style.color='#fff';pill.style.borderColor='transparent';
+  });
+  filterDataTable();
+}
+
+function filterDataTable(){
+  const from=document.getElementById('filterFrom')?.value;
+  const to=document.getElementById('filterTo')?.value;
+  const fromDate=from?new Date(from):null;
+  const toDate=to?new Date(to):null;
+
+  const filtered=allRawRows.filter(r=>{
+    if(!datosActiveProjs.has(r.proj)) return false;
+    if(fromDate && r.fecha<fromDate) return false;
+    if(toDate && r.fecha>toDate) return false;
+    return true;
+  });
+
+  const tbody=document.getElementById('dataTableBody');
+  tbody.innerHTML=filtered.map(r=>`
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r.color};margin-right:6px;vertical-align:1px"></span>${r.name}</td>
+      <td>${r.fechaStr}</td>
+      <td>${r.factura}</td>
+      <td class="num">${fmt(r.contrato)}</td>
+      <td class="num">${fmt(r.acum)}</td>
+      <td class="expo">${fmt(r.expo)}</td>
+    </tr>`).join('');
+  document.getElementById('rowCount').textContent=filtered.length+' registros';
+}
+
+
+document.querySelectorAll('.pill[data-proj]').forEach(p=>p.addEventListener('click',pillClickHandler));
+
+const fileInput=document.getElementById('fileInput');
+fileInput.addEventListener('change',e=>{
+  if(e.target.files[0]){ parseXlsx(e.target.files[0]); e.target.value=''; }
+});
+
+const zone=document.getElementById('uploadZone');
+zone.addEventListener('click',e=>{
+  if(e.target===fileInput) return;
+  fileInput.click();
+});
+zone.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();zone.style.borderColor='#185FA5';zone.style.background='#f0f4fa';});
+zone.addEventListener('dragleave',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';});
+zone.addEventListener('drop',e=>{
+  e.preventDefault();e.stopPropagation();
+  zone.style.borderColor='';zone.style.background='';
+  const f=e.dataTransfer.files[0];
+  if(f&&(f.name.endsWith('.xlsx')||f.name.endsWith('.xls'))) parseXlsx(f);
+  else if(f) alert('Por favor sube un archivo .xlsx o .xls');
+});
+
+loadDefaultData();
+</script>
+</body>
+</html>
