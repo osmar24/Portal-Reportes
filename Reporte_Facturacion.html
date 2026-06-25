@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Seguimiento de Facturación por Proyecto</title>
@@ -110,6 +109,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
     <a href="index.html">Inicio</a>
     <a href="Reporte_Facturacion.html" class="active">Facturación</a>
     <a href="FC_ObrasPublicas.html">Flujo de Caja</a>
+    <a href="Gestion_Pagos.html">Pagos a Proveedores</a>
   </div>
 </nav>
 
@@ -119,7 +119,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
     <h1>Seguimiento de Facturación por Proyecto</h1>
   </div>
   <div style="display:flex;align-items:center;gap:12px;">
-    <div class="upload-btn" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+    <div class="upload-btn" id="uploadZone" onclick="document.getElementById('fileInput').click()" style="">
       <i class="ti ti-upload" aria-hidden="true"></i>
       <div>
         <span>Cargar Excel</span>
@@ -127,7 +127,14 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
       </div>
       <input type="file" id="fileInput" accept=".xlsx,.xls">
     </div>
-    <div class="topbar-r" id="lastUpdate">Datos: RELACION_FACTURACION.xlsx</div>
+    <div class="upload-btn" id="downloadBtn" onclick="downloadHTML()">
+      <i class="ti ti-download" aria-hidden="true"></i>
+      <div>
+        <span>Descargar HTML</span>
+        <small>Guarda esta versión</small>
+      </div>
+    </div>
+    <div class="topbar-r" id="lastUpdate">Datos cargados desde: RELACION FACTURACION.xlsx</div>
   </div>
 </div>
 
@@ -136,7 +143,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
   <div class="tab" id="tab-datos" onclick="switchTab('datos')">📋 Datos</div>
 </div>
 
-<div class="controls">
+<div class="controls" style="">
   <label>Proyectos:</label>
   <div class="pill-group" id="pillGroup">
     <div class="pill active" data-proj="ALL">Todos</div>
@@ -153,18 +160,18 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
 <div class="kpi-row">
   <div class="kpi">
     <div class="label"><i class="ti ti-file-invoice" aria-hidden="true"></i> Total contratado</div>
-    <div class="value" id="kpiContrato">—</div>
-    <div class="sub" id="kpiProyectos">—</div>
+    <div class="value" id="kpiContrato">$433.8 MM</div>
+    <div class="sub" id="kpiProyectos">5 proyectos seleccionados</div>
   </div>
   <div class="kpi">
     <div class="label"><i class="ti ti-check" aria-hidden="true"></i> Total facturado</div>
-    <div class="value" id="kpiFacturado">—</div>
-    <div class="sub" id="kpiPct">—</div>
+    <div class="value" id="kpiFacturado">$290.4 MM</div>
+    <div class="sub" id="kpiPct">67% del portafolio</div>
   </div>
   <div class="kpi">
     <div class="label" style="color:#854F0B"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Exposición total</div>
-    <div class="value" id="kpiExposicion" style="color:#854F0B">—</div>
-    <div class="sub" id="kpiExpPct">—</div>
+    <div class="value" id="kpiExposicion" style="color:#854F0B">$143.4 MM</div>
+    <div class="sub" id="kpiExpPct">33% por facturar</div>
   </div>
 </div>
 
@@ -176,8 +183,8 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
     <div class="legend-item"><div class="legend-dot" style="background:#185FA5"></div>Facturado</div>
     <div class="legend-item"><div class="legend-dot" style="background:#EF9F27"></div>Exposición (por facturar)</div>
   </div>
-  <div class="chart-wrap" id="barWrap" style="height:260px">
-    <canvas id="barChart" role="img" aria-label="Gráfica de barras apiladas mostrando facturado vs exposición por proyecto">Facturación por proyecto.</canvas>
+  <div class="chart-wrap" id="barWrap" style="height: 320px;">
+    <canvas id="barChart" role="img" aria-label="Gráfica de barras apiladas mostrando facturado vs exposición por proyecto" style="box-sizing: border-box; display: block; height: 320px; width: 1216px;" width="1825" height="480">Facturación por proyecto.</canvas>
   </div>
 </div>
 
@@ -196,7 +203,42 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
         <th>Estado</th>
       </tr>
     </thead>
-    <tbody id="tableBody"></tbody>
+    <tbody id="tableBody"><tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#185FA5;margin-right:6px;vertical-align:1px"></span><strong>Vías</strong></td>
+      <td>$52.1 MM</td>
+      <td>$51.3 MM</td>
+      <td style="color:#854F0B">$796.2 M</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">98%</span><div class="bar-bg"><div class="bar-fill" style="width:98%;background:#185FA5"></div></div></div></td>
+      <td><span class="badge verde">Avanzado</span></td>
+    </tr><tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3B6D11;margin-right:6px;vertical-align:1px"></span><strong>Hospital</strong></td>
+      <td>$16.5 MM</td>
+      <td>$12.7 MM</td>
+      <td style="color:#854F0B">$3.8 MM</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">77%</span><div class="bar-bg"><div class="bar-fill" style="width:77%;background:#3B6D11"></div></div></div></td>
+      <td><span class="badge amarillo">En curso</span></td>
+    </tr><tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#854F0B;margin-right:6px;vertical-align:1px"></span><strong>Colegios</strong></td>
+      <td>$111.3 MM</td>
+      <td>$20.7 MM</td>
+      <td style="color:#854F0B">$90.6 MM</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">19%</span><div class="bar-bg"><div class="bar-fill" style="width:19%;background:#854F0B"></div></div></div></td>
+      <td><span class="badge rojo">Inicial</span></td>
+    </tr><tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#533AB7;margin-right:6px;vertical-align:1px"></span><strong>Playas</strong></td>
+      <td>$80.9 MM</td>
+      <td>$64.2 MM</td>
+      <td style="color:#854F0B">$16.7 MM</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">79%</span><div class="bar-bg"><div class="bar-fill" style="width:79%;background:#533AB7"></div></div></div></td>
+      <td><span class="badge amarillo">En curso</span></td>
+    </tr><tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#993556;margin-right:6px;vertical-align:1px"></span><strong>Metropolitano</strong></td>
+      <td>$173.0 MM</td>
+      <td>$141.5 MM</td>
+      <td style="color:#854F0B">$31.5 MM</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">82%</span><div class="bar-bg"><div class="bar-fill" style="width:82%;background:#993556"></div></div></div></td>
+      <td><span class="badge amarillo">En curso</span></td>
+    </tr></tbody>
   </table>
 </div>
 
@@ -204,28 +246,69 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
 
 <div class="section">
   <div class="section-title">Evolución de facturación acumulada</div>
-  <div class="legend-row" id="lineLegend"></div>
+  <div class="legend-row" id="lineLegend">
+    <div class="legend-item"><div class="legend-dot" style="background:#E87B3B99;border:1.5px solid #E87B3B"></div>Fact. acum.</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(210,210,210,0.55);border:1px solid #bbb"></div>Exposición (área)</div>
+    <div class="legend-item" style="gap:5px"><div style="width:20px;border-top:1.5px dashed rgba(80,80,80,0.55);flex-shrink:0"></div><span>Contrato acum.</span></div></div>
   <div class="chart-wrap" id="lineWrap" style="height:320px">
-    <canvas id="lineChart" role="img" aria-label="Gráfica de evolución de facturación acumulada por proyecto">Evolución de facturación acumulada por proyecto.</canvas>
+    <canvas id="lineChart" role="img" aria-label="Gráfica de evolución de facturación acumulada por proyecto" style="box-sizing: border-box; display: block; height: 320px; width: 1216px;" width="1825" height="480">Evolución de facturación acumulada por proyecto.</canvas>
   </div>
 </div>
 
-<div class="last-updated" id="updatedTs"></div>
+<div class="last-updated" id="updatedTs">Última actualización: 25/6/2026, 3:15:23 p. m.</div>
 
 </div><!-- end content-dashboard -->
 
 <div class="tab-content" id="content-datos">
 
   <!-- Cuadro resumen -->
-  <div class="datos-summary" id="datosSummary"></div>
+  <div class="datos-summary" id="datosSummary"><div class="datos-card" style="border-left-color:#854F0B">
+      <div class="dc-label">Proyecto</div>
+      <div class="dc-proj">Colegios</div>
+      <div class="dc-row"><span>Contrato</span><span>$111.3 MM</span></div>
+      <div class="dc-row"><span>Facturado</span><span>$20.7 MM</span></div>
+      <div class="dc-row expo"><span>Exposición</span><span>$90.6 MM</span></div>
+      <div class="dc-row"><span>Avance</span><span>19%</span></div>
+      <div class="dc-bar"><div class="dc-bar-fill" style="width:19%;background:#854F0B"></div></div>
+    </div><div class="datos-card" style="border-left-color:#3B6D11">
+      <div class="dc-label">Proyecto</div>
+      <div class="dc-proj">Hospital</div>
+      <div class="dc-row"><span>Contrato</span><span>$16.5 MM</span></div>
+      <div class="dc-row"><span>Facturado</span><span>$12.7 MM</span></div>
+      <div class="dc-row expo"><span>Exposición</span><span>$3.8 MM</span></div>
+      <div class="dc-row"><span>Avance</span><span>77%</span></div>
+      <div class="dc-bar"><div class="dc-bar-fill" style="width:77%;background:#3B6D11"></div></div>
+    </div><div class="datos-card" style="border-left-color:#993556">
+      <div class="dc-label">Proyecto</div>
+      <div class="dc-proj">Metropolitano</div>
+      <div class="dc-row"><span>Contrato</span><span>$173.0 MM</span></div>
+      <div class="dc-row"><span>Facturado</span><span>$141.5 MM</span></div>
+      <div class="dc-row expo"><span>Exposición</span><span>$31.5 MM</span></div>
+      <div class="dc-row"><span>Avance</span><span>82%</span></div>
+      <div class="dc-bar"><div class="dc-bar-fill" style="width:82%;background:#993556"></div></div>
+    </div><div class="datos-card" style="border-left-color:#533AB7">
+      <div class="dc-label">Proyecto</div>
+      <div class="dc-proj">Playas</div>
+      <div class="dc-row"><span>Contrato</span><span>$80.9 MM</span></div>
+      <div class="dc-row"><span>Facturado</span><span>$64.2 MM</span></div>
+      <div class="dc-row expo"><span>Exposición</span><span>$16.7 MM</span></div>
+      <div class="dc-row"><span>Avance</span><span>79%</span></div>
+      <div class="dc-bar"><div class="dc-bar-fill" style="width:79%;background:#533AB7"></div></div>
+    </div><div class="datos-card" style="border-left-color:#185FA5">
+      <div class="dc-label">Proyecto</div>
+      <div class="dc-proj">Vías</div>
+      <div class="dc-row"><span>Contrato</span><span>$52.1 MM</span></div>
+      <div class="dc-row"><span>Facturado</span><span>$51.3 MM</span></div>
+      <div class="dc-row expo"><span>Exposición</span><span>$796.2 M</span></div>
+      <div class="dc-row"><span>Avance</span><span>98%</span></div>
+      <div class="dc-bar"><div class="dc-bar-fill" style="width:98%;background:#185FA5"></div></div>
+    </div></div>
 
   <!-- Filtros -->
   <div class="datos-filters">
     <div class="datos-filter-group">
       <label>Proyecto</label>
-      <div class="pill-group" id="dataPillGroup">
-        <div class="pill active" style="background:#5F5E5A;color:#fff;border-color:transparent" onclick="toggleAllDataProjs(this)">Todos</div>
-      </div>
+      <div class="pill-group" id="dataPillGroup"><div class="pill active" style="background:#5F5E5A;color:#fff;border-color:transparent" onclick="toggleAllDataProjs(this)">Todos</div><div class="pill active" data-dproj="COLEGIOS" onclick="toggleDataProj('COLEGIOS',this)" style="background: rgb(133, 79, 11); color: rgb(255, 255, 255); border-color: transparent;">Colegios</div><div class="pill active" data-dproj="HOSPITAL" onclick="toggleDataProj('HOSPITAL',this)" style="background: rgb(59, 109, 17); color: rgb(255, 255, 255); border-color: transparent;">Hospital</div><div class="pill active" data-dproj="METROPOLITANO" onclick="toggleDataProj('METROPOLITANO',this)" style="background: rgb(153, 53, 86); color: rgb(255, 255, 255); border-color: transparent;">Metropolitano</div><div class="pill active" data-dproj="PLAYAS" onclick="toggleDataProj('PLAYAS',this)" style="background: rgb(83, 58, 183); color: rgb(255, 255, 255); border-color: transparent;">Playas</div><div class="pill active" data-dproj="VIAS" onclick="toggleDataProj('VIAS',this)" style="background: rgb(24, 95, 165); color: rgb(255, 255, 255); border-color: transparent;">Vías</div></div>
     </div>
     <div class="datos-filter-group">
       <label>Desde</label>
@@ -239,7 +322,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
       <label>&nbsp;</label>
       <button onclick="clearDataFilters()" style="font-size:12px;padding:5px 12px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;color:#555">Limpiar filtros</button>
     </div>
-    <span class="row-count" id="rowCount" style="align-self:flex-end;padding-bottom:4px"></span>
+    <span class="row-count" id="rowCount" style="align-self:flex-end;padding-bottom:4px">27 registros</span>
   </div>
 
   <!-- Tabla -->
@@ -255,7 +338,223 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
           <th style="text-align:right">Exposición</th>
         </tr>
       </thead>
-      <tbody id="dataTableBody"></tbody>
+      <tbody id="dataTableBody">
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#854F0B;margin-right:6px;vertical-align:1px"></span>Colegios</td>
+      <td>08/10/2025</td>
+      <td>FV 0</td>
+      <td class="num">$111.3 MM</td>
+      <td class="num">$0</td>
+      <td class="expo">$111.3 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#854F0B;margin-right:6px;vertical-align:1px"></span>Colegios</td>
+      <td>08/10/2025</td>
+      <td>FV 1</td>
+      <td class="num">$111.3 MM</td>
+      <td class="num">$8.2 M</td>
+      <td class="expo">$111.3 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#854F0B;margin-right:6px;vertical-align:1px"></span>Colegios</td>
+      <td>21/11/2025</td>
+      <td>FV 2</td>
+      <td class="num">$111.3 MM</td>
+      <td class="num">$6.5 MM</td>
+      <td class="expo">$104.8 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#854F0B;margin-right:6px;vertical-align:1px"></span>Colegios</td>
+      <td>21/11/2025</td>
+      <td>FV 3</td>
+      <td class="num">$111.3 MM</td>
+      <td class="num">$10.0 MM</td>
+      <td class="expo">$101.3 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#854F0B;margin-right:6px;vertical-align:1px"></span>Colegios</td>
+      <td>26/03/2026</td>
+      <td>FV 4</td>
+      <td class="num">$111.3 MM</td>
+      <td class="num">$12.3 MM</td>
+      <td class="expo">$99.0 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#854F0B;margin-right:6px;vertical-align:1px"></span>Colegios</td>
+      <td>26/03/2026</td>
+      <td>FV 5</td>
+      <td class="num">$111.3 MM</td>
+      <td class="num">$16.2 MM</td>
+      <td class="expo">$95.2 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#854F0B;margin-right:6px;vertical-align:1px"></span>Colegios</td>
+      <td>26/03/2026</td>
+      <td>FV 6</td>
+      <td class="num">$111.3 MM</td>
+      <td class="num">$20.7 MM</td>
+      <td class="expo">$90.6 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3B6D11;margin-right:6px;vertical-align:1px"></span>Hospital</td>
+      <td>06/01/2026</td>
+      <td>FV 0</td>
+      <td class="num">$16.5 MM</td>
+      <td class="num">$0</td>
+      <td class="expo">$16.5 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3B6D11;margin-right:6px;vertical-align:1px"></span>Hospital</td>
+      <td>07/01/2026</td>
+      <td>FV 1</td>
+      <td class="num">$16.5 MM</td>
+      <td class="num">$3.4 MM</td>
+      <td class="expo">$13.1 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3B6D11;margin-right:6px;vertical-align:1px"></span>Hospital</td>
+      <td>03/02/2026</td>
+      <td>FV 2</td>
+      <td class="num">$16.5 MM</td>
+      <td class="num">$6.1 MM</td>
+      <td class="expo">$10.3 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3B6D11;margin-right:6px;vertical-align:1px"></span>Hospital</td>
+      <td>11/03/2026</td>
+      <td>FV 3</td>
+      <td class="num">$16.5 MM</td>
+      <td class="num">$8.1 MM</td>
+      <td class="expo">$8.3 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3B6D11;margin-right:6px;vertical-align:1px"></span>Hospital</td>
+      <td>05/05/2026</td>
+      <td>FV 4</td>
+      <td class="num">$16.5 MM</td>
+      <td class="num">$12.7 MM</td>
+      <td class="expo">$3.8 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#993556;margin-right:6px;vertical-align:1px"></span>Metropolitano</td>
+      <td>01/12/2025</td>
+      <td>FV 0</td>
+      <td class="num">$173.0 MM</td>
+      <td class="num">$0</td>
+      <td class="expo">$173.0 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#993556;margin-right:6px;vertical-align:1px"></span>Metropolitano</td>
+      <td>01/06/2026</td>
+      <td>FV 1</td>
+      <td class="num">$173.0 MM</td>
+      <td class="num">$28.5 MM</td>
+      <td class="expo">$144.6 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#993556;margin-right:6px;vertical-align:1px"></span>Metropolitano</td>
+      <td>01/06/2026</td>
+      <td>FV 2</td>
+      <td class="num">$173.0 MM</td>
+      <td class="num">$69.8 MM</td>
+      <td class="expo">$103.2 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#993556;margin-right:6px;vertical-align:1px"></span>Metropolitano</td>
+      <td>01/06/2026</td>
+      <td>FV 3</td>
+      <td class="num">$173.0 MM</td>
+      <td class="num">$141.5 MM</td>
+      <td class="expo">$31.5 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#533AB7;margin-right:6px;vertical-align:1px"></span>Playas</td>
+      <td>12/12/2025</td>
+      <td>FV 0</td>
+      <td class="num">$80.9 MM</td>
+      <td class="num">$0</td>
+      <td class="expo">$80.9 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#533AB7;margin-right:6px;vertical-align:1px"></span>Playas</td>
+      <td>12/12/2025</td>
+      <td>FV 1</td>
+      <td class="num">$80.9 MM</td>
+      <td class="num">$8.5 MM</td>
+      <td class="expo">$72.4 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#533AB7;margin-right:6px;vertical-align:1px"></span>Playas</td>
+      <td>12/03/2026</td>
+      <td>FV 2</td>
+      <td class="num">$80.9 MM</td>
+      <td class="num">$30.7 MM</td>
+      <td class="expo">$50.2 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#533AB7;margin-right:6px;vertical-align:1px"></span>Playas</td>
+      <td>20/04/2026</td>
+      <td>FV 3</td>
+      <td class="num">$80.9 MM</td>
+      <td class="num">$51.1 MM</td>
+      <td class="expo">$29.8 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#533AB7;margin-right:6px;vertical-align:1px"></span>Playas</td>
+      <td>19/05/2026</td>
+      <td>FV 4</td>
+      <td class="num">$80.9 MM</td>
+      <td class="num">$64.2 MM</td>
+      <td class="expo">$16.7 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#185FA5;margin-right:6px;vertical-align:1px"></span>Vías</td>
+      <td>23/10/2025</td>
+      <td>FV 0</td>
+      <td class="num">$52.1 MM</td>
+      <td class="num">$0</td>
+      <td class="expo">$52.1 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#185FA5;margin-right:6px;vertical-align:1px"></span>Vías</td>
+      <td>24/10/2025</td>
+      <td>FV 1</td>
+      <td class="num">$52.1 MM</td>
+      <td class="num">$10.3 MM</td>
+      <td class="expo">$41.8 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#185FA5;margin-right:6px;vertical-align:1px"></span>Vías</td>
+      <td>26/12/2025</td>
+      <td>FV 2</td>
+      <td class="num">$52.1 MM</td>
+      <td class="num">$25.3 MM</td>
+      <td class="expo">$26.7 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#185FA5;margin-right:6px;vertical-align:1px"></span>Vías</td>
+      <td>10/02/2026</td>
+      <td>FV 3</td>
+      <td class="num">$52.1 MM</td>
+      <td class="num">$40.3 MM</td>
+      <td class="expo">$11.7 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#185FA5;margin-right:6px;vertical-align:1px"></span>Vías</td>
+      <td>24/03/2026</td>
+      <td>FV 4</td>
+      <td class="num">$52.1 MM</td>
+      <td class="num">$51.2 MM</td>
+      <td class="expo">$873.5 M</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#185FA5;margin-right:6px;vertical-align:1px"></span>Vías</td>
+      <td>27/03/2026</td>
+      <td>FV 5</td>
+      <td class="num">$52.1 MM</td>
+      <td class="num">$51.3 MM</td>
+      <td class="expo">$796.2 M</td>
+    </tr></tbody>
     </table>
   </div>
 </div>
@@ -290,52 +589,12 @@ let activeProjs = new Set(['VIAS','HOSPITAL','COLEGIOS','PLAYAS','METROPOLITANO'
 let barChartInst = null, lineChartInst = null;
 
 function loadDefaultData(){
-  allData = {
-    VIAS:          {contrato:52085450531,    facturado:51289237101, exposicion:796213430},
-    HOSPITAL:      {contrato:13197369373,    facturado:12677557070, exposicion:519812303},
-    COLEGIOS:      {contrato:111327609605,   facturado:20717464570, exposicion:90610145035},
-    PLAYAS:        {contrato:66547295616,    facturado:64212616488, exposicion:2334679129},
-    METROPOLITANO: {contrato:173020000000,   facturado:141531169404,exposicion:31488830596}
-  };
-  timelineData = {
-    VIAS:[
-      {date:new Date(2025,9,23),  acum:0},
-      {date:new Date(2025,9,24),  acum:10281737404},
-      {date:new Date(2025,11,26), acum:25337628899},
-      {date:new Date(2026,1,10),  acum:40337628899},
-      {date:new Date(2026,2,24),  acum:51211919433},
-      {date:new Date(2026,2,27),  acum:51289237101}
-    ],
-    HOSPITAL:[
-      {date:new Date(2026,0,6),  acum:0},
-      {date:new Date(2026,0,7),  acum:3379714137},
-      {date:new Date(2026,1,3),  acum:6125139256},
-      {date:new Date(2026,2,11), acum:8137535916},
-      {date:new Date(2026,4,5),  acum:12677557070}
-    ],
-    COLEGIOS:[
-      {date:new Date(2025,9,8),   acum:0},
-      {date:new Date(2025,9,8),   acum:8182750},
-      {date:new Date(2025,10,21), acum:6504197214},
-      {date:new Date(2025,10,21), acum:9978252277},
-      {date:new Date(2026,2,26),  acum:12299181919},
-      {date:new Date(2026,2,26),  acum:16175375779},
-      {date:new Date(2026,2,26),  acum:20717464570}
-    ],
-    PLAYAS:[
-      {date:new Date(2025,11,12), acum:0},
-      {date:new Date(2025,11,12), acum:8490935939},
-      {date:new Date(2026,2,12),  acum:30708357466},
-      {date:new Date(2026,3,20),  acum:51090805875},
-      {date:new Date(2026,4,19),  acum:64212616488}
-    ],
-    METROPOLITANO:[
-      {date:new Date(2025,11,1), acum:0},
-      {date:new Date(2026,5,1),  acum:28467192767},
-      {date:new Date(2026,5,1),  acum:69794162954},
-      {date:new Date(2026,5,1),  acum:141531169404}
-    ]
-  };
+  /* DATA_START */
+  allData = {"VIAS":{"contrato":52085450531,"facturado":51289237101.020004,"exposicion":796213429.9799957},"HOSPITAL":{"contrato":16464647721,"facturado":12677557069.96,"exposicion":3787090651.040001},"COLEGIOS":{"contrato":111327609605,"facturado":20717464569.9942,"exposicion":90610145035.0058},"PLAYAS":{"contrato":80882579931,"facturado":64212616487.579994,"exposicion":16669963443.420006},"METROPOLITANO":{"contrato":173020000000,"facturado":141531169404.41,"exposicion":31488830595.589996}};
+  timelineData = {"VIAS":[{"date":"2025-10-23T05:00:00.000Z","acum":0},{"date":"2025-10-24T05:00:00.000Z","acum":10281737404.23},{"date":"2025-12-26T05:00:00.000Z","acum":25337628899.02},{"date":"2026-02-10T05:00:00.000Z","acum":40337628899.020004},{"date":"2026-03-24T05:00:00.000Z","acum":51211919433.020004},{"date":"2026-03-27T05:00:00.000Z","acum":51289237101.020004}],"HOSPITAL":[{"date":"2026-01-06T05:00:00.000Z","acum":0},{"date":"2026-01-07T05:00:00.000Z","acum":3379714137},{"date":"2026-02-03T05:00:00.000Z","acum":6125139256},{"date":"2026-03-11T05:00:00.000Z","acum":8137535915.96},{"date":"2026-05-05T05:00:00.000Z","acum":12677557069.96}],"COLEGIOS":[{"date":"2025-10-08T05:00:00.000Z","acum":0},{"date":"2025-10-08T05:00:00.000Z","acum":8182750},{"date":"2025-11-21T05:00:00.000Z","acum":6504197213.9991},{"date":"2025-11-21T05:00:00.000Z","acum":9978252276.9942},{"date":"2026-03-26T05:00:00.000Z","acum":12299181918.9942},{"date":"2026-03-26T05:00:00.000Z","acum":16175375778.9942},{"date":"2026-03-26T05:00:00.000Z","acum":20717464569.9942}],"PLAYAS":[{"date":"2025-12-12T05:00:00.000Z","acum":0},{"date":"2025-12-12T05:00:00.000Z","acum":8490935939},{"date":"2026-03-12T05:00:00.000Z","acum":30708357465.73},{"date":"2026-04-20T05:00:00.000Z","acum":51090805874.729996},{"date":"2026-05-19T05:00:00.000Z","acum":64212616487.579994}],"METROPOLITANO":[{"date":"2025-12-01T05:00:00.000Z","acum":0},{"date":"2026-06-01T05:00:00.000Z","acum":28467192767.41},{"date":"2026-06-01T05:00:00.000Z","acum":69794162954.41},{"date":"2026-06-01T05:00:00.000Z","acum":141531169404.41}]};
+  /* DATA_END */
+  // Si los datos vienen de un HTML descargado, las fechas llegan como texto ISO: reconstituir a Date.
+  Object.values(timelineData).forEach(arr=>arr.forEach(pt=>{ if(typeof pt.date==='string') pt.date=new Date(pt.date); }));
   renderAll();
   document.getElementById('updatedTs').textContent='Datos base: jun 2026 | Fuente: RELACION_FACTURACION.xlsx';
 }
@@ -1010,7 +1269,34 @@ zone.addEventListener('drop',e=>{
   else if(f) alert('Por favor sube un archivo .xlsx o .xls');
 });
 
+function downloadHTML(){
+  try{
+    let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const newBlock = '/* DATA_START */\n  allData = '+JSON.stringify(allData)+';\n  timelineData = '+JSON.stringify(timelineData).replace(/<\/script/gi,'<\\/script')+';\n  /* DATA_END */';
+    const re = /\/\* DATA_START \*\/[\s\S]*?\/\* DATA_END \*\//;
+    if(!re.test(html)){ throw new Error('No se encontró el bloque de datos en el HTML actual.'); }
+    html = html.replace(re, newBlock);
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const now = new Date();
+    const stamp = now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0');
+    a.href = url;
+    a.download = 'Reporte_Facturacion_'+stamp+'.html';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    const btn=document.getElementById('downloadBtn');
+    const sp=btn.querySelector('span'); const orig=sp.textContent;
+    sp.textContent='✅ Descargado';
+    setTimeout(()=>{ sp.textContent=orig; },3000);
+  }catch(err){
+    alert('No se pudo generar la descarga: '+err.message);
+    console.error(err);
+  }
+}
+
 loadDefaultData();
 </script>
-</body>
-</html>
+
+
+</body></html>
