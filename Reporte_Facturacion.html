@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Seguimiento de Facturación por Proyecto</title>
@@ -22,12 +21,11 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
 .topbar-logo{width:32px;height:32px;background:#2E75B6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
 .topbar h1{font-size:14px;font-weight:600;color:#fff;white-space:nowrap;}
 .topbar-r{font-size:11px;color:#93B8D8;white-space:nowrap;}
-.upload-btn{display:flex;align-items:center;gap:7px;padding:6px 12px;border:1px solid rgba(255,255,255,.25);border-radius:8px;background:rgba(255,255,255,.08);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background .15s}
-.upload-btn:hover{background:rgba(255,255,255,.16)}
-.upload-btn i{font-size:15px;color:#fff}
-.upload-btn span{font-size:12px;color:#fff;font-weight:500}
-.upload-btn small{font-size:10px;color:#93B8D8;display:block;margin-top:1px}
-#fileInput{display:none}
+.upload-btn{display:flex;align-items:center;gap:7px;padding:6px 12px;border:1px solid rgba(255,255,255,.25);border-radius:8px;background:rgba(255,255,255,.08);cursor:pointer;white-space:nowrap;transition:background .15s;}
+.upload-btn:hover{background:rgba(255,255,255,.16);}
+.upload-btn span{font-size:12px;color:#fff;font-weight:500;}
+.upload-btn small{font-size:10px;color:#93B8D8;display:block;margin-top:1px;}
+#fileInput{display:none;}
 .controls{padding:0.75rem 1.5rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:0.5px solid #ddd;background:#fff}
 .controls label{font-size:12px;color:#888;margin-right:4px}
 .pill-group{display:flex;gap:6px;flex-wrap:wrap}
@@ -121,21 +119,15 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
   </div>
   <div style="display:flex;align-items:center;gap:12px;">
     <div class="upload-btn" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-      <i class="ti ti-upload" aria-hidden="true"></i>
-      <div>
-        <span>Cargar Excel</span>
-        <small>Arrastra o haz clic</small>
-      </div>
+      <span>📤 Cargar Excel</span>
+      <small>Arrastra o haz clic</small>
       <input type="file" id="fileInput" accept=".xlsx,.xls">
     </div>
     <div class="upload-btn" id="downloadBtn" onclick="downloadHTML()">
-      <i class="ti ti-download" aria-hidden="true"></i>
-      <div>
-        <span>Descargar HTML</span>
-        <small>Guarda esta versión</small>
-      </div>
+      <span>💾 Descargar HTML</span>
+      <small>Guarda esta versión</small>
     </div>
-    <div class="topbar-r" id="lastUpdate">Datos: RELACION_FACTURACION.xlsx</div>
+    <div class="topbar-r" id="corteLabel">Corte: 24 jun 2026 · Confidencial</div>
   </div>
 </div>
 
@@ -161,18 +153,18 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
 <div class="kpi-row">
   <div class="kpi">
     <div class="label"><i class="ti ti-file-invoice" aria-hidden="true"></i> Total contratado</div>
-    <div class="value" id="kpiContrato">—</div>
-    <div class="sub" id="kpiProyectos">—</div>
+    <div class="value" id="kpiContrato">$416.2 MM</div>
+    <div class="sub" id="kpiProyectos">5 proyectos seleccionados</div>
   </div>
   <div class="kpi">
     <div class="label"><i class="ti ti-check" aria-hidden="true"></i> Total facturado</div>
-    <div class="value" id="kpiFacturado">—</div>
-    <div class="sub" id="kpiPct">—</div>
+    <div class="value" id="kpiFacturado">$290.4 MM</div>
+    <div class="sub" id="kpiPct">70% del portafolio</div>
   </div>
   <div class="kpi">
     <div class="label" style="color:#854F0B"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Exposición total</div>
-    <div class="value" id="kpiExposicion" style="color:#854F0B">—</div>
-    <div class="sub" id="kpiExpPct">—</div>
+    <div class="value" id="kpiExposicion" style="color:#854F0B">$125.7 MM</div>
+    <div class="sub" id="kpiExpPct">30% por facturar</div>
   </div>
 </div>
 
@@ -184,8 +176,8 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
     <div class="legend-item"><div class="legend-dot" style="background:#185FA5"></div>Facturado</div>
     <div class="legend-item"><div class="legend-dot" style="background:#EF9F27"></div>Exposición (por facturar)</div>
   </div>
-  <div class="chart-wrap" id="barWrap" style="height:260px">
-    <canvas id="barChart" role="img" aria-label="Gráfica de barras apiladas mostrando facturado vs exposición por proyecto">Facturación por proyecto.</canvas>
+  <div class="chart-wrap" id="barWrap" style="height: 320px;">
+    <canvas id="barChart" role="img" aria-label="Gráfica de barras apiladas mostrando facturado vs exposición por proyecto" style="box-sizing: border-box; display: block; height: 320px; width: 1216px;" width="1825" height="480">Facturación por proyecto.</canvas>
   </div>
 </div>
 
@@ -204,7 +196,42 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
         <th>Estado</th>
       </tr>
     </thead>
-    <tbody id="tableBody"></tbody>
+    <tbody id="tableBody"><tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#185FA5;margin-right:6px;vertical-align:1px"></span><strong>Vías</strong></td>
+      <td>$52.1 MM</td>
+      <td>$51.3 MM</td>
+      <td style="color:#854F0B">$796.2 M</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">98%</span><div class="bar-bg"><div class="bar-fill" style="width:98%;background:#185FA5"></div></div></div></td>
+      <td><span class="badge verde">Avanzado</span></td>
+    </tr><tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3B6D11;margin-right:6px;vertical-align:1px"></span><strong>Hospital</strong></td>
+      <td>$13.2 MM</td>
+      <td>$12.7 MM</td>
+      <td style="color:#854F0B">$519.8 M</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">96%</span><div class="bar-bg"><div class="bar-fill" style="width:96%;background:#3B6D11"></div></div></div></td>
+      <td><span class="badge verde">Avanzado</span></td>
+    </tr><tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#854F0B;margin-right:6px;vertical-align:1px"></span><strong>Colegios</strong></td>
+      <td>$111.3 MM</td>
+      <td>$20.7 MM</td>
+      <td style="color:#854F0B">$90.6 MM</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">19%</span><div class="bar-bg"><div class="bar-fill" style="width:19%;background:#854F0B"></div></div></div></td>
+      <td><span class="badge rojo">Inicial</span></td>
+    </tr><tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#533AB7;margin-right:6px;vertical-align:1px"></span><strong>Playas</strong></td>
+      <td>$66.5 MM</td>
+      <td>$64.2 MM</td>
+      <td style="color:#854F0B">$2.3 MM</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">96%</span><div class="bar-bg"><div class="bar-fill" style="width:96%;background:#533AB7"></div></div></div></td>
+      <td><span class="badge verde">Avanzado</span></td>
+    </tr><tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#993556;margin-right:6px;vertical-align:1px"></span><strong>Metropolitano</strong></td>
+      <td>$173.0 MM</td>
+      <td>$141.5 MM</td>
+      <td style="color:#854F0B">$31.5 MM</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">82%</span><div class="bar-bg"><div class="bar-fill" style="width:82%;background:#993556"></div></div></div></td>
+      <td><span class="badge amarillo">En curso</span></td>
+    </tr></tbody>
   </table>
 </div>
 
@@ -212,13 +239,16 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
 
 <div class="section">
   <div class="section-title">Evolución de facturación acumulada</div>
-  <div class="legend-row" id="lineLegend"></div>
+  <div class="legend-row" id="lineLegend">
+    <div class="legend-item"><div class="legend-dot" style="background:#E87B3B99;border:1.5px solid #E87B3B"></div>Fact. acum.</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(210,210,210,0.55);border:1px solid #bbb"></div>Exposición (área)</div>
+    <div class="legend-item" style="gap:5px"><div style="width:20px;border-top:1.5px dashed rgba(80,80,80,0.55);flex-shrink:0"></div><span>Contrato acum.</span></div></div>
   <div class="chart-wrap" id="lineWrap" style="height:320px">
-    <canvas id="lineChart" role="img" aria-label="Gráfica de evolución de facturación acumulada por proyecto">Evolución de facturación acumulada por proyecto.</canvas>
+    <canvas id="lineChart" role="img" aria-label="Gráfica de evolución de facturación acumulada por proyecto" style="box-sizing: border-box; display: block; height: 320px; width: 1216px;" width="1825" height="480">Evolución de facturación acumulada por proyecto.</canvas>
   </div>
 </div>
 
-<div class="last-updated" id="updatedTs"></div>
+<div class="last-updated" id="updatedTs">Datos base: jun 2026 | Fuente: RELACION_FACTURACION.xlsx</div>
 
 </div><!-- end content-dashboard -->
 
@@ -293,62 +323,28 @@ const fmt = v => {
 };
 const pct = (a,b) => b>0 ? Math.round(a/b*100) : 0;
 
-let allData = {}, timelineData = {};
+let allData = {}, timelineData = {}, corteFecha = '24 jun 2026';
+function formatCorte(){
+  const now=new Date();
+  const meses3=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return now.getDate()+' '+meses3[now.getMonth()]+' '+now.getFullYear();
+}
+function renderCorte(){
+  document.getElementById('corteLabel').textContent='Corte: '+corteFecha+' · Confidencial';
+}
 let activeProjs = new Set(['VIAS','HOSPITAL','COLEGIOS','PLAYAS','METROPOLITANO']);
 let barChartInst = null, lineChartInst = null;
 
 function loadDefaultData(){
   /* DATA_START */
-  allData = {
-    VIAS:          {contrato:52085450531,    facturado:51289237101, exposicion:796213430},
-    HOSPITAL:      {contrato:13197369373,    facturado:12677557070, exposicion:519812303},
-    COLEGIOS:      {contrato:111327609605,   facturado:20717464570, exposicion:90610145035},
-    PLAYAS:        {contrato:66547295616,    facturado:64212616488, exposicion:2334679129},
-    METROPOLITANO: {contrato:173020000000,   facturado:141531169404,exposicion:31488830596}
-  };
-  timelineData = {
-    VIAS:[
-      {date:new Date(2025,9,23),  acum:0},
-      {date:new Date(2025,9,24),  acum:10281737404},
-      {date:new Date(2025,11,26), acum:25337628899},
-      {date:new Date(2026,1,10),  acum:40337628899},
-      {date:new Date(2026,2,24),  acum:51211919433},
-      {date:new Date(2026,2,27),  acum:51289237101}
-    ],
-    HOSPITAL:[
-      {date:new Date(2026,0,6),  acum:0},
-      {date:new Date(2026,0,7),  acum:3379714137},
-      {date:new Date(2026,1,3),  acum:6125139256},
-      {date:new Date(2026,2,11), acum:8137535916},
-      {date:new Date(2026,4,5),  acum:12677557070}
-    ],
-    COLEGIOS:[
-      {date:new Date(2025,9,8),   acum:0},
-      {date:new Date(2025,9,8),   acum:8182750},
-      {date:new Date(2025,10,21), acum:6504197214},
-      {date:new Date(2025,10,21), acum:9978252277},
-      {date:new Date(2026,2,26),  acum:12299181919},
-      {date:new Date(2026,2,26),  acum:16175375779},
-      {date:new Date(2026,2,26),  acum:20717464570}
-    ],
-    PLAYAS:[
-      {date:new Date(2025,11,12), acum:0},
-      {date:new Date(2025,11,12), acum:8490935939},
-      {date:new Date(2026,2,12),  acum:30708357466},
-      {date:new Date(2026,3,20),  acum:51090805875},
-      {date:new Date(2026,4,19),  acum:64212616488}
-    ],
-    METROPOLITANO:[
-      {date:new Date(2025,11,1), acum:0},
-      {date:new Date(2026,5,1),  acum:28467192767},
-      {date:new Date(2026,5,1),  acum:69794162954},
-      {date:new Date(2026,5,1),  acum:141531169404}
-    ]
-  };
+  allData = {"VIAS":{"contrato":52085450531,"facturado":51289237101,"exposicion":796213430},"HOSPITAL":{"contrato":13197369373,"facturado":12677557070,"exposicion":519812303},"COLEGIOS":{"contrato":111327609605,"facturado":20717464570,"exposicion":90610145035},"PLAYAS":{"contrato":66547295616,"facturado":64212616488,"exposicion":2334679129},"METROPOLITANO":{"contrato":173020000000,"facturado":141531169404,"exposicion":31488830596}};
+  timelineData = {"VIAS":[{"date":"2025-10-23T05:00:00.000Z","acum":0},{"date":"2025-10-24T05:00:00.000Z","acum":10281737404},{"date":"2025-12-26T05:00:00.000Z","acum":25337628899},{"date":"2026-02-10T05:00:00.000Z","acum":40337628899},{"date":"2026-03-24T05:00:00.000Z","acum":51211919433},{"date":"2026-03-27T05:00:00.000Z","acum":51289237101}],"HOSPITAL":[{"date":"2026-01-06T05:00:00.000Z","acum":0},{"date":"2026-01-07T05:00:00.000Z","acum":3379714137},{"date":"2026-02-03T05:00:00.000Z","acum":6125139256},{"date":"2026-03-11T05:00:00.000Z","acum":8137535916},{"date":"2026-05-05T05:00:00.000Z","acum":12677557070}],"COLEGIOS":[{"date":"2025-10-08T05:00:00.000Z","acum":0},{"date":"2025-10-08T05:00:00.000Z","acum":8182750},{"date":"2025-11-21T05:00:00.000Z","acum":6504197214},{"date":"2025-11-21T05:00:00.000Z","acum":9978252277},{"date":"2026-03-26T05:00:00.000Z","acum":12299181919},{"date":"2026-03-26T05:00:00.000Z","acum":16175375779},{"date":"2026-03-26T05:00:00.000Z","acum":20717464570}],"PLAYAS":[{"date":"2025-12-12T05:00:00.000Z","acum":0},{"date":"2025-12-12T05:00:00.000Z","acum":8490935939},{"date":"2026-03-12T05:00:00.000Z","acum":30708357466},{"date":"2026-04-20T05:00:00.000Z","acum":51090805875},{"date":"2026-05-19T05:00:00.000Z","acum":64212616488}],"METROPOLITANO":[{"date":"2025-12-01T05:00:00.000Z","acum":0},{"date":"2026-06-01T05:00:00.000Z","acum":28467192767},{"date":"2026-06-01T05:00:00.000Z","acum":69794162954},{"date":"2026-06-01T05:00:00.000Z","acum":141531169404}]};
+  corteFecha = "24 jun 2026";
   /* DATA_END */
   // Si los datos vienen de un HTML descargado, las fechas llegan como texto ISO: reconstituir a Date.
   Object.values(timelineData).forEach(arr=>arr.forEach(pt=>{ if(typeof pt.date==='string') pt.date=new Date(pt.date); }));
   renderAll();
+  renderCorte();
   document.getElementById('updatedTs').textContent='Datos base: jun 2026 | Fuente: RELACION_FACTURACION.xlsx';
 }
 
@@ -795,9 +791,13 @@ loadDefaultData();function parseXlsx(file){
       const allPill=document.querySelector('.pill[data-proj="ALL"]');
       if(allPill) allPill.classList.add('active');
 
-      document.getElementById('lastUpdate').textContent='Datos cargados desde: '+file.name;
+      corteFecha = formatCorte();
+      renderCorte();
       document.getElementById('updatedTs').textContent='Última actualización: '+new Date().toLocaleString('es-CO');
       setTimeout(()=>renderAll(), 100);
+      const zoneSp=document.getElementById('uploadZone').querySelector('span');
+      zoneSp.textContent='✅ Cargado: '+file.name.slice(0,28);
+      setTimeout(()=>{ zoneSp.textContent='📤 Cargar Excel'; },4000);
 
     }catch(err){
       console.error(err);
@@ -1025,7 +1025,7 @@ zone.addEventListener('drop',e=>{
 function downloadHTML(){
   try{
     let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-    const newBlock = '/* DATA_START */\n  allData = '+JSON.stringify(allData)+';\n  timelineData = '+JSON.stringify(timelineData).replace(/<\/script/gi,'<\\/script')+';\n  /* DATA_END */';
+    const newBlock = '/* DATA_START */\n  allData = '+JSON.stringify(allData)+';\n  timelineData = '+JSON.stringify(timelineData).replace(/<\/script/gi,'<\\/script')+';\n  corteFecha = '+JSON.stringify(corteFecha)+';\n  /* DATA_END */';
     const re = /\/\* DATA_START \*\/[\s\S]*?\/\* DATA_END \*\//;
     if(!re.test(html)){ throw new Error('No se encontró el bloque de datos en el HTML actual.'); }
     html = html.replace(re, newBlock);
@@ -1050,5 +1050,6 @@ function downloadHTML(){
 
 loadDefaultData();
 </script>
-</body>
-</html>
+
+
+</body></html>
