@@ -3,7 +3,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Seguimiento de Facturación por Proyecto</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 .portal-nav{position:sticky;top:0;z-index:200;height:44px;background:#1C1C1E;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-family:'Inter','Segoe UI',Arial,sans-serif;}
 .portal-nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:#fff;}
@@ -15,7 +14,7 @@
 .portal-nav-links a.active{background:rgba(255,255,255,.12);color:#fff;font-weight:600;}
 @media (max-width:640px){.portal-nav-title{display:none;}}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
+body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;font-size:13px;line-height:1.5;}
 .topbar{background:#2A2A2C;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:56px;flex-wrap:wrap;gap:10px;}
 .topbar-l{display:flex;align-items:center;gap:12px;min-width:0;}
 .topbar-logo{width:32px;height:32px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;padding:4px;}
@@ -27,7 +26,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
 .upload-btn small{font-size:10px;color:#ACA9A6;display:block;margin-top:1px;}
 #fileInput{display:none;}
 .controls{padding:0.75rem 1.5rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:0.5px solid #ddd;background:#fff}
-.controls label{font-size:12px;color:#888;margin-right:4px}
+.controls label{font-size:12px;color:#6B7280;margin-right:4px}
 .pill-group{display:flex;gap:6px;flex-wrap:wrap}
 .pill{font-size:12px;padding:4px 10px;border-radius:20px;border:0.5px solid #ccc;cursor:pointer;background:#fff;color:#666;transition:all .15s;user-select:none}
 .pill.active{border-color:transparent;color:#fff}
@@ -37,63 +36,67 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
 .pill[data-proj="PLAYAS"].active{background:#533AB7}
 .pill[data-proj="METROPOLITANO"].active{background:#993556}
 .pill[data-proj="ALL"].active{background:#5F5E5A}
-.kpi-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:1rem 1.5rem;background:#fff}
-.kpi{background:#f5f5f3;border-radius:8px;padding:0.85rem 1rem}
-.kpi .label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
-.kpi .value{font-size:20px;font-weight:500;color:#1a1a1a}
-.kpi .sub{font-size:11px;color:#888;margin-top:2px}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;padding:16px 24px;background:#fff;border-bottom:1px solid #E5E7EB;}
+.kpi{background:#fff;border:1px solid #E5E7EB;border-left:3px solid #E5E7EB;border-radius:10px;padding:14px 16px;}
+.kpi.kb{border-left-color:#58595B;}.kpi.kp{border-left-color:#16A34A;}.kpi.kw{border-left-color:#D97706;}.kpi.kn{border-left-color:#DC2626;}
+.kpi .label{font-size:10px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;display:flex;align-items:center;gap:4px;}
+.kpi .value{font-size:22px;font-weight:700;line-height:1;color:#111827}
+.kpi .value.p{color:#16A34A;}.kpi .value.w{color:#D97706;}.kpi .value.n{color:#DC2626;}.kpi .value.b{color:#0F2D4E;}
+.kpi .sub{font-size:11px;color:#9CA3AF;margin-top:4px}
 .section{padding:0 1.5rem 1rem;background:#fff;margin-top:8px}
-.section-title{font-size:12px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;padding-top:0.75rem}
+.section-title{font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;padding-top:0.75rem;padding-bottom:8px;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;gap:8px;}
+.section-title::before{content:'';display:block;width:3px;height:13px;background:#58595B;border-radius:2px;}
 .chart-wrap{position:relative;width:100%}
 .progress-table{width:100%;border-collapse:collapse;font-size:13px}
-.progress-table th{font-size:11px;color:#888;font-weight:500;text-align:left;padding:4px 8px 6px;border-bottom:0.5px solid #ddd}
+.progress-table th{font-size:11px;color:#6B7280;font-weight:500;text-align:left;padding:4px 8px 6px;border-bottom:0.5px solid #ddd}
 .progress-table th:not(:first-child){text-align:right}
-.progress-table td{padding:8px;border-bottom:0.5px solid #ddd;vertical-align:middle;color:#1a1a1a}
+.progress-table td{padding:8px;border-bottom:0.5px solid #ddd;vertical-align:middle;color:#111827}
 .progress-table td:not(:first-child){text-align:right}
-.bar-bg{height:6px;border-radius:3px;background:#e5e5e3;overflow:hidden;min-width:60px}
+.bar-bg{height:6px;border-radius:3px;background:#E5E7EB;overflow:hidden;min-width:60px}
 .bar-fill{height:100%;border-radius:3px;transition:width .4s}
 .badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
 .badge.verde{background:#EAF3DE;color:#3B6D11}
 .badge.amarillo{background:#FAEEDA;color:#854F0B}
 .badge.rojo{background:#FCEBEB;color:#A32D2D}
 .legend-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#888}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#6B7280}
 .legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
 .divider{height:0.5px;background:#ddd;margin:0 1.5rem}
-.last-updated{font-size:11px;color:#888;padding:0.5rem 1.5rem 1rem;text-align:right;background:#fff}
+.last-updated{font-size:11px;color:#6B7280;padding:0.5rem 1.5rem 1rem;text-align:right;background:#fff}
 /* Tabs */
 .tabs{display:flex;border-bottom:1px solid #ddd;background:#fff;padding:0 1.5rem}
-.tab{font-size:13px;padding:10px 16px;cursor:pointer;color:#888;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;user-select:none}
-.tab.active{color:#1a1a1a;border-bottom-color:#C8302A;font-weight:500}
+.tab{font-size:13px;font-weight:500;padding:14px 20px 12px;cursor:pointer;color:#6B7280;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;user-select:none}
+.tab:hover{color:#C8302A;}
+.tab.active{color:#C8302A;border-bottom-color:#C8302A;font-weight:500}
 .tab-content{display:none}
 .tab-content.active{display:block}
 /* Data table */
 .data-table-wrap{padding:1rem 1.5rem 1.5rem;overflow-x:auto;max-height:600px;overflow-y:auto}
 .data-table{width:100%;border-collapse:collapse;font-size:12px}
-.data-table th{font-size:11px;color:#888;font-weight:500;text-align:left;padding:6px 10px;border-bottom:1px solid #ddd;white-space:nowrap;background:#f8f8f6;position:sticky;top:0;z-index:1}
-.data-table td{padding:6px 10px;border-bottom:0.5px solid #eee;color:#1a1a1a;white-space:nowrap}
-.data-table tr:hover td{background:#f5f5f3}
+.data-table th{font-size:11px;color:#6B7280;font-weight:500;text-align:left;padding:6px 10px;border-bottom:1px solid #ddd;white-space:nowrap;background:#FAFBFC;position:sticky;top:0;z-index:1}
+.data-table td{padding:6px 10px;border-bottom:0.5px solid #eee;color:#111827;white-space:nowrap}
+.data-table tr:hover td{background:#F8FAFC}
 .data-table td.num{text-align:right;font-variant-numeric:tabular-nums}
 .data-table td.expo{color:#854F0B;text-align:right;font-weight:500}
 .filter-row{display:flex;gap:10px;align-items:center;padding:0.75rem 1.5rem 0;flex-wrap:wrap;background:#fff}
 .filter-row input{font-size:12px;padding:5px 10px;border:1px solid #ddd;border-radius:6px;outline:none;width:220px}
 .filter-row input:focus{border-color:#C8302A}
-.row-count{font-size:12px;color:#888}
+.row-count{font-size:12px;color:#6B7280}
 /* Datos tab layout */
 .datos-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;padding:1rem 1.5rem 0;background:#fff}
-.datos-card{background:#f5f5f3;border-radius:8px;padding:0.75rem 1rem;border-left:3px solid #ddd}
-.datos-card .dc-label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:3px}
-.datos-card .dc-proj{font-size:12px;font-weight:500;color:#1a1a1a;margin-bottom:6px}
+.datos-card{background:#fff;border:1px solid #E5E7EB;border-radius:10px;padding:0.75rem 1rem;border-left:3px solid #ddd}
+.datos-card .dc-label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#6B7280;margin-bottom:3px}
+.datos-card .dc-proj{font-size:12px;font-weight:500;color:#111827;margin-bottom:6px}
 .datos-card .dc-row{display:flex;justify-content:space-between;font-size:11px;margin-top:2px}
-.datos-card .dc-row span:first-child{color:#888}
-.datos-card .dc-row span:last-child{font-weight:500;color:#1a1a1a}
+.datos-card .dc-row span:first-child{color:#6B7280}
+.datos-card .dc-row span:last-child{font-weight:500;color:#111827}
 .datos-card .dc-row.expo span:last-child{color:#854F0B}
-.datos-card .dc-bar{height:4px;border-radius:2px;background:#e5e5e3;margin-top:6px;overflow:hidden}
+.datos-card .dc-bar{height:4px;border-radius:2px;background:#E5E7EB;margin-top:6px;overflow:hidden}
 .datos-card .dc-bar-fill{height:100%;border-radius:2px}
 .datos-filters{display:flex;gap:14px;align-items:flex-end;padding:0.75rem 1.5rem;background:#fff;flex-wrap:wrap;border-bottom:0.5px solid #ddd}
 .datos-filter-group{display:flex;flex-direction:column;gap:4px}
-.datos-filter-group label{font-size:11px;color:#888;font-weight:500}
-.datos-filter-group input[type="date"]{font-size:12px;padding:5px 8px;border:1px solid #ddd;border-radius:6px;outline:none;color:#1a1a1a}
+.datos-filter-group label{font-size:11px;color:#6B7280;font-weight:500}
+.datos-filter-group input[type="date"]{font-size:12px;padding:5px 8px;border:1px solid #ddd;border-radius:6px;outline:none;color:#111827}
 .datos-filter-group input[type="date"]:focus{border-color:#C8302A}
 </style>
 <!--UIPATH_EXTENSION_ID: conkfbpnllelocpogdmbilgmnkabjfmf--></head>
@@ -151,19 +154,19 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
 <div class="tab-content active" id="content-dashboard">
 
 <div class="kpi-row">
-  <div class="kpi">
-    <div class="label"><i class="ti ti-file-invoice" aria-hidden="true"></i> Total contratado</div>
-    <div class="value" id="kpiContrato">$433.8 MM</div>
+  <div class="kpi kb">
+    <div class="label">Total contratado</div>
+    <div class="value b" id="kpiContrato">$433.8 MM</div>
     <div class="sub" id="kpiProyectos">5 proyectos seleccionados</div>
   </div>
-  <div class="kpi">
-    <div class="label"><i class="ti ti-check" aria-hidden="true"></i> Total facturado</div>
-    <div class="value" id="kpiFacturado">$290.4 MM</div>
+  <div class="kpi kp">
+    <div class="label">Total facturado</div>
+    <div class="value p" id="kpiFacturado">$290.4 MM</div>
     <div class="sub" id="kpiPct">67% del portafolio</div>
   </div>
-  <div class="kpi">
-    <div class="label" style="color:#854F0B"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Exposición total</div>
-    <div class="value" id="kpiExposicion" style="color:#854F0B">$143.4 MM</div>
+  <div class="kpi kw">
+    <div class="label">Exposición total</div>
+    <div class="value w" id="kpiExposicion">$143.4 MM</div>
     <div class="sub" id="kpiExpPct">33% por facturar</div>
   </div>
 </div>
@@ -388,7 +391,7 @@ function renderBar(active){
   const labels=active.map(p=>PROJ_NAMES[p]||p);
   const facturado=active.map(p=>+((allData[p]?.facturado||0)/1e9).toFixed(2));
   const exposicion=active.map(p=>+((allData[p]?.exposicion||0)/1e9).toFixed(2));
-  const colors=active.map(p=>PROJ_COLORS[p]||'#888');
+  const colors=active.map(p=>PROJ_COLORS[p]||'#6B7280');
   document.getElementById('barWrap').style.height=Math.max(200,active.length*52+60)+'px';
   barChartInst=new Chart(document.getElementById('barChart'),{
     type:'bar',
@@ -415,7 +418,7 @@ function renderTable(active){
     if(!d) return;
     const pc=pct(d.facturado,d.contrato);
     const badge=pc>=90?'<span class="badge verde">Avanzado</span>':pc>=50?'<span class="badge amarillo">En curso</span>':'<span class="badge rojo">Inicial</span>';
-    const color=PROJ_COLORS[p]||'#888';
+    const color=PROJ_COLORS[p]||'#6B7280';
     tbody.innerHTML+=`<tr>
       <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${color};margin-right:6px;vertical-align:1px"></span><strong>${PROJ_NAMES[p]||p}</strong></td>
       <td>${fmt(d.contrato)}</td>
@@ -761,7 +764,7 @@ loadDefaultData();function parseXlsx(file){
           });
         }
         /* Agregar al selector de pills si es nuevo */
-        if(!PROJ_COLORS[p]) PROJ_COLORS[p]='#888888';
+        if(!PROJ_COLORS[p]) PROJ_COLORS[p]='#6B7280';
         if(!PROJ_NAMES[p])  PROJ_NAMES[p]=p.charAt(0)+p.slice(1).toLowerCase();
       });
 
@@ -771,7 +774,7 @@ loadDefaultData();function parseXlsx(file){
       /* Reconstruir pills */
       const pillGroup=document.getElementById('pillGroup');
       found.forEach(p=>{
-        if(!PROJ_COLORS[p]) PROJ_COLORS[p]='#888888';
+        if(!PROJ_COLORS[p]) PROJ_COLORS[p]='#6B7280';
         if(!PROJ_NAMES[p])  PROJ_NAMES[p]=p.charAt(0)+p.slice(1).toLowerCase();
         const existing=pillGroup.querySelector(`[data-proj="${p}"]`);
         if(!existing){
@@ -862,7 +865,7 @@ function renderSummaryCards(){
   const projs=Object.keys(allData).sort();
   container.innerHTML=projs.map(p=>{
     const d=allData[p];
-    const color=PROJ_COLORS[p]||'#888';
+    const color=PROJ_COLORS[p]||'#6B7280';
     const name=PROJ_NAMES[p]||p;
     const pc=d.contrato>0?Math.round(d.facturado/d.contrato*100):0;
     return `<div class="datos-card" style="border-left-color:${color}">
@@ -887,7 +890,7 @@ function buildDataPills(){
   // Aplicar colores a los pills de proyectos
   projs.forEach(p=>{
     const pill=group.querySelector(`[data-dproj="${p}"]`);
-    if(pill){ pill.style.background=PROJ_COLORS[p]||'#888'; pill.style.color='#fff'; pill.style.borderColor='transparent'; }
+    if(pill){ pill.style.background=PROJ_COLORS[p]||'#6B7280'; pill.style.color='#fff'; pill.style.borderColor='transparent'; }
   });
 }
 
@@ -907,7 +910,7 @@ function toggleAllDataProjs(pill){
     document.querySelectorAll('#dataPillGroup .pill[data-dproj]').forEach(p=>{
       const proj=p.dataset.dproj;
       p.classList.add('active');
-      p.style.background=PROJ_COLORS[proj]||'#888'; p.style.color='#fff'; p.style.borderColor='transparent';
+      p.style.background=PROJ_COLORS[proj]||'#6B7280'; p.style.color='#fff'; p.style.borderColor='transparent';
     });
     pill.classList.add('active');
     pill.style.background='#5F5E5A'; pill.style.color='#fff'; pill.style.borderColor='transparent';
@@ -923,7 +926,7 @@ function toggleDataProj(p, pill){
     pill.classList.remove('active');
   } else {
     datosActiveProjs.add(p);
-    pill.style.background=PROJ_COLORS[p]||'#888'; pill.style.color='#fff'; pill.style.borderColor='transparent';
+    pill.style.background=PROJ_COLORS[p]||'#6B7280'; pill.style.color='#fff'; pill.style.borderColor='transparent';
     pill.classList.add('active');
   }
   // Sincronizar botón Todos
@@ -946,7 +949,7 @@ function buildAllRawRows(){
     const d=allData[p];
     pts.forEach((pt,i)=>{
       allRawRows.push({
-        proj:p, name:PROJ_NAMES[p]||p, color:PROJ_COLORS[p]||'#888',
+        proj:p, name:PROJ_NAMES[p]||p, color:PROJ_COLORS[p]||'#6B7280',
         fecha:pt.date,
         fechaStr:pt.date.toLocaleDateString('es-CO',{day:'2-digit',month:'2-digit',year:'numeric'}),
         factura:'FV '+i,
@@ -965,7 +968,7 @@ function clearDataFilters(){
   document.querySelectorAll('#dataPillGroup .pill').forEach(pill=>{
     const p=pill.dataset.dproj;
     pill.classList.add('active');
-    pill.style.background=PROJ_COLORS[p]||'#888';pill.style.color='#fff';pill.style.borderColor='transparent';
+    pill.style.background=PROJ_COLORS[p]||'#6B7280';pill.style.color='#fff';pill.style.borderColor='transparent';
   });
   filterDataTable();
 }
