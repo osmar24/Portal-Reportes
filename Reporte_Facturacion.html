@@ -96,7 +96,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
 .datos-filter-group input[type="date"]{font-size:12px;padding:5px 8px;border:1px solid #ddd;border-radius:6px;outline:none;color:#1a1a1a}
 .datos-filter-group input[type="date"]:focus{border-color:#185FA5}
 </style>
-</head>
+<!--UIPATH_EXTENSION_ID: conkfbpnllelocpogdmbilgmnkabjfmf--></head>
 <body>
 
 <nav class="portal-nav">
@@ -118,8 +118,8 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
     <h1>Seguimiento de Facturación por Proyecto</h1>
   </div>
   <div style="display:flex;align-items:center;gap:12px;">
-    <div class="upload-btn" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-      <span>📤 Cargar Excel</span>
+    <div class="upload-btn" id="uploadZone" onclick="document.getElementById('fileInput').click()" style="">
+      <span>✅ Cargado: RELACION FACTURACION.xlsx</span>
       <small>Arrastra o haz clic</small>
       <input type="file" id="fileInput" accept=".xlsx,.xls">
     </div>
@@ -127,7 +127,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
       <span>💾 Descargar HTML</span>
       <small>Guarda esta versión</small>
     </div>
-    <div class="topbar-r" id="corteLabel">Corte: 24 jun 2026 · Confidencial</div>
+    <div class="topbar-r" id="corteLabel">Corte: 26 jun 2026 · Confidencial</div>
   </div>
 </div>
 
@@ -153,18 +153,18 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
 <div class="kpi-row">
   <div class="kpi">
     <div class="label"><i class="ti ti-file-invoice" aria-hidden="true"></i> Total contratado</div>
-    <div class="value" id="kpiContrato">$416.2 MM</div>
+    <div class="value" id="kpiContrato">$433.8 MM</div>
     <div class="sub" id="kpiProyectos">5 proyectos seleccionados</div>
   </div>
   <div class="kpi">
     <div class="label"><i class="ti ti-check" aria-hidden="true"></i> Total facturado</div>
     <div class="value" id="kpiFacturado">$290.4 MM</div>
-    <div class="sub" id="kpiPct">70% del portafolio</div>
+    <div class="sub" id="kpiPct">67% del portafolio</div>
   </div>
   <div class="kpi">
     <div class="label" style="color:#854F0B"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Exposición total</div>
-    <div class="value" id="kpiExposicion" style="color:#854F0B">$125.7 MM</div>
-    <div class="sub" id="kpiExpPct">30% por facturar</div>
+    <div class="value" id="kpiExposicion" style="color:#854F0B">$143.4 MM</div>
+    <div class="sub" id="kpiExpPct">33% por facturar</div>
   </div>
 </div>
 
@@ -205,11 +205,11 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
       <td><span class="badge verde">Avanzado</span></td>
     </tr><tr>
       <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3B6D11;margin-right:6px;vertical-align:1px"></span><strong>Hospital</strong></td>
-      <td>$13.2 MM</td>
+      <td>$16.5 MM</td>
       <td>$12.7 MM</td>
-      <td style="color:#854F0B">$519.8 M</td>
-      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">96%</span><div class="bar-bg"><div class="bar-fill" style="width:96%;background:#3B6D11"></div></div></div></td>
-      <td><span class="badge verde">Avanzado</span></td>
+      <td style="color:#854F0B">$3.8 MM</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">77%</span><div class="bar-bg"><div class="bar-fill" style="width:77%;background:#3B6D11"></div></div></div></td>
+      <td><span class="badge amarillo">En curso</span></td>
     </tr><tr>
       <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#854F0B;margin-right:6px;vertical-align:1px"></span><strong>Colegios</strong></td>
       <td>$111.3 MM</td>
@@ -219,11 +219,11 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
       <td><span class="badge rojo">Inicial</span></td>
     </tr><tr>
       <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#533AB7;margin-right:6px;vertical-align:1px"></span><strong>Playas</strong></td>
-      <td>$66.5 MM</td>
+      <td>$80.9 MM</td>
       <td>$64.2 MM</td>
-      <td style="color:#854F0B">$2.3 MM</td>
-      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">96%</span><div class="bar-bg"><div class="bar-fill" style="width:96%;background:#533AB7"></div></div></div></td>
-      <td><span class="badge verde">Avanzado</span></td>
+      <td style="color:#854F0B">$16.7 MM</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">79%</span><div class="bar-bg"><div class="bar-fill" style="width:79%;background:#533AB7"></div></div></div></td>
+      <td><span class="badge amarillo">En curso</span></td>
     </tr><tr>
       <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#993556;margin-right:6px;vertical-align:1px"></span><strong>Metropolitano</strong></td>
       <td>$173.0 MM</td>
@@ -248,7 +248,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a1a}
   </div>
 </div>
 
-<div class="last-updated" id="updatedTs">Datos base: jun 2026 | Fuente: RELACION_FACTURACION.xlsx</div>
+<div class="last-updated" id="updatedTs">Última actualización: 26/6/2026, 10:06:24 a. m.</div>
 
 </div><!-- end content-dashboard -->
 
@@ -337,9 +337,9 @@ let barChartInst = null, lineChartInst = null;
 
 function loadDefaultData(){
   /* DATA_START */
-  allData = {"VIAS":{"contrato":52085450531,"facturado":51289237101,"exposicion":796213430},"HOSPITAL":{"contrato":13197369373,"facturado":12677557070,"exposicion":519812303},"COLEGIOS":{"contrato":111327609605,"facturado":20717464570,"exposicion":90610145035},"PLAYAS":{"contrato":66547295616,"facturado":64212616488,"exposicion":2334679129},"METROPOLITANO":{"contrato":173020000000,"facturado":141531169404,"exposicion":31488830596}};
-  timelineData = {"VIAS":[{"date":"2025-10-23T05:00:00.000Z","acum":0},{"date":"2025-10-24T05:00:00.000Z","acum":10281737404},{"date":"2025-12-26T05:00:00.000Z","acum":25337628899},{"date":"2026-02-10T05:00:00.000Z","acum":40337628899},{"date":"2026-03-24T05:00:00.000Z","acum":51211919433},{"date":"2026-03-27T05:00:00.000Z","acum":51289237101}],"HOSPITAL":[{"date":"2026-01-06T05:00:00.000Z","acum":0},{"date":"2026-01-07T05:00:00.000Z","acum":3379714137},{"date":"2026-02-03T05:00:00.000Z","acum":6125139256},{"date":"2026-03-11T05:00:00.000Z","acum":8137535916},{"date":"2026-05-05T05:00:00.000Z","acum":12677557070}],"COLEGIOS":[{"date":"2025-10-08T05:00:00.000Z","acum":0},{"date":"2025-10-08T05:00:00.000Z","acum":8182750},{"date":"2025-11-21T05:00:00.000Z","acum":6504197214},{"date":"2025-11-21T05:00:00.000Z","acum":9978252277},{"date":"2026-03-26T05:00:00.000Z","acum":12299181919},{"date":"2026-03-26T05:00:00.000Z","acum":16175375779},{"date":"2026-03-26T05:00:00.000Z","acum":20717464570}],"PLAYAS":[{"date":"2025-12-12T05:00:00.000Z","acum":0},{"date":"2025-12-12T05:00:00.000Z","acum":8490935939},{"date":"2026-03-12T05:00:00.000Z","acum":30708357466},{"date":"2026-04-20T05:00:00.000Z","acum":51090805875},{"date":"2026-05-19T05:00:00.000Z","acum":64212616488}],"METROPOLITANO":[{"date":"2025-12-01T05:00:00.000Z","acum":0},{"date":"2026-06-01T05:00:00.000Z","acum":28467192767},{"date":"2026-06-01T05:00:00.000Z","acum":69794162954},{"date":"2026-06-01T05:00:00.000Z","acum":141531169404}]};
-  corteFecha = "24 jun 2026";
+  allData = {"VIAS":{"contrato":52085450531,"facturado":51289237101.020004,"exposicion":796213429.9799957},"HOSPITAL":{"contrato":16464647721,"facturado":12677557069.96,"exposicion":3787090651.040001},"COLEGIOS":{"contrato":111327609605,"facturado":20717464569.9942,"exposicion":90610145035.0058},"PLAYAS":{"contrato":80882579931,"facturado":64212616487.579994,"exposicion":16669963443.420006},"METROPOLITANO":{"contrato":173020000000,"facturado":141531169404.41,"exposicion":31488830595.589996}};
+  timelineData = {"VIAS":[{"date":"2025-10-23T05:00:00.000Z","acum":0},{"date":"2025-10-24T05:00:00.000Z","acum":10281737404.23},{"date":"2025-12-26T05:00:00.000Z","acum":25337628899.02},{"date":"2026-02-10T05:00:00.000Z","acum":40337628899.020004},{"date":"2026-03-24T05:00:00.000Z","acum":51211919433.020004},{"date":"2026-03-27T05:00:00.000Z","acum":51289237101.020004}],"HOSPITAL":[{"date":"2026-01-06T05:00:00.000Z","acum":0},{"date":"2026-01-07T05:00:00.000Z","acum":3379714137},{"date":"2026-02-03T05:00:00.000Z","acum":6125139256},{"date":"2026-03-11T05:00:00.000Z","acum":8137535915.96},{"date":"2026-05-05T05:00:00.000Z","acum":12677557069.96}],"COLEGIOS":[{"date":"2025-10-08T05:00:00.000Z","acum":0},{"date":"2025-10-08T05:00:00.000Z","acum":8182750},{"date":"2025-11-21T05:00:00.000Z","acum":6504197213.9991},{"date":"2025-11-21T05:00:00.000Z","acum":9978252276.9942},{"date":"2026-03-26T05:00:00.000Z","acum":12299181918.9942},{"date":"2026-03-26T05:00:00.000Z","acum":16175375778.9942},{"date":"2026-03-26T05:00:00.000Z","acum":20717464569.9942}],"PLAYAS":[{"date":"2025-12-12T05:00:00.000Z","acum":0},{"date":"2025-12-12T05:00:00.000Z","acum":8490935939},{"date":"2026-03-12T05:00:00.000Z","acum":30708357465.73},{"date":"2026-04-20T05:00:00.000Z","acum":51090805874.729996},{"date":"2026-05-19T05:00:00.000Z","acum":64212616487.579994}],"METROPOLITANO":[{"date":"2025-12-01T05:00:00.000Z","acum":0},{"date":"2026-06-01T05:00:00.000Z","acum":28467192767.41},{"date":"2026-06-01T05:00:00.000Z","acum":69794162954.41},{"date":"2026-06-01T05:00:00.000Z","acum":141531169404.41}]};
+  corteFecha = "26 jun 2026";
   /* DATA_END */
   // Si los datos vienen de un HTML descargado, las fechas llegan como texto ISO: reconstituir a Date.
   Object.values(timelineData).forEach(arr=>arr.forEach(pt=>{ if(typeof pt.date==='string') pt.date=new Date(pt.date); }));
