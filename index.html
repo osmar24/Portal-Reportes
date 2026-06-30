@@ -43,6 +43,9 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--
 .stat .sv{font-size:15px;font-weight:700;color:var(--navy);line-height:1.1;}
 .stat .sl{font-size:9.5px;color:var(--soft);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;}
 .card-cta{font-size:12.5px;font-weight:600;color:var(--blue);display:flex;align-items:center;gap:6px;}
+.card-updated{font-size:10.5px;color:var(--soft);margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.card-updated::before{content:'';width:6px;height:6px;border-radius:50%;background:#16A34A;flex-shrink:0;}
+.card-updated.stale::before{background:var(--soft);}
 .card-cta .arrow{transition:transform .15s;}
 .card:hover .card-cta .arrow{transform:translateX(3px);}
 
@@ -84,9 +87,10 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--
       </div>
       <p class="desc">Facturación ejecutada vs. exposición contractual en 5 proyectos: Vías, Hospital, Colegios, Playas y Metropolitano.</p>
       <div class="card-stats">
-        <div class="stat"><div class="sv">5</div><div class="sl">Proyectos</div></div>
-        <div class="stat"><div class="sv">$290.4B</div><div class="sl">Total facturado</div></div>
+        <div class="stat"><div class="sv" id="fac-nproy">5</div><div class="sl">Proyectos</div></div>
+        <div class="stat"><div class="sv" id="fac-total">$290.4B</div><div class="sl">Total facturado</div></div>
       </div>
+      <div class="card-updated" id="fac-updated">Actualizado: 24 jun 2026</div>
       <div class="card-cta">Ver reporte <span class="arrow">→</span></div>
     </a>
 
@@ -100,9 +104,10 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--
       </div>
       <p class="desc">Ingresos, egresos y saldo de caja del portafolio 2025–2028, con detalle semanal del mes en curso y simulador de escenarios.</p>
       <div class="card-stats">
-        <div class="stat"><div class="sv">$701.75B</div><div class="sl">Portafolio total</div></div>
-        <div class="stat"><div class="sv">18.5%</div><div class="sl">Margen portafolio</div></div>
+        <div class="stat"><div class="sv" id="fc-portafolio">$701.75B</div><div class="sl">Portafolio total</div></div>
+        <div class="stat"><div class="sv" id="fc-margen">18.5%</div><div class="sl">Margen portafolio</div></div>
       </div>
+      <div class="card-updated" id="fc-updated">Actualizado: 24 jun 2026</div>
       <div class="card-cta">Ver reporte <span class="arrow">→</span></div>
     </a>
 
@@ -116,9 +121,10 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--
       </div>
       <p class="desc">Control de pagos a proveedores en 8 proyectos: ranking de proveedores críticos, evolución mensual y análisis Pareto.</p>
       <div class="card-stats">
-        <div class="stat"><div class="sv">$144.72B</div><div class="sl">Total pagado</div></div>
-        <div class="stat"><div class="sv">702</div><div class="sl">Proveedores</div></div>
+        <div class="stat"><div class="sv" id="pg-total">$144.72B</div><div class="sl">Total pagado</div></div>
+        <div class="stat"><div class="sv" id="pg-nprov">702</div><div class="sl">Proveedores</div></div>
       </div>
+      <div class="card-updated" id="pg-updated">Actualizado: 25 jun 2026</div>
       <div class="card-cta">Ver reporte <span class="arrow">→</span></div>
     </a>
 
@@ -127,5 +133,117 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--
 
 <p class="footer-note">Los datos se actualizan cargando el Excel correspondiente desde cada reporte. Use el botón "Descargar HTML" para guardar una versión con los datos más recientes.</p>
 
+<script>
+// ════════════════════════════════════════════════════════════════
+// Lee los datos más recientes directamente de los 3 dashboards ya
+// publicados (mismo dominio en GitHub Pages) y actualiza las tarjetas.
+// Si algo falla (ej. abierto como file:// local), se quedan los
+// valores de respaldo que ya están escritos en el HTML.
+// ════════════════════════════════════════════════════════════════
+
+function extractBlock(text, startMark, endMark){
+  const i = text.indexOf(startMark);
+  const j = text.indexOf(endMark);
+  if(i===-1||j===-1||j<=i) return null;
+  return text.slice(i+startMark.length, j);
+}
+
+// Extrae el objeto {...} balanceado que sigue a "varName = "
+function extractObjectLiteral(text, varName){
+  const marker = varName+' = ';
+  const idx = text.indexOf(marker);
+  if(idx===-1) return null;
+  const start = text.indexOf('{', idx);
+  if(start===-1) return null;
+  let depth=0, inStr=null, esc=false;
+  for(let k=start;k<text.length;k++){
+    const c=text[k];
+    if(inStr){
+      if(esc){ esc=false; }
+      else if(c==='\\'){ esc=true; }
+      else if(c===inStr){ inStr=null; }
+    }else{
+      if(c==='"'||c==="'") inStr=c;
+      else if(c==='{') depth++;
+      else if(c==='}'){ depth--; if(depth===0) return text.slice(start,k+1); }
+    }
+  }
+  return null;
+}
+
+function extractStringLiteral(text, varName){
+  const marker = varName+' = ';
+  const idx = text.indexOf(marker);
+  if(idx===-1) return null;
+  const after = text.slice(idx+marker.length);
+  const m = after.match(/^['"]([^'"]*)['"]/);
+  return m ? m[1] : null;
+}
+
+function fmtB(v){ return '$'+(v/1e9).toFixed(2)+'B'; }
+
+function markUpdated(id, fecha){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = fecha ? ('Actualizado: '+fecha) : 'Sin datos en vivo';
+  el.classList.toggle('stale', !fecha);
+}
+
+async function loadCardData(path, cb){
+  try{
+    const res = await fetch(path, {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const text = await res.text();
+    const block = extractBlock(text, '/* DATA_START */', '/* DATA_END */');
+    if(!block) throw new Error('No se encontró el bloque de datos en '+path);
+    cb(block);
+  }catch(err){
+    console.warn('No se pudo actualizar la tarjeta de', path, '—', err.message);
+  }
+}
+
+// Facturación
+loadCardData('Reporte_Facturacion.html', (block)=>{
+  const allDataStr = extractObjectLiteral(block, 'allData');
+  const corte = extractStringLiteral(block, 'corteFecha');
+  if(allDataStr){
+    const allData = JSON.parse(allDataStr);
+    const projs = Object.keys(allData);
+    const totalFacturado = projs.reduce((a,p)=>a+(allData[p].facturado||0),0);
+    document.getElementById('fac-nproy').textContent = projs.length;
+    document.getElementById('fac-total').textContent = fmtB(totalFacturado);
+  }
+  markUpdated('fac-updated', corte);
+});
+
+// Flujo de Caja
+loadCardData('FC_ObrasPublicas.html', (block)=>{
+  const dataStr = extractObjectLiteral(block, 'DATA');
+  if(dataStr){
+    const d = JSON.parse(dataStr);
+    if(d.TOTAL_PORTAFOLIO!=null){
+      document.getElementById('fc-portafolio').textContent = fmtB(d.TOTAL_PORTAFOLIO);
+      if(d.TOTAL_EGRESOS_PORTAFOLIO!=null){
+        const margen = (d.TOTAL_PORTAFOLIO-d.TOTAL_EGRESOS_PORTAFOLIO)/d.TOTAL_PORTAFOLIO*100;
+        document.getElementById('fc-margen').textContent = margen.toFixed(1)+'%';
+      }
+    }
+    markUpdated('fc-updated', d.corte);
+  }
+});
+
+// Gestión de Pagos
+loadCardData('Gestion_Pagos.html', (block)=>{
+  const dataStr = extractObjectLiteral(block, 'DATA');
+  if(dataStr){
+    const d = JSON.parse(dataStr);
+    if(d.K){
+      document.getElementById('pg-total').textContent = fmtB(d.K.total);
+      document.getElementById('pg-nprov').textContent = d.K.nprov;
+    }
+    markUpdated('pg-updated', d.corte);
+  }
+});
+</script>
 </body>
 </html>
