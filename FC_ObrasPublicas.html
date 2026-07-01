@@ -125,13 +125,13 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
 </div>
 
 <div class="tab-bar">
-  <button class="tab" onclick="go('res',this)">FC Resumen — O.P.</button>
-  <button class="tab on" onclick="go('mes',this)">FC Mes — Junio 2026</button>
+  <button class="tab on" onclick="go('res',this)">FC Resumen — O.P.</button>
+  <button class="tab" onclick="go('mes',this)">FC Mes — Junio 2026</button>
   <button class="tab" onclick="go('sim',this)">Simulador de escenarios</button>
 </div>
 
 <!-- ══ PANEL RESUMEN ══ -->
-<div id="p-res" class="panel">
+<div id="p-res" class="panel on">
   <div class="kpi-row">
     <div class="kpi kb"><div class="kl">Portafolio total</div><div class="kv b" id="kpi-portafolio">$701.75B</div><div class="ks">Ingresos contractuales</div></div>
     <div class="kpi kw"><div class="kl">Flujo neto 2026</div><div class="kv w" id="kpi-flujoneto">$12.46B</div><div class="ks" id="kpi-flujoneto-s">0 de 12 meses negativos</div></div>
@@ -148,18 +148,18 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
     <h3>Ingresos vs. Egresos mensuales (COP Billones)</h3>
     <p class="sub" id="sub-c1">Julio concentra el mayor ingreso 2026 — saldo máximo de $75.73B en julio</p>
     <div class="leg"><div class="li"><div class="ld" style="background:#16505C"></div>Ingresos</div><div class="li"><div class="ld" style="background:#78716C"></div>Egresos</div></div>
-    <div style="position:relative;height:250px"><canvas id="c1" role="img" aria-label="Ingresos y egresos 2026" style="box-sizing: border-box; display: block; height: 250px; width: 1171px;" width="1756" height="375"></canvas></div>
+    <div style="position:relative;height:250px"><canvas id="c1" role="img" aria-label="Ingresos y egresos 2026" style="box-sizing: border-box; display: block; height: 250px; width: 1811px;" width="1811" height="250"></canvas></div>
   </div>
   <div class="g2">
-    <div class="cc"><h3>Flujo neto mensual (COP Billones)</h3><p class="sub" id="sub-c2">El portafolio no registra meses con saldo acumulado negativo en 2026</p><div style="position:relative;height:210px"><canvas id="c2" role="img" aria-label="Flujo neto 2026" style="box-sizing: border-box; display: block; height: 210px; width: 559px;" width="838" height="315"></canvas></div></div>
-    <div class="cc"><h3>Saldo acumulado (COP Billones)</h3><p class="sub" id="sub-c3">Saldo mínimo $1.27B en enero, cierra diciembre en $22.86B</p><div style="position:relative;height:210px"><canvas id="c3" role="img" aria-label="Saldo acumulado 2026" style="box-sizing: border-box; display: block; height: 210px; width: 559px;" width="838" height="315"></canvas></div></div>
+    <div class="cc"><h3>Flujo neto mensual (COP Billones)</h3><p class="sub" id="sub-c2">El portafolio no registra meses con saldo acumulado negativo en 2026</p><div style="position:relative;height:210px"><canvas id="c2" role="img" aria-label="Flujo neto 2026" style="box-sizing: border-box; display: block; height: 210px; width: 878px;" width="878" height="210"></canvas></div></div>
+    <div class="cc"><h3>Saldo acumulado (COP Billones)</h3><p class="sub" id="sub-c3">Saldo mínimo $1.27B en enero, cierra diciembre en $22.86B</p><div style="position:relative;height:210px"><canvas id="c3" role="img" aria-label="Saldo acumulado 2026" style="box-sizing: border-box; display: block; height: 210px; width: 878px;" width="878" height="210"></canvas></div></div>
   </div>
 
   <div class="st">Análisis de portafolio</div>
   <div class="g3">
-    <div class="cc"><h3>Participación por proyecto</h3><p class="sub" id="sub-c4">Metro Estadio = 49.1% del portafolio</p><div style="position:relative;height:220px"><canvas id="c4" role="img" aria-label="Participación por proyecto" style="box-sizing: border-box; display: block; height: 220px; width: 354px;" width="532" height="330"></canvas></div></div>
-    <div class="cc"><h3>Margen bruto por proyecto (%)</h3><p class="sub">Verde ≥ 20% · Amarillo ≥ 12% · Rojo &lt;12%</p><div style="position:relative;height:220px"><canvas id="c5" role="img" aria-label="Margen por proyecto" style="box-sizing: border-box; display: block; height: 220px; width: 354px;" width="532" height="330"></canvas></div></div>
-    <div class="cc"><h3>Concentración de ingresos mensual</h3><p class="sub">% del total anual 2026</p><div style="position:relative;height:220px"><canvas id="c6" role="img" aria-label="Concentración mensual" style="box-sizing: border-box; display: block; height: 220px; width: 354px;" width="532" height="330"></canvas></div></div>
+    <div class="cc"><h3>Participación por proyecto</h3><p class="sub" id="sub-c4">Metro Estadio = 49.1% del portafolio</p><div style="position:relative;height:220px"><canvas id="c4" role="img" aria-label="Participación por proyecto" style="box-sizing: border-box; display: block; height: 220px; width: 567px;" width="567" height="220"></canvas></div></div>
+    <div class="cc"><h3>Margen bruto por proyecto (%)</h3><p class="sub">Verde ≥ 20% · Amarillo ≥ 12% · Rojo &lt;12%</p><div style="position:relative;height:220px"><canvas id="c5" role="img" aria-label="Margen por proyecto" style="box-sizing: border-box; display: block; height: 220px; width: 567px;" width="567" height="220"></canvas></div></div>
+    <div class="cc"><h3>Concentración de ingresos mensual</h3><p class="sub">% del total anual 2026</p><div style="position:relative;height:220px"><canvas id="c6" role="img" aria-label="Concentración mensual" style="box-sizing: border-box; display: block; height: 220px; width: 567px;" width="567" height="220"></canvas></div></div>
   </div>
 
   <div class="st">Detalle mensual por proyecto</div>
@@ -177,7 +177,7 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
 </div>
 
 <!-- ══ PANEL MES ══ -->
-<div id="p-mes" class="panel on">
+<div id="p-mes" class="panel">
   <div class="kpi-row">
     <div class="kpi kb"><div class="kl" id="kpi-mes-label">Saldo inicial junio</div><div class="kv b" id="kpi-mes-s0">$2.32B</div><div class="ks">Acumulado a mayo</div></div>
     <div class="kpi kp"><div class="kl">Ingresos ejecutados</div><div class="kv p" id="kpi-mes-ie">$104.25B</div><div class="ks">Total mes ejecutado</div></div>
@@ -189,17 +189,17 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
   <div class="g2">
     <div class="cc"><h3>Ingreso semanal (COP Billones)</h3><p class="sub">Valor ejecutado en cada semana del mes (no acumulado)</p>
       <div class="leg"><div class="li"><div class="ld" style="background:#16505C"></div>Ejecución</div></div>
-      <div style="position:relative;height:220px"><canvas id="c7" role="img" aria-label="Ingreso acumulado semanal" style="box-sizing: border-box; display: block; height: 220px; width: 559px;" width="838" height="330"></canvas></div></div>
+      <div style="position:relative;height:220px"><canvas id="c7" role="img" aria-label="Ingreso acumulado semanal" style="box-sizing: border-box; display: block; height: 220px; width: 878px;" width="878" height="220"></canvas></div></div>
     <div class="cc"><h3>Egreso semanal (COP Billones)</h3><p class="sub">Valor ejecutado en cada semana del mes (no acumulado)</p>
       <div class="leg"><div class="li"><div class="ld" style="background:#78716C"></div>Ejecución</div></div>
-      <div style="position:relative;height:220px"><canvas id="c8" role="img" aria-label="Egreso acumulado semanal" style="box-sizing: border-box; display: block; height: 220px; width: 559px;" width="838" height="330"></canvas></div></div>
+      <div style="position:relative;height:220px"><canvas id="c8" role="img" aria-label="Egreso acumulado semanal" style="box-sizing: border-box; display: block; height: 220px; width: 878px;" width="878" height="220"></canvas></div></div>
   </div>
   <div class="g2">
     <div class="cc"><h3>Saldo de caja acumulado semanal (COP Billones)</h3><p class="sub" id="sub-c9">Ejecución desde saldo inicial $2.32B</p>
       <div class="leg"><div class="li"><div class="ld" style="background:#2A2A2C;border-radius:50%"></div>Ejecución</div></div>
-      <div style="position:relative;height:210px"><canvas id="c9" role="img" aria-label="Saldo acumulado semanal" style="box-sizing: border-box; display: block; height: 210px; width: 559px;" width="838" height="315"></canvas></div></div>
+      <div style="position:relative;height:210px"><canvas id="c9" role="img" aria-label="Saldo acumulado semanal" style="box-sizing: border-box; display: block; height: 210px; width: 878px;" width="878" height="210"></canvas></div></div>
     <div class="cc"><h3>Egresos ejecutados por proyecto — <span id="c10-mes">Junio</span></h3><p class="sub" id="sub-c10">Metro Estadio = 63.2% del egreso del mes</p>
-      <div style="position:relative;height:210px"><canvas id="c10" role="img" aria-label="Egresos junio por proyecto" style="box-sizing: border-box; display: block; height: 210px; width: 559px;" width="838" height="315"></canvas></div></div>
+      <div style="position:relative;height:210px"><canvas id="c10" role="img" aria-label="Egresos junio por proyecto" style="box-sizing: border-box; display: block; height: 210px; width: 878px;" width="878" height="210"></canvas></div></div>
   </div>
 
   <div class="st">Detalle semanal — <span id="st-mes-detalle">Junio 2026</span></div>
@@ -227,7 +227,7 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
   </div>
 
   <div class="kpi-row" style="margin-bottom:20px;">
-    <div class="kpi kw"><div class="kl">Flujo neto 2026</div><div class="kv p" id="sk1">$5.68B</div><div class="ks" id="sd1" style="color: var(--pos);">▲ +0.01B vs base</div></div>
+    <div class="kpi kw"><div class="kl">Flujo neto 2026</div><div class="kv p" id="sk1">$12.46B</div><div class="ks" id="sd1" style="color: var(--pos);">▲ +0.00B vs base</div></div>
     <div class="kpi kp"><div class="kl">Saldo mín. (peor mes)</div><div class="kv p" id="sk2">$1.27B</div><div class="ks" id="sd2" style="color: var(--pos);">▲ +0.00B vs base</div></div>
     <div class="kpi kp"><div class="kl">Meses en déficit</div><div class="kv p" id="sk3">0 / 12</div><div class="ks" id="sd3" style="color: var(--pos);">▲ 0 mes(es)</div></div>
     <div class="kpi kn"><div class="kl">Cash runway</div><div class="kv n" id="sk4">&lt;1 mes</div><div class="ks" id="sd4" style="color: var(--neg);">Crítico</div></div>
@@ -311,7 +311,7 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
     <!-- PANEL DERECHO: Gráfica -->
     <div class="cc">
       <div class="st" style="margin-bottom:14px;">Saldo acumulado mensual</div>
-      <div style="position:relative;height:255px"><canvas id="c-sim" role="img" aria-label="Saldo acumulado escenario vs base" width="0" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;"></canvas></div>
+      <div style="position:relative;height:255px"><canvas id="c-sim" role="img" aria-label="Saldo acumulado escenario vs base" width="878" height="255" style="display: block; box-sizing: border-box; height: 255px; width: 878px;"></canvas></div>
       <div style="display:flex;gap:16px;margin-top:10px;font-size:11px;color:var(--muted);">
         <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:20px;height:0;border-top:2px dashed #9CA3AF;"></span>Base</span>
         <span style="display:flex;align-items:center;gap:5px;"><div class="ld" style="background:#58595B;"></div>Escenario</span>
@@ -355,6 +355,37 @@ const MS_FULL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto'
 const WK=['Sem 1','Sem 2','Sem 3','Sem 4'];
 const TC='#6B7280',GC='rgba(0,0,0,.05)';
 
+// Plugin compartido: línea vertical punteada + etiquetas "← Ejecutado | Proyectado →"
+// Se usa en c1, c2, c3, c6 y en el gráfico del simulador
+const separatorPlugin={
+  id:'separator',
+  afterDraw(chart){
+    const CUT=DATA.mesActualIdx;
+    if(CUT<0||CUT>=11) return;
+    const {ctx,scales}=chart;
+    if(!scales.x||!scales.y) return;
+    const {x,y}=scales;
+    const x0=x.getPixelForValue(CUT), x1=x.getPixelForValue(CUT+1);
+    const xPos=x0+(x1-x0)/2;
+    ctx.save();
+    ctx.setLineDash([5,4]);
+    ctx.strokeStyle='#9CA3AF';
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.moveTo(xPos,y.top);
+    ctx.lineTo(xPos,y.bottom+4);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.font='600 9.5px Inter,sans-serif';
+    ctx.fillStyle='#9CA3AF';
+    ctx.textAlign='right';
+    ctx.fillText('← Ejecutado',xPos-7,y.top+11);
+    ctx.textAlign='left';
+    ctx.fillText('Proyectado →',xPos+7,y.top+11);
+    ctx.restore();
+  }
+};
+
 // fN: format raw COP pesos for display
 // unit 'M' = Millones (divide by 1e6, integer with locale)
 // unit 'B' = Billones (divide by 1e9, 2 decimals)
@@ -389,12 +420,56 @@ function buildCharts(){
 
   ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10'].forEach(destroyChart);
 
-  charts.c1=new Chart(document.getElementById('c1'),{type:'bar',data:{labels:MS,datasets:[{label:'Ingresos',data:IT_B,backgroundColor:'#16505C',borderRadius:3,barPercentage:.75},{label:'Egresos',data:ET_B,backgroundColor:'#78716C',borderRadius:3,barPercentage:.75}]},options:bo});
-  charts.c2=new Chart(document.getElementById('c2'),{type:'bar',data:{labels:MS,datasets:[{label:'Flujo neto',data:NT_B,backgroundColor:NT_B.map(v=>v>=0?'#16A34A':'#DC2626'),borderRadius:3,barPercentage:.65}]},options:{...bo,plugins:{...bo.plugins,tooltip:{callbacks:{label:c=>' Neto: '+(c.parsed.y>=0?'+':'')+'$'+c.parsed.y.toFixed(2)+'B'}}}}});
-  charts.c3=new Chart(document.getElementById('c3'),{type:'line',data:{labels:MS,datasets:[{label:'Saldo',data:AC_B,borderColor:'#2A2A2C',borderWidth:2,backgroundColor:'rgba(42,42,44,.06)',fill:true,tension:.35,pointBackgroundColor:AC_B.map(v=>v>=0?'#16A34A':'#DC2626'),pointRadius:5,pointBorderWidth:0}]},options:{...bo,plugins:{...bo.plugins,tooltip:{callbacks:{label:c=>' Saldo: $'+c.parsed.y.toFixed(2)+'B'}}}}});
+  // ── Ejecutado vs Proyectado ──
+  const CUT=DATA.mesActualIdx; // último mes ejecutado (inclusive, 0-basado)
+
+  // Colores: sólido para ejecutado, semitransparente para proyectado
+  function mixedColors(solidHex){
+    return MS.map((_,i)=>i<=CUT ? solidHex : solidHex+'66');
+  }
+
+  // c1: Ingresos vs Egresos — barras ejecutadas sólidas, proyectadas semitransparentes
+  charts.c1=new Chart(document.getElementById('c1'),{type:'bar',data:{labels:MS,datasets:[
+    {label:'Ingresos',data:IT_B,backgroundColor:mixedColors('#16505C'),borderRadius:3,barPercentage:.75},
+    {label:'Egresos',data:ET_B,backgroundColor:mixedColors('#78716C'),borderRadius:3,barPercentage:.75}
+  ]},options:bo,plugins:[separatorPlugin]});
+
+  // c2: Flujo neto — mismo criterio
+  charts.c2=new Chart(document.getElementById('c2'),{type:'bar',data:{labels:MS,datasets:[
+    {label:'Flujo neto',data:NT_B,backgroundColor:NT_B.map((v,i)=>{
+      const base=v>=0?'#16A34A':'#DC2626';
+      return i<=CUT ? base : base+'66';
+    }),borderRadius:3,barPercentage:.65}
+  ]},options:{...bo,plugins:{...bo.plugins,tooltip:{callbacks:{label:c=>' Neto: '+(c.parsed.y>=0?'+':'')+'$'+c.parsed.y.toFixed(2)+'B'}}}},plugins:[separatorPlugin]});
+
+  // c3: Saldo acumulado — línea sólida para ejecutado, punteada para proyectado
+  const AC_ejec=AC_B.map((v,i)=>i<=CUT?v:null);
+  const AC_proy=AC_B.map((v,i)=>i>=CUT?v:null);
+  charts.c3=new Chart(document.getElementById('c3'),{type:'line',data:{labels:MS,datasets:[
+    {label:'Ejecutado',data:AC_ejec,borderColor:'#2A2A2C',borderWidth:2,backgroundColor:'rgba(42,42,44,.06)',fill:true,tension:.35,
+     pointBackgroundColor:AC_ejec.map(v=>v==null?'transparent':v>=0?'#16A34A':'#DC2626'),pointRadius:5,pointBorderWidth:0},
+    {label:'Proyectado',data:AC_proy,borderColor:'rgba(42,42,44,.45)',borderWidth:2,borderDash:[6,4],backgroundColor:'transparent',fill:false,tension:.35,
+     pointBackgroundColor:AC_proy.map(v=>v==null?'transparent':v>=0?'rgba(22,163,74,.45)':'rgba(220,38,38,.45)'),pointRadius:4,pointBorderWidth:0}
+  ]},options:{...bo,plugins:{...bo.plugins,
+    legend:{display:true,position:'bottom',labels:{font:{size:10},boxWidth:24,padding:12,
+      generateLabels:()=>[
+        {text:'Ejecutado',strokeStyle:'#2A2A2C',fillStyle:'rgba(42,42,44,.06)',lineWidth:2,lineDash:[],hidden:false,datasetIndex:0},
+        {text:'Proyectado',strokeStyle:'rgba(42,42,44,.45)',fillStyle:'transparent',lineWidth:2,lineDash:[6,4],hidden:false,datasetIndex:1}
+      ]
+    }},
+    tooltip:{callbacks:{label:c=>c.raw!=null?' Saldo: $'+c.raw.toFixed(2)+'B':null}}
+  }},plugins:[separatorPlugin]});
+
   charts.c4=new Chart(document.getElementById('c4'),{type:'doughnut',data:{labels:d.PR_NAMES,datasets:[{data:d.PRIV_M,backgroundColor:['#2A2A2C','#58595B','#8A8B8D','#6B7F94','#9C8F7C','#7C8B7A','#9FB3C2','#B0AEAC','#D4D2D0'],borderWidth:1,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:9,padding:6}},tooltip:{callbacks:{label:c=>' '+c.label+': $'+c.parsed.toLocaleString('es-CO')+'M'}}}}});
   charts.c5=new Chart(document.getElementById('c5'),{type:'bar',data:{labels:d.PR_NAMES.map(n=>n.length>13?n.slice(0,13)+'…':n),datasets:[{label:'Margen',data:d.PR_MARGIN,backgroundColor:d.PR_MARGIN.map(v=>v>=20?'#16A34A':v>=12?'#D97706':'#B45309'),borderRadius:3,barPercentage:.7}]},options:{...bo,indexAxis:'y',scales:{x:{ticks:{color:TC,font:{size:11},callback:v=>v+'%'},grid:{color:GC},border:{display:false},min:0,max:Math.max(45,...d.PR_MARGIN)+5},y:{ticks:{color:TC,font:{size:10}},grid:{display:false},border:{display:false}}},plugins:{...bo.plugins,tooltip:{callbacks:{label:c=>' Margen: '+c.parsed.x.toFixed(1)+'%'}}}}});
-  charts.c6=new Chart(document.getElementById('c6'),{type:'bar',data:{labels:MS,datasets:[{label:'% ingreso anual',data:CP,backgroundColor:CP.map(v=>v>20?'#0F3940':v>8?'#16505C':'#7FA8AE'),borderRadius:3,barPercentage:.7}]},options:{...bo,scales:{x:{ticks:{color:TC,font:{size:11},autoSkip:false,maxRotation:0},grid:{color:GC},border:{display:false}},y:{ticks:{color:TC,font:{size:11},callback:v=>v+'%'},grid:{color:GC},border:{display:false}}},plugins:{...bo.plugins,tooltip:{callbacks:{label:c=>' '+c.parsed.y.toFixed(1)+'% del ingreso anual'}}}}});
+
+  // c6: Concentración de ingresos — mismo criterio de opacidad
+  charts.c6=new Chart(document.getElementById('c6'),{type:'bar',data:{labels:MS,datasets:[
+    {label:'% ingreso anual',data:CP,backgroundColor:CP.map((v,i)=>{
+      const base=v>20?'#0F3940':v>8?'#16505C':'#7FA8AE';
+      return i<=CUT ? base : base+'66';
+    }),borderRadius:3,barPercentage:.7}
+  ]},options:{...bo,scales:{x:{ticks:{color:TC,font:{size:11},autoSkip:false,maxRotation:0},grid:{color:GC},border:{display:false}},y:{ticks:{color:TC,font:{size:11},callback:v=>v+'%'},grid:{color:GC},border:{display:false}}},plugins:{...bo.plugins,tooltip:{callbacks:{label:c=>' '+c.parsed.y.toFixed(1)+'% del ingreso anual'}}}},plugins:[separatorPlugin]});
 
   const ACEM=mAcum(d.IE,d.EE,d.S0);
   charts.c7=new Chart(document.getElementById('c7'),{type:'bar',data:{labels:WK,datasets:[{label:'Ejecución',data:d.IE.map(v=>+(v/1e9).toFixed(2)),backgroundColor:'#16505C',borderRadius:3,barPercentage:.8}]},options:mo});
@@ -840,7 +915,7 @@ function sU(preview) {
     plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.dataset.label+': $'+c.parsed.y.toFixed(2)+'B'}}},
     scales:{x:{ticks:{color:TC,font:{size:11},autoSkip:false,maxRotation:0},grid:{color:GC},border:{display:false}},
             y:{ticks:{color:TC,font:{size:11},callback:v=>'$'+v+'B'},grid:{color:GC},border:{display:false}}}};
-  if(simC){simC.data=cd;simC.update('none');}else{simC=new Chart(document.getElementById('c-sim'),{type:'line',data:cd,options:co});}
+  if(simC){simC.data=cd;simC.update('none');}else{simC=new Chart(document.getElementById('c-sim'),{type:'line',data:cd,options:co,plugins:[separatorPlugin]});}
 }
 
 function sReset() {
