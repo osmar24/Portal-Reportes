@@ -65,6 +65,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--
     <a href="Reporte_Facturacion.html">Facturación</a>
     <a href="FC_ObrasPublicas.html">Flujo de Caja</a>
     <a href="Gestion_Pagos.html">Pagos a Proveedores</a>
+    <a href="CXP_Obligaciones.html">CxP por Edades</a>
   </div>
 </nav>
 
@@ -125,6 +126,23 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--
         <div class="stat"><div class="sv" id="pg-nprov">702</div><div class="sl">Proveedores</div></div>
       </div>
       <div class="card-updated" id="pg-updated">Actualizado: 25 jun 2026</div>
+      <div class="card-cta">Ver reporte <span class="arrow">→</span></div>
+    </a>
+
+    <a href="CXP_Obligaciones.html" class="card">
+      <div class="card-top">
+        <div class="card-mark" style="background:#16505C;">CxP</div>
+        <div>
+          <h2>CxP — Obligaciones por Edades</h2>
+          <div class="tag">Seguimiento semanal</div>
+        </div>
+      </div>
+      <p class="desc">Evolución semanal de las cuentas por pagar por proyecto, desglosadas por antigüedad (30, 60, 90, 120+ días) y proveedores críticos.</p>
+      <div class="card-stats">
+        <div class="stat"><div class="sv" id="cxp-total">$17.54B</div><div class="sl">Total CxP actual</div></div>
+        <div class="stat"><div class="sv" id="cxp-nweeks">9</div><div class="sl">Semanas de historial</div></div>
+      </div>
+      <div class="card-updated" id="cxp-updated">Actualizado: 01 jul 2026</div>
       <div class="card-cta">Ver reporte <span class="arrow">→</span></div>
     </a>
 
@@ -242,6 +260,24 @@ loadCardData('Gestion_Pagos.html', (block)=>{
       document.getElementById('pg-nprov').textContent = d.K.nprov;
     }
     markUpdated('pg-updated', d.corte);
+  }
+});
+
+// CxP Obligaciones por Edades
+loadCardData('CXP_Obligaciones.html', (block)=>{
+  // el historial está en HISTORY = [...]
+  const histStr = block.match(/let HISTORY = (\[[\s\S]*?\]);/);
+  if(histStr){
+    const hist = JSON.parse(histStr[1]);
+    if(hist&&hist.length){
+      const last = hist[hist.length-1];
+      document.getElementById('cxp-total').textContent = fmtB(last.total);
+      document.getElementById('cxp-nweeks').textContent = hist.length+' sem.';
+      const fecha = last.fecha;
+      const meses3=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+      const [y,m,dy]=fecha.split('-');
+      markUpdated('cxp-updated', dy+' '+meses3[+m-1]+' '+y);
+    }
   }
 });
 </script>
