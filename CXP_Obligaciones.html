@@ -128,6 +128,7 @@ tr.tot td{font-weight:700;background:var(--pale2);border-top:2px solid var(--lin
   <button class="tab" onclick="go('semana',this)">📋 Semana Actual</button>
   <button class="tab" onclick="go('proyectos',this)">🏗️ Por Proyecto</button>
   <button class="tab" onclick="go('criticos',this)">⚠️ Proveedores Críticos</button>
+  <button class="tab" onclick="go('comparativo',this)">🔍 Comparativo de Períodos</button>
 </div>
 
 <!-- ════════ TAB 1: EVOLUCIÓN SEMANAL ════════ -->
@@ -203,6 +204,7 @@ tr.tot td{font-weight:700;background:var(--pale2);border-top:2px solid var(--lin
 <div class="panel" id="p-proyectos">
   <div style="margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
     <span style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Proyecto:</span>
+    <button class="ppill" id="pill-todos" onclick="toggleTodos()" style="background:#C8302A;color:#fff;border-color:#C8302A;">Todos</button>
     <div class="proj-pills" id="projPills" style="margin-bottom:0;"></div>
   </div>
 
@@ -210,8 +212,8 @@ tr.tot td{font-weight:700;background:var(--pale2);border-top:2px solid var(--lin
 
   <div class="g1 cc">
     <h3 id="proj-chart-title">Evolución semanal del proyecto</h3>
-    <p class="sub">Total CxP, Contabilizado y Sin Contabilizar (COP Billones)</p>
-    <div class="leg">
+    <p class="sub">Total CxP, Contabilizado y Sin Contabilizar (COP Billones/Millones)</p>
+    <div class="leg" id="proj-legend">
       <div class="li"><div class="ld" style="background:#2A2A2C;border-radius:50%"></div>Total</div>
       <div class="li"><div class="ld" style="background:#16505C;border-radius:50%"></div>Contabilizado</div>
       <div class="li"><div class="ld" style="background:#D97706;border-radius:50%"></div>Sin Contabilizar</div>
@@ -239,6 +241,42 @@ tr.tot td{font-weight:700;background:var(--pale2);border-top:2px solid var(--lin
 
   <div class="tw"><div class="ts"><table id="crit-tbl"></table></div></div>
   <p class="note">Los proveedores críticos son aquellos clasificados estratégicamente por su alta dependencia en múltiples proyectos o alto volumen de saldo pendiente.</p>
+</div>
+
+<!-- ════════ TAB 5: COMPARATIVO DE PERÍODOS ════════ -->
+<div class="panel" id="p-comparativo">
+  <div style="background:var(--white);border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+    <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Comparar:</span>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <label style="font-size:11px;color:var(--muted);font-weight:600;">Desde</label>
+      <select id="cmp-desde" onchange="renderComparativo()" style="font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;font-family:inherit;"></select>
+    </div>
+    <div style="font-size:18px;color:var(--soft);">→</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <label style="font-size:11px;color:var(--muted);font-weight:600;">Hasta</label>
+      <select id="cmp-hasta" onchange="renderComparativo()" style="font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;font-family:inherit;"></select>
+    </div>
+    <span style="font-size:11px;color:var(--soft);margin-left:auto;">▼ verde = baja CxP (bueno) · ▲ rojo = sube CxP (alerta)</span>
+  </div>
+
+  <!-- Resumen ejecutivo del período -->
+  <div class="kpi-row" id="cmp-kpis"></div>
+
+  <!-- Gráfico comparativo por proyecto -->
+  <div class="g1 cc" style="margin-bottom:20px;">
+    <h3 id="cmp-chart-title">Variación por proyecto en el período</h3>
+    <p class="sub">Δ en COP Millones — barras verdes = baja (positivo), rojas = sube (alerta)</p>
+    <div style="position:relative;height:260px"><canvas id="c8" role="img"></canvas></div>
+  </div>
+
+  <!-- Tabla por proyecto -->
+  <div class="st">Detalle por proyecto</div>
+  <div class="tw" style="margin-bottom:24px;"><div class="ts"><table id="cmp-proj-tbl"></table></div></div>
+
+  <!-- Tabla por proveedor crítico -->
+  <div class="st">Proveedores críticos — evolución en el período</div>
+  <div class="tw"><div class="ts"><table id="cmp-crit-tbl"></table></div></div>
+  <p class="note">Reducción en Contabilizado = el saldo registrado en SincoERP para pago disminuyó (se cancelaron obligaciones). Reducción en Sin Contabilizar = las facturas pendientes de registro bajaron (se procesaron o contabilizaron). Aumento en Sin Contabilizar = ingresaron nuevas facturas sin procesar. La variación total combina ambos movimientos.</p>
 </div>
 
 
@@ -388,53 +426,118 @@ function renderSemana(idx){
 // TAB 3: POR PROYECTO
 // ────────────────────────────────────────────────────────────────
 let selProj=null;
+let projModo='single'; // 'single' | 'todos'
+let activeProjSet=new Set();
+
 function buildProjPills(){
   const projs=[...new Set(HISTORY.flatMap(d=>Object.keys(d.proyectos)))].sort((a,b)=>{const oa=PROJ_ORDER.indexOf(a),ob=PROJ_ORDER.indexOf(b);return (oa<0?99:oa)-(ob<0?99:ob);});
   const el=document.getElementById('projPills');
-  el.innerHTML=projs.map((p,i)=>`<button class="ppill${i===0?' on':''}" onclick="selectProj('${p}')">${p}</button>`).join('');
-  if(projs.length>0) selectProj(projs[0]);
+  el.innerHTML=projs.map(p=>`<button class="ppill" onclick="toggleProj('${p}')">${p}</button>`).join('');
+  selectProj(projs[0]);
+}
+function toggleTodos(){
+  const todos=document.getElementById('pill-todos');
+  const pills=[...document.querySelectorAll('#projPills .ppill')];
+  if(projModo==='todos'){
+    // quitar todos → volver al primero
+    projModo='single';
+    todos.style.background=''; todos.style.color=''; todos.style.borderColor='';
+    todos.textContent='Todos';
+    activeProjSet.clear();
+    if(pills.length) selectProj(pills[0].textContent);
+  } else {
+    // seleccionar todos
+    projModo='todos';
+    todos.style.background='#2A2A2C'; todos.style.color='#fff'; todos.style.borderColor='#2A2A2C';
+    todos.textContent='Quitar todos';
+    const projs=pills.map(b=>b.textContent);
+    projs.forEach(p=>activeProjSet.add(p));
+    pills.forEach(b=>b.classList.add('on'));
+    selProj='__todos__';
+    renderProjTodos(projs);
+  }
+}
+function toggleProj(proj){
+  if(projModo==='todos'){
+    // salir de modo todos al hacer clic individual
+    projModo='single';
+    const todos=document.getElementById('pill-todos');
+    todos.style.background=''; todos.style.color=''; todos.style.borderColor='';
+    todos.textContent='Todos';
+    activeProjSet.clear();
+    document.querySelectorAll('#projPills .ppill').forEach(b=>b.classList.remove('on'));
+  }
+  selectProj(proj);
 }
 function selectProj(proj){
   selProj=proj;
   document.querySelectorAll('#projPills .ppill').forEach(b=>b.classList.toggle('on',b.textContent===proj));
   renderProj(proj);
 }
+function renderProjTodos(projs){
+  const labels=HISTORY.map(d=>shortDate(d.fecha));
+  document.getElementById('proj-chart-title').textContent='Evolución semanal — Todos los proyectos';
+  document.getElementById('proj-table-title').textContent='Resumen comparativo — Todos los proyectos';
+  // KPIs: totales de la última semana
+  const last=HISTORY[HISTORY.length-1];
+  const prev=HISTORY.length>1?HISTORY[HISTORY.length-2]:null;
+  const totalLast=Object.values(last.proyectos).reduce((a,p)=>a+p.total,0);
+  const totalPrev=prev?Object.values(prev.proyectos).reduce((a,p)=>a+p.total,0):null;
+  const delta=totalPrev?totalLast-totalPrev:null;
+  document.getElementById('proj-kpis').innerHTML=`
+    <div class="kpi kb"><div class="kl">Total CxP (todos)</div><div class="kv b">${fB(totalLast)}</div><div class="ks">Semana más reciente</div></div>
+    <div class="kpi ${delta!==null&&delta>=0?'kn':'kp'}"><div class="kl">Variación semanal</div><div class="kv ${delta!==null&&delta>=0?'n':'p'}">${delta!==null?(delta>=0?'▲ +':'▼ ')+fM(Math.abs(delta)):'—'}</div><div class="ks">${prev?'vs '+shortDate(prev.fecha):'—'}</div></div>
+    <div class="kpi kb"><div class="kl">Proyectos mostrados</div><div class="kv b">${projs.length}</div><div class="ks">de ${PROJ_ORDER.length}</div></div>
+  `;
+  // c6: multi-línea por proyecto
+  destroyChart('c6');
+  const legEl=document.getElementById('proj-legend');
+  legEl.innerHTML=projs.map(p=>`<div class="li"><div class="ld" style="background:${PROJ_COLORS[p]||'#8A8B8D'};border-radius:50%"></div>${p}</div>`).join('');
+  charts.c6=new Chart(document.getElementById('c6'),{type:'line',data:{labels,datasets:
+    projs.map(p=>({label:p,data:HISTORY.map(d=>+((d.proyectos[p]?.total||0)/1e6).toFixed(1)),borderColor:PROJ_COLORS[p]||'#8A8B8D',backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:.3,fill:false}))
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',callbacks:{label:c=>' '+c.dataset.label+': $'+c.raw.toFixed(1)+'M'}}},scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC},border:{display:false}},y:{ticks:{color:TC,font:{size:10},callback:v=>'$'+v+'M'},grid:{color:GC},border:{display:false}}}}});
+  // tabla comparativa todos los proyectos
+  const lastD=HISTORY[HISTORY.length-1], prevD=HISTORY.length>1?HISTORY[HISTORY.length-2]:null;
+  let h='<thead><tr><th class="tl">Proyecto</th>'+HISTORY.map(d=>'<th>'+shortDate(d.fecha)+'</th>').join('')+'<th>Δ Total</th></tr></thead><tbody>';
+  projs.forEach(p=>{
+    const vals=HISTORY.map(d=>d.proyectos[p]?.total||0);
+    const deltaT=vals[vals.length-1]-vals[0];
+    h+=`<tr><td class="tn">${p}</td>${vals.map(v=>'<td class="tv">'+fM(v)+'</td>').join('')}<td class="tv ${deltaT>=0?'n':'p'}">${(deltaT>=0?'▲ +':'▼ ')+fM(Math.abs(deltaT))}</td></tr>`;
+  });
+  h+='</tbody>';
+  document.getElementById('proj-tbl').innerHTML=h;
+}
 function renderProj(proj){
+  projModo='single';
+  document.getElementById('proj-legend').innerHTML=`
+    <div class="li"><div class="ld" style="background:#2A2A2C;border-radius:50%"></div>Total</div>
+    <div class="li"><div class="ld" style="background:#16505C;border-radius:50%"></div>Contabilizado</div>
+    <div class="li"><div class="ld" style="background:#D97706;border-radius:50%"></div>Sin Contabilizar</div>`;
   const weeks=HISTORY.filter(d=>d.proyectos[proj]);
   const labels=weeks.map(d=>shortDate(d.fecha));
   const last=weeks[weeks.length-1]?.proyectos[proj];
   const prev=weeks.length>1?weeks[weeks.length-2]?.proyectos[proj]:null;
-  const color=PROJ_COLORS[proj]||'#58595B';
-
   document.getElementById('proj-chart-title').textContent='Evolución semanal — '+proj;
   document.getElementById('proj-table-title').textContent='Detalle por semana — '+proj;
-
-  // KPIs del proyecto
   const delta=last&&prev?last.total-prev.total:null;
   document.getElementById('proj-kpis').innerHTML=`
     <div class="kpi kb"><div class="kl">Total CxP Actual</div><div class="kv b">${last?fM(last.total):'—'}</div><div class="ks">Semana más reciente</div></div>
     <div class="kpi kt"><div class="kl">Contabilizado</div><div class="kv t">${last?fM(last.cont):'—'}</div><div class="ks">En SincoERP</div></div>
     <div class="kpi kw"><div class="kl">Sin Contabilizar</div><div class="kv w">${last?fM(last.sinCont):'—'}</div><div class="ks">Sin asociar</div></div>
-    <div class="kpi ${delta!==null&&delta>=0?'kn':'kp'}"><div class="kl">Variación semanal</div><div class="kv ${delta!==null&&delta>=0?'n':'p'}">${delta!==null?(delta>=0?'▲ +':'▼ ')+fM(Math.abs(delta)):'—'}</div><div class="ks">${prev?'vs '+shortDate(HISTORY[HISTORY.length-2].fecha):'—'}</div></div>
+    <div class="kpi ${delta!==null&&delta>=0?'kn':'kp'}"><div class="kl">Variación semanal</div><div class="kv ${delta!==null&&delta>=0?'n':'p'}">${delta!==null?(delta>=0?'▲ +':'▼ ')+fM(Math.abs(delta)):'—'}</div><div class="ks">${prev?'vs '+shortDate(weeks[weeks.length-2].fecha):'—'}</div></div>
   `;
-
-  // c6
   destroyChart('c6');
   charts.c6=new Chart(document.getElementById('c6'),{type:'line',data:{labels,datasets:[
     {label:'Total',data:weeks.map(d=>+((d.proyectos[proj]?.total||0)/1e6).toFixed(1)),borderColor:'#2A2A2C',backgroundColor:'rgba(42,42,44,.06)',fill:true,borderWidth:2,pointRadius:4,tension:.3},
     {label:'Contabilizado',data:weeks.map(d=>+((d.proyectos[proj]?.cont||0)/1e6).toFixed(1)),borderColor:'#16505C',borderWidth:2,pointRadius:4,fill:false,tension:.3},
     {label:'Sin Contabilizar',data:weeks.map(d=>+((d.proyectos[proj]?.sinCont||0)/1e6).toFixed(1)),borderColor:'#D97706',borderWidth:2,borderDash:[5,3],pointRadius:4,fill:false,tension:.3}
-  ]},options:{responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{mode:'index',callbacks:{label:c=>' '+c.dataset.label+': $'+c.raw.toFixed(1)+'M'}}},
-    scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC},border:{display:false}},y:{ticks:{color:TC,font:{size:10},callback:v=>'$'+v+'M'},grid:{color:GC},border:{display:false}}}}});
-
-  // tabla proyecto
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',callbacks:{label:c=>' '+c.dataset.label+': $'+c.raw.toFixed(1)+'M'}}},scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC},border:{display:false}},y:{ticks:{color:TC,font:{size:10},callback:v=>'$'+v+'M'},grid:{color:GC},border:{display:false}}}}});
   let h='<thead><tr><th class="tl">Semana</th><th>Total CxP</th><th>Contabilizado</th><th>Sin Contabilizar</th><th>30 días</th><th>60 días</th><th>90+ días</th><th>Δ vs anterior</th></tr></thead><tbody>';
   weeks.forEach((d,i)=>{
     const pd=d.proyectos[proj]; const pp=i>0?weeks[i-1].proyectos[proj]:null;
-    const delta=pp?pd.total-pp.total:null;
+    const dlt=pp?pd.total-pp.total:null;
     const e90p=(pd.edades['90']||0)+(pd.edades['120']||0)+(pd.edades['150']||0)+(pd.edades['180']||0)+(pd.edades['270']||0)+(pd.edades['360']||0)+(pd.edades['361>']||0);
-    h+=`<tr><td class="tn">${fDate(d.fecha)}</td><td class="tv">${fM(pd.total)}</td><td class="tv">${fM(pd.cont)}</td><td class="tv w">${pd.sinCont>0?fM(pd.sinCont):'—'}</td><td class="tv">${pd.edades['30']>0?fM(pd.edades['30']):'—'}</td><td class="tv">${pd.edades['60']>0?fM(pd.edades['60']):'—'}</td><td class="tv ${e90p>1e9?'n':e90p>0?'w':''}">${e90p>0?fM(e90p):'—'}</td><td class="tv ${delta===null?'':delta>=0?'n':'p'}">${delta===null?'—':(delta>=0?'▲ +':'▼ ')+fM(Math.abs(delta))}</td></tr>`;
+    h+=`<tr><td class="tn">${fDate(d.fecha)}</td><td class="tv">${fM(pd.total)}</td><td class="tv">${fM(pd.cont)}</td><td class="tv w">${pd.sinCont>0?fM(pd.sinCont):'—'}</td><td class="tv">${pd.edades['30']>0?fM(pd.edades['30']):'—'}</td><td class="tv">${pd.edades['60']>0?fM(pd.edades['60']):'—'}</td><td class="tv ${e90p>1e9?'n':e90p>0?'w':''}">${e90p>0?fM(e90p):'—'}</td><td class="tv ${dlt===null?'':dlt>=0?'n':'p'}">${dlt===null?'—':(dlt>=0?'▲ +':'▼ ')+fM(Math.abs(dlt))}</td></tr>`;
   });
   h+='</tbody>';
   document.getElementById('proj-tbl').innerHTML=h;
@@ -469,8 +572,129 @@ function renderCriticos(idx){
 }
 
 // ────────────────────────────────────────────────────────────────
-// INICIALIZACIÓN
+// TAB 5: COMPARATIVO DE PERÍODOS
 // ────────────────────────────────────────────────────────────────
+function buildCmpSelectors(){
+  const opts=HISTORY.map((d,i)=>`<option value="${i}">${fDate(d.fecha)}</option>`).join('');
+  document.getElementById('cmp-desde').innerHTML=opts;
+  document.getElementById('cmp-hasta').innerHTML=opts;
+  // por defecto: primera semana → última semana
+  document.getElementById('cmp-desde').value='0';
+  document.getElementById('cmp-hasta').value=String(HISTORY.length-1);
+}
+
+function renderComparativo(){
+  const idxA=+document.getElementById('cmp-desde').value;
+  const idxB=+document.getElementById('cmp-hasta').value;
+  if(idxA===idxB){ document.getElementById('cmp-kpis').innerHTML='<p style="color:var(--muted);font-size:12px;padding:8px;">Seleccioná dos semanas distintas para comparar.</p>'; return; }
+  const [ia,ib]=idxA<idxB?[idxA,idxB]:[idxB,idxA];
+  const dA=HISTORY[ia], dB=HISTORY[ib];
+
+  // ── KPIs del período ──
+  const deltaTotal=dB.total-dA.total;
+  const deltaCont=dB.contabilizado-dA.contabilizado;
+  const deltaSinc=dB.sinCont-dA.sinCont;
+  // pagos realizados = reducción en contabilizado (si bajó = se pagó)
+  const pagosRealizados=deltaCont<0?Math.abs(deltaCont):0;
+  const nuevaFacturacion=deltaSinc>0?deltaSinc:0;
+  const sincRegularizado=deltaSinc<0?Math.abs(deltaSinc):0;
+  const pctVar=dA.total?deltaTotal/dA.total:0;
+  const semanas=ib-ia;
+
+  document.getElementById('cmp-kpis').innerHTML=`
+    <div class="kpi kb">
+      <div class="kl">Saldo Inicial</div>
+      <div class="kv b">${fB(dA.total)}</div>
+      <div class="ks">${fDate(dA.fecha)}</div>
+    </div>
+    <div class="kpi kb">
+      <div class="kl">Saldo Final</div>
+      <div class="kv b">${fB(dB.total)}</div>
+      <div class="ks">${fDate(dB.fecha)}</div>
+    </div>
+    <div class="kpi ${deltaTotal>=0?'kn':'kp'}">
+      <div class="kl">Variación Total CxP</div>
+      <div class="kv ${deltaTotal>=0?'n':'p'}" style="font-size:18px;">${(deltaTotal>=0?'▲ +':'▼ ')+fM(Math.abs(deltaTotal))}</div>
+      <div class="ks">${(Math.abs(pctVar)*100).toFixed(1)}% en ${semanas} semana${semanas>1?'s':''}</div>
+    </div>
+    <div class="kpi kp">
+      <div class="kl">Reducción en Contabilizado</div>
+      <div class="kv p">▼ ${fM(pagosRealizados)}</div>
+      <div class="ks">Saldo contabilizado liberado</div>
+    </div>
+    <div class="kpi ${deltaSinc>0?'kw':'kp'}">
+      <div class="kl">${deltaSinc>0?'Aumento en Sin Contabilizar':'Reducción en Sin Contabilizar'}</div>
+      <div class="kv ${deltaSinc>0?'w':'p'}">${deltaSinc>0?'▲ '+fM(nuevaFacturacion):'▼ '+fM(sincRegularizado)}</div>
+      <div class="ks">${deltaSinc>0?'Sin contabilizar creció':deltaSinc<0?'Sin contabilizar se redujo':'Sin cambio'}</div>
+    </div>
+  `;
+
+  document.getElementById('cmp-chart-title').textContent=`Variación por proyecto — ${shortDate(dA.fecha)} → ${shortDate(dB.fecha)}`;
+
+  // ── Gráfico por proyecto ──
+  const projs=[...new Set([...Object.keys(dA.proyectos),...Object.keys(dB.proyectos)])].sort((a,b)=>{const oa=PROJ_ORDER.indexOf(a),ob=PROJ_ORDER.indexOf(b);return (oa<0?99:oa)-(ob<0?99:ob);});
+  const deltas=projs.map(p=>((dB.proyectos[p]?.total||0)-(dA.proyectos[p]?.total||0)));
+  destroyChart('c8');
+  charts.c8=new Chart(document.getElementById('c8'),{type:'bar',data:{labels:projs,datasets:[{
+    label:'Variación CxP',data:deltas.map(v=>+(v/1e6).toFixed(1)),
+    backgroundColor:deltas.map(v=>v>=0?'rgba(220,38,38,.8)':'rgba(22,163,74,.8)'),
+    borderRadius:4,barPercentage:.6
+  }]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+    tooltip:{callbacks:{label:c=>{const v=c.raw; return ' '+(v>=0?'▲ Subió $':'▼ Bajó $')+Math.abs(v).toFixed(1)+'M';}}}},
+    scales:{x:{ticks:{color:TC,font:{size:11}},grid:{display:false},border:{display:false}},
+            y:{ticks:{color:TC,font:{size:10},callback:v=>v>=0?'+$'+v+'M':'$'+v+'M'},grid:{color:GC},border:{display:false}}}}});
+
+  // ── Tabla por proyecto ──
+  let h='<thead><tr><th class="tl">Proyecto</th><th>Saldo '+shortDate(dA.fecha)+'</th><th>Saldo '+shortDate(dB.fecha)+'</th><th>Δ COP</th><th>Δ %</th><th>Pagos est.</th><th>Nueva fact. est.</th></tr></thead><tbody>';
+  projs.forEach(p=>{
+    const sa=dA.proyectos[p]?.total||0, sb=dB.proyectos[p]?.total||0;
+    const dlt=sb-sa, pct=sa?dlt/sa:0;
+    const pago=((dA.proyectos[p]?.cont||0)-(dB.proyectos[p]?.cont||0));
+    const nfact=((dB.proyectos[p]?.sinCont||0)-(dA.proyectos[p]?.sinCont||0));
+    h+=`<tr>
+      <td class="tn">${p}</td>
+      <td class="tv">${fM(sa)}</td>
+      <td class="tv">${fM(sb)}</td>
+      <td class="tv ${dlt>=0?'n':'p'}" style="font-weight:700;">${(dlt>=0?'▲ +':'▼ ')+fM(Math.abs(dlt))}</td>
+      <td class="tv ${dlt>=0?'n':'p'}">${(pct>=0?'+':'')+(pct*100).toFixed(1)}%</td>
+      <td class="tv p">${pago>0?'▼ '+fM(pago):'—'}</td>
+      <td class="tv w">${nfact>0?'▲ '+fM(nfact):'—'}</td>
+    </tr>`;
+  });
+  const dltTot=dB.total-dA.total, pctTot=dA.total?dltTot/dA.total:0;
+  h+=`<tr class="tot"><td class="tn">TOTAL EMPRESA</td><td class="tv">${fB(dA.total)}</td><td class="tv">${fB(dB.total)}</td><td class="tv ${dltTot>=0?'n':'p'}" style="font-weight:700;">${(dltTot>=0?'▲ +':'▼ ')+fM(Math.abs(dltTot))}</td><td class="tv ${dltTot>=0?'n':'p'}">${(pctTot>=0?'+':'')+(pctTot*100).toFixed(1)}%</td><td class="tv p">${pagosRealizados>0?'▼ '+fM(pagosRealizados):'—'}</td><td class="tv w">${nuevaFacturacion>0?'▲ '+fM(nuevaFacturacion):'—'}</td></tr>`;
+  h+='</tbody>';
+  document.getElementById('cmp-proj-tbl').innerHTML=h;
+
+  // ── Tabla de críticos ──
+  const critsA=Object.fromEntries((dA.criticos||[]).map(c=>[c.nit,c]));
+  const critsB=Object.fromEntries((dB.criticos||[]).map(c=>[c.nit,c]));
+  const allNits=[...new Set([...Object.keys(critsA),...Object.keys(critsB)])];
+  const critRows=allNits.map(nit=>{
+    const ca=critsA[nit], cb=critsB[nit];
+    const sa=ca?.total||0, sb=cb?.total||0;
+    const nombre=(ca||cb).nombre;
+    return {nit,nombre,sa,sb,dlt:sb-sa,pct:sa?(sb-sa)/sa:0,
+      pagoEst:Math.max(0,(ca?.cont||0)-(cb?.cont||0)),
+      nfactEst:Math.max(0,(cb?.sinCont||0)-(ca?.sinCont||0))};
+  }).sort((a,b)=>Math.abs(b.dlt)-Math.abs(a.dlt));
+
+  let h2='<thead><tr><th class="tl">Proveedor</th><th>NIT</th><th>Saldo '+shortDate(dA.fecha)+'</th><th>Saldo '+shortDate(dB.fecha)+'</th><th>Δ COP</th><th>Δ %</th><th>Pagos est.</th><th>Nueva fact. est.</th></tr></thead><tbody>';
+  critRows.forEach(r=>{
+    h2+=`<tr>
+      <td class="tn" style="min-width:200px;">${r.nombre}</td>
+      <td class="tv">${r.nit}</td>
+      <td class="tv">${fM(r.sa)}</td>
+      <td class="tv">${fM(r.sb)}</td>
+      <td class="tv ${r.dlt>=0?'n':'p'}" style="font-weight:700;">${(r.dlt>=0?'▲ +':'▼ ')+fM(Math.abs(r.dlt))}</td>
+      <td class="tv ${r.dlt>=0?'n':'p'}">${(r.pct>=0?'+':'')+(r.pct*100).toFixed(1)}%</td>
+      <td class="tv p">${r.pagoEst>0?'▼ '+fM(r.pagoEst):'—'}</td>
+      <td class="tv w">${r.nfactEst>0?'▲ '+fM(r.nfactEst):'—'}</td>
+    </tr>`;
+  });
+  h2+='</tbody>';
+  document.getElementById('cmp-crit-tbl').innerHTML=h2;
+}
 function renderAll(){
   if(!HISTORY||!HISTORY.length) return;
   HISTORY.sort((a,b)=>a.fecha.localeCompare(b.fecha));
@@ -484,6 +708,8 @@ function renderAll(){
   selectWeek(lastIdx,'weekPills','semana');
   selectCritWeek(lastIdx);
   buildProjPills();
+  buildCmpSelectors();
+  renderComparativo();
 }
 
 // ────────────────────────────────────────────────────────────────
