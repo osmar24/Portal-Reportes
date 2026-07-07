@@ -89,7 +89,7 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
 .msg-t{color:var(--muted);font-style:italic;}
 @media(max-width:900px){.g2,.g3{grid-template-columns:1fr}.panel{padding:16px}.topbar,.tab-bar{padding:0 16px}}
 </style>
-<!--UIPATH_EXTENSION_ID: conkfbpnllelocpogdmbilgmnkabjfmf--><!--UIPATH_EXTENSION_ID: conkfbpnllelocpogdmbilgmnkabjfmf--><!--UIPATH_EXTENSION_ID: conkfbpnllelocpogdmbilgmnkabjfmf--><!--UIPATH_EXTENSION_ID: conkfbpnllelocpogdmbilgmnkabjfmf--><!--UIPATH_EXTENSION_ID: conkfbpnllelocpogdmbilgmnkabjfmf--><!--UIPATH_EXTENSION_ID: conkfbpnllelocpogdmbilgmnkabjfmf--></head>
+<!--UIPATH_EXTENSION_ID: conkfbpnllelocpogdmbilgmnkabjfmf--><!--UIPATH_EXTENSION_ID: conkfbpnllelocpogdmbilgmnkabjfmf--><!--UIPATH_EXTENSION_ID: conkfbpnllelocpogdmbilgmnkabjfmf--></head>
 <body>
 
 <nav class="portal-nav">
@@ -127,7 +127,7 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
 
 <div class="tab-bar">
   <button class="tab on" onclick="go('res',this)">FC Resumen — O.P.</button>
-  <button class="tab" onclick="go('mes',this)">FC Mes — Junio 2026</button>
+  <button class="tab" id="tab-mes" onclick="go('mes',this)">FC Mes — Julio 2026</button>
   <button class="tab" onclick="go('sim',this)">Simulador de escenarios</button>
 </div>
 
@@ -149,18 +149,18 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
     <h3>Ingresos vs. Egresos mensuales (COP Billones)</h3>
     <p class="sub" id="sub-c1">Octubre concentra el mayor ingreso 2026 — saldo máximo de $66.86B en octubre</p>
     <div class="leg"><div class="li"><div class="ld" style="background:#16505C"></div>Ingresos</div><div class="li"><div class="ld" style="background:#78716C"></div>Egresos</div></div>
-    <div style="position:relative;height:250px"><canvas id="c1" role="img" aria-label="Ingresos y egresos 2026" style="box-sizing: border-box; display: block; height: 250px; width: 1311px;" width="1770" height="337"></canvas></div>
+    <div style="position:relative;height:250px"><canvas id="c1" role="img" aria-label="Ingresos y egresos 2026" style="box-sizing: border-box; display: block; height: 250px; width: 1171px;" width="1756" height="375"></canvas></div>
   </div>
   <div class="g2">
-    <div class="cc"><h3>Flujo neto mensual (COP Billones)</h3><p class="sub" id="sub-c2">1 mes(es) con saldo acumulado negativo en 2026</p><div style="position:relative;height:210px"><canvas id="c2" role="img" aria-label="Flujo neto 2026" style="box-sizing: border-box; display: block; height: 210px; width: 878px;" width="1185" height="283"></canvas></div></div>
-    <div class="cc"><h3>Saldo acumulado (COP Billones)</h3><p class="sub" id="sub-c3">Saldo mínimo −$2.64B en septiembre, cierra diciembre en $23.26B</p><div style="position:relative;height:210px"><canvas id="c3" role="img" aria-label="Saldo acumulado 2026" style="box-sizing: border-box; display: block; height: 210px; width: 878px;" width="1185" height="283"></canvas></div></div>
+    <div class="cc"><h3>Flujo neto mensual (COP Billones)</h3><p class="sub" id="sub-c2">1 mes(es) con saldo acumulado negativo en 2026</p><div style="position:relative;height:210px"><canvas id="c2" role="img" aria-label="Flujo neto 2026" style="box-sizing: border-box; display: block; height: 210px; width: 559px;" width="838" height="315"></canvas></div></div>
+    <div class="cc"><h3>Saldo acumulado (COP Billones)</h3><p class="sub" id="sub-c3">Saldo mínimo −$2.64B en septiembre, cierra diciembre en $23.26B</p><div style="position:relative;height:210px"><canvas id="c3" role="img" aria-label="Saldo acumulado 2026" style="box-sizing: border-box; display: block; height: 210px; width: 559px;" width="838" height="315"></canvas></div></div>
   </div>
 
   <div class="st">Análisis de portafolio</div>
   <div class="g3">
-    <div class="cc"><h3>Participación por proyecto</h3><p class="sub" id="sub-c4">Metro Estadio = 49.1% del portafolio</p><div style="position:relative;height:220px"><canvas id="c4" role="img" aria-label="Participación por proyecto" style="box-sizing: border-box; display: block; height: 220px; width: 567px;" width="765" height="296"></canvas></div></div>
-    <div class="cc"><h3>Margen bruto por proyecto (%)</h3><p class="sub">Verde ≥ 20% · Amarillo ≥ 12% · Rojo &lt;12%</p><div style="position:relative;height:220px"><canvas id="c5" role="img" aria-label="Margen por proyecto" style="box-sizing: border-box; display: block; height: 220px; width: 567px;" width="765" height="296"></canvas></div></div>
-    <div class="cc"><h3>Concentración de ingresos mensual</h3><p class="sub">% del total anual 2026</p><div style="position:relative;height:220px"><canvas id="c6" role="img" aria-label="Concentración mensual" style="box-sizing: border-box; display: block; height: 220px; width: 567px;" width="765" height="296"></canvas></div></div>
+    <div class="cc"><h3>Participación por proyecto</h3><p class="sub" id="sub-c4">Metro Estadio = 49.1% del portafolio</p><div style="position:relative;height:220px"><canvas id="c4" role="img" aria-label="Participación por proyecto" style="box-sizing: border-box; display: block; height: 220px; width: 354px;" width="532" height="330"></canvas></div></div>
+    <div class="cc"><h3>Margen bruto por proyecto (%)</h3><p class="sub">Verde ≥ 20% · Amarillo ≥ 12% · Rojo &lt;12%</p><div style="position:relative;height:220px"><canvas id="c5" role="img" aria-label="Margen por proyecto" style="box-sizing: border-box; display: block; height: 220px; width: 354px;" width="532" height="330"></canvas></div></div>
+    <div class="cc"><h3>Concentración de ingresos mensual</h3><p class="sub">% del total anual 2026</p><div style="position:relative;height:220px"><canvas id="c6" role="img" aria-label="Concentración mensual" style="box-sizing: border-box; display: block; height: 220px; width: 354px;" width="532" height="330"></canvas></div></div>
   </div>
 
   <div class="st">Detalle mensual por proyecto</div>
@@ -182,25 +182,25 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
   <div class="kpi-row">
     <div class="kpi kb"><div class="kl" id="kpi-mes-label">Saldo inicial julio</div><div class="kv b" id="kpi-mes-s0">$46.27B</div><div class="ks">Acumulado a mayo</div></div>
     <div class="kpi kp"><div class="kl">Ingresos ejecutados</div><div class="kv p" id="kpi-mes-ie">$50.28B</div><div class="ks">Total mes ejecutado</div></div>
-    <div class="kpi kn"><div class="kl">Egresos ejecutados</div><div class="kv n" id="kpi-mes-ee">$42.06B</div><div class="ks">Total mes ejecutado</div></div>
-    <div class="kpi kp"><div class="kl">Saldo final ejecutado</div><div class="kv p" id="kpi-mes-final">$54.49B</div><div class="ks" id="kpi-mes-final-s">Cierre de julio</div></div>
+    <div class="kpi kn"><div class="kl">Egresos ejecutados</div><div class="kv n" id="kpi-mes-ee">$53.70B</div><div class="ks">Total mes ejecutado</div></div>
+    <div class="kpi kp"><div class="kl">Saldo final ejecutado</div><div class="kv p" id="kpi-mes-final">$42.85B</div><div class="ks" id="kpi-mes-final-s">Cierre de julio</div></div>
   </div>
 
   <div class="st" id="st-mes-semanas">Detalle semana a semana — Julio 2026</div>
   <div class="g2">
     <div class="cc"><h3>Ingreso semanal (COP Billones)</h3><p class="sub">Valor ejecutado en cada semana del mes (no acumulado)</p>
       <div class="leg"><div class="li"><div class="ld" style="background:#16505C"></div>Ejecución</div></div>
-      <div style="position:relative;height:220px"><canvas id="c7" role="img" aria-label="Ingreso acumulado semanal" style="box-sizing: border-box; display: block; height: 220px; width: 629px;" width="849" height="296"></canvas></div></div>
+      <div style="position:relative;height:220px"><canvas id="c7" role="img" aria-label="Ingreso acumulado semanal" style="box-sizing: border-box; display: block; height: 220px; width: 792px;" width="1188" height="330"></canvas></div></div>
     <div class="cc"><h3>Egreso semanal (COP Billones)</h3><p class="sub">Valor ejecutado en cada semana del mes (no acumulado)</p>
       <div class="leg"><div class="li"><div class="ld" style="background:#78716C"></div>Ejecución</div></div>
-      <div style="position:relative;height:220px"><canvas id="c8" role="img" aria-label="Egreso acumulado semanal" style="box-sizing: border-box; display: block; height: 220px; width: 629px;" width="849" height="296"></canvas></div></div>
+      <div style="position:relative;height:220px"><canvas id="c8" role="img" aria-label="Egreso acumulado semanal" style="box-sizing: border-box; display: block; height: 220px; width: 792px;" width="1188" height="330"></canvas></div></div>
   </div>
   <div class="g2">
     <div class="cc"><h3>Saldo de caja acumulado semanal (COP Billones)</h3><p class="sub" id="sub-c9">Ejecución desde saldo inicial $46.27B</p>
       <div class="leg"><div class="li"><div class="ld" style="background:#2A2A2C;border-radius:50%"></div>Ejecución</div></div>
-      <div style="position:relative;height:210px"><canvas id="c9" role="img" aria-label="Saldo acumulado semanal" style="box-sizing: border-box; display: block; height: 210px; width: 629px;" width="849" height="283"></canvas></div></div>
-    <div class="cc"><h3>Egresos ejecutados por proyecto — <span id="c10-mes">Julio</span></h3><p class="sub" id="sub-c10">Metro Estadio = 61.7% del egreso del mes</p>
-      <div style="position:relative;height:210px"><canvas id="c10" role="img" aria-label="Egresos junio por proyecto" style="box-sizing: border-box; display: block; height: 210px; width: 629px;" width="849" height="283"></canvas></div></div>
+      <div style="position:relative;height:210px"><canvas id="c9" role="img" aria-label="Saldo acumulado semanal" style="box-sizing: border-box; display: block; height: 210px; width: 792px;" width="1188" height="315"></canvas></div></div>
+    <div class="cc"><h3>Egresos ejecutados por proyecto — <span id="c10-mes">Julio</span></h3><p class="sub" id="sub-c10">Metro Estadio = 59.4% del egreso del mes</p>
+      <div style="position:relative;height:210px"><canvas id="c10" role="img" aria-label="Egresos junio por proyecto" style="box-sizing: border-box; display: block; height: 210px; width: 792px;" width="1188" height="315"></canvas></div></div>
   </div>
 
   <div class="st">Detalle semanal — <span id="st-mes-detalle">Julio 2026</span></div>
@@ -212,7 +212,7 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
       <select id="m-m" onchange="mT()"><option value="sem">Por semana</option><option value="acum">Acumulado semanal</option></select>
       <span class="badge" id="m-b">COP Millones</span>
     </div>
-    <div class="ts"><table id="m-tbl"><thead><tr><th class="tl" style="position:sticky;left:0;z-index:3;min-width:165px">Proyecto</th><th class="t3">Sem 1</th><th class="t3">Sem 2</th><th class="t3">Sem 3</th><th class="t3">Sem 4</th><th class="t3">Total</th></tr></thead><tbody><tr class="sec"><td class="tn" colspan="6">▸ Ingresos</td></tr><tr><td class="tn s">Hospital Pto.</td><td class="tv  ej">—</td><td class="tv p ej">2.298</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">2.298</td></tr><tr><td class="tn s">Escenarios Dep.</td><td class="tv  ej">—</td><td class="tv p ej">8.404</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">8.404</td></tr><tr><td class="tn s">Playas Sta. Verónica</td><td class="tv  ej">—</td><td class="tv p ej">7.966</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">7.966</td></tr><tr><td class="tn s">Calle 2</td><td class="tv  ej">—</td><td class="tv p ej">3.262</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">3.262</td></tr><tr><td class="tn s">Metroplús</td><td class="tv  ej">—</td><td class="tv p ej">787</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">787</td></tr><tr><td class="tn s">Magangué</td><td class="tv  ej">—</td><td class="tv p ej">900</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">900</td></tr><tr><td class="tn s">Metro Estadio</td><td class="tv  ej">—</td><td class="tv p ej">26.660</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">26.660</td></tr><tr class="tot"><td class="tn">TOTAL INGRESOS</td><td class="tv p ej" style="font-weight:700">—</td><td class="tv p ej" style="font-weight:700">50.277</td><td class="tv p ej" style="font-weight:700">—</td><td class="tv p ej" style="font-weight:700">—</td><td class="tv p ej" style="font-weight:700">50.277</td></tr><tr class="sec"><td class="tn" colspan="6">▸ Egresos</td></tr><tr><td class="tn s">Vías Urbanas M1</td><td class="tv n ej">520</td><td class="tv n ej">960</td><td class="tv n ej">960</td><td class="tv n ej">960</td><td class="tv n ej" style="font-weight:700">3.401</td></tr><tr><td class="tn s">Colegios BQ</td><td class="tv n ej">1.206</td><td class="tv n ej">1.597</td><td class="tv n ej">1.597</td><td class="tv n ej">1.597</td><td class="tv n ej" style="font-weight:700">5.997</td></tr><tr><td class="tn s">Hospital Pto.</td><td class="tv n ej">453</td><td class="tv n ej">200</td><td class="tv n ej">200</td><td class="tv n ej">100</td><td class="tv n ej" style="font-weight:700">954</td></tr><tr><td class="tn s">Escenarios Dep.</td><td class="tv n ej">73</td><td class="tv n ej">531</td><td class="tv n ej">531</td><td class="tv n ej">531</td><td class="tv n ej" style="font-weight:700">1.665</td></tr><tr><td class="tn s">Playas Sta. Verónica</td><td class="tv n ej">529</td><td class="tv n ej">420</td><td class="tv n ej">420</td><td class="tv n ej">420</td><td class="tv n ej" style="font-weight:700">1.789</td></tr><tr><td class="tn s">Calle 2</td><td class="tv n ej">50</td><td class="tv n ej">240</td><td class="tv n ej">240</td><td class="tv n ej">240</td><td class="tv n ej" style="font-weight:700">770</td></tr><tr><td class="tn s">Metroplús</td><td class="tv n ej">0</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv n ej" style="font-weight:700">0</td></tr><tr><td class="tn s">Costos Admin.</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv n ej" style="font-weight:700">(401)</td></tr><tr><td class="tn s">Magangué</td><td class="tv n ej">332</td><td class="tv n ej">348</td><td class="tv n ej">348</td><td class="tv n ej">348</td><td class="tv n ej" style="font-weight:700">1.374</td></tr><tr><td class="tn s">Metro Estadio</td><td class="tv n ej">4.315</td><td class="tv n ej">12.624</td><td class="tv n ej">4.624</td><td class="tv n ej">4.624</td><td class="tv n ej" style="font-weight:700">26.188</td></tr><tr><td class="tn s">Antares</td><td class="tv n ej">3</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv n ej" style="font-weight:700">3</td></tr><tr><td class="tn s">Escenarios Baq</td><td class="tv n ej">18</td><td class="tv n ej">100</td><td class="tv n ej">100</td><td class="tv n ej">100</td><td class="tv n ej" style="font-weight:700">318</td></tr><tr class="tot"><td class="tn">TOTAL EGRESOS</td><td class="tv n ej" style="font-weight:700">7.097</td><td class="tv n ej" style="font-weight:700">17.020</td><td class="tv n ej" style="font-weight:700">9.020</td><td class="tv n ej" style="font-weight:700">8.920</td><td class="tv n ej" style="font-weight:700">42.057</td></tr><tr class="sec"><td class="tn" colspan="6">▸ Saldo de caja</td></tr><tr class="sub"><td class="tn">Flujo neto semanal</td><td class="tv n ej">(7.097)</td><td class="tv p ej">33.258</td><td class="tv n ej">(9.020)</td><td class="tv n ej">(8.920)</td><td class="tv p ej" style="font-weight:700">8.221</td></tr><tr class="tot"><td class="tn">Saldo acumulado</td><td class="tv p ej" style="font-weight:700">39.175</td><td class="tv p ej" style="font-weight:700">72.433</td><td class="tv p ej" style="font-weight:700">63.413</td><td class="tv p ej" style="font-weight:700">54.494</td><td></td></tr></tbody></table></div>
+    <div class="ts"><table id="m-tbl"><thead><tr><th class="tl" style="position:sticky;left:0;z-index:3;min-width:165px">Proyecto</th><th class="t3">Sem 1</th><th class="t3">Sem 2</th><th class="t3">Sem 3</th><th class="t3">Sem 4</th><th class="t3">Sem 5</th><th class="t3">Total</th></tr></thead><tbody><tr class="sec"><td class="tn" colspan="7">▸ Ingresos</td></tr><tr><td class="tn s">Hospital Pto.</td><td class="tv  ej">—</td><td class="tv p ej">2.298</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">2.298</td></tr><tr><td class="tn s">Escenarios Dep.</td><td class="tv  ej">—</td><td class="tv p ej">8.404</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">8.404</td></tr><tr><td class="tn s">Playas Sta. Verónica</td><td class="tv  ej">—</td><td class="tv p ej">7.966</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">7.966</td></tr><tr><td class="tn s">Calle 2</td><td class="tv  ej">—</td><td class="tv p ej">3.262</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">3.262</td></tr><tr><td class="tn s">Metroplús</td><td class="tv  ej">—</td><td class="tv p ej">787</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">787</td></tr><tr><td class="tn s">Magangué</td><td class="tv  ej">—</td><td class="tv p ej">900</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">900</td></tr><tr><td class="tn s">Metro Estadio</td><td class="tv  ej">—</td><td class="tv p ej">26.660</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv p ej" style="font-weight:700">26.660</td></tr><tr class="tot"><td class="tn">TOTAL INGRESOS</td><td class="tv p ej" style="font-weight:700">—</td><td class="tv p ej" style="font-weight:700">50.277</td><td class="tv p ej" style="font-weight:700">—</td><td class="tv p ej" style="font-weight:700">—</td><td class="tv p ej" style="font-weight:700">—</td><td class="tv p ej" style="font-weight:700">50.277</td></tr><tr class="sec"><td class="tn" colspan="7">▸ Egresos</td></tr><tr><td class="tn s">Vías Urbanas M1</td><td class="tv n ej">520</td><td class="tv n ej">960</td><td class="tv n ej">960</td><td class="tv n ej">960</td><td class="tv n ej">1.401</td><td class="tv n ej" style="font-weight:700">4.801</td></tr><tr><td class="tn s">Colegios BQ</td><td class="tv n ej">1.206</td><td class="tv n ej">1.597</td><td class="tv n ej">1.597</td><td class="tv n ej">1.597</td><td class="tv n ej">1.988</td><td class="tv n ej" style="font-weight:700">7.984</td></tr><tr><td class="tn s">Hospital Pto.</td><td class="tv n ej">453</td><td class="tv n ej">200</td><td class="tv n ej">200</td><td class="tv n ej">100</td><td class="tv n ej">48</td><td class="tv n ej" style="font-weight:700">1.001</td></tr><tr><td class="tn s">Escenarios Dep.</td><td class="tv n ej">73</td><td class="tv n ej">531</td><td class="tv n ej">531</td><td class="tv n ej">531</td><td class="tv n ej">989</td><td class="tv n ej" style="font-weight:700">2.653</td></tr><tr><td class="tn s">Playas Sta. Verónica</td><td class="tv n ej">529</td><td class="tv n ej">420</td><td class="tv n ej">420</td><td class="tv n ej">420</td><td class="tv n ej">311</td><td class="tv n ej" style="font-weight:700">2.100</td></tr><tr><td class="tn s">Calle 2</td><td class="tv n ej">50</td><td class="tv n ej">240</td><td class="tv n ej">240</td><td class="tv n ej">240</td><td class="tv n ej">430</td><td class="tv n ej" style="font-weight:700">1.200</td></tr><tr><td class="tn s">Metroplús</td><td class="tv n ej">0</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv n ej" style="font-weight:700">0</td></tr><tr><td class="tn s">Costos Admin.</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv n ej" style="font-weight:700">(401)</td></tr><tr><td class="tn s">Magangué</td><td class="tv n ej">332</td><td class="tv n ej">348</td><td class="tv n ej">348</td><td class="tv n ej">348</td><td class="tv n ej">363</td><td class="tv n ej" style="font-weight:700">1.738</td></tr><tr><td class="tn s">Metro Estadio</td><td class="tv n ej">4.315</td><td class="tv n ej">12.624</td><td class="tv n ej">4.624</td><td class="tv n ej">4.624</td><td class="tv n ej">5.934</td><td class="tv n ej" style="font-weight:700">32.122</td></tr><tr><td class="tn s">Antares</td><td class="tv n ej">3</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv  ej">—</td><td class="tv n ej" style="font-weight:700">3</td></tr><tr><td class="tn s">Escenarios Baq</td><td class="tv n ej">18</td><td class="tv n ej">100</td><td class="tv n ej">100</td><td class="tv n ej">100</td><td class="tv n ej">181</td><td class="tv n ej" style="font-weight:700">499</td></tr><tr class="tot"><td class="tn">TOTAL EGRESOS</td><td class="tv n ej" style="font-weight:700">7.097</td><td class="tv n ej" style="font-weight:700">17.020</td><td class="tv n ej" style="font-weight:700">9.020</td><td class="tv n ej" style="font-weight:700">8.920</td><td class="tv n ej" style="font-weight:700">11.644</td><td class="tv n ej" style="font-weight:700">53.701</td></tr><tr class="sec"><td class="tn" colspan="7">▸ Saldo de caja</td></tr><tr class="sub"><td class="tn">Flujo neto semanal</td><td class="tv n ej">(7.097)</td><td class="tv p ej">33.258</td><td class="tv n ej">(9.020)</td><td class="tv n ej">(8.920)</td><td class="tv n ej">(11.644)</td><td class="tv n ej" style="font-weight:700">(3.423)</td></tr><tr class="tot"><td class="tn">Saldo acumulado</td><td class="tv p ej" style="font-weight:700">39.175</td><td class="tv p ej" style="font-weight:700">72.433</td><td class="tv p ej" style="font-weight:700">63.413</td><td class="tv p ej" style="font-weight:700">54.494</td><td class="tv p ej" style="font-weight:700">42.850</td><td></td></tr></tbody></table></div>
     <p class="note">Solo flujo ejecutado. "Acumulado" muestra saldo corriente desde inicio de mes.</p>
   </div>
 </div>
@@ -228,9 +228,9 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
   </div>
 
   <div class="kpi-row" style="margin-bottom:20px;">
-    <div class="kpi kw"><div class="kl">Flujo neto 2026</div><div class="kv p" id="sk1">$12.06B</div><div class="ks" id="sd1" style="color: var(--pos);">▲ +0.00B vs base</div></div>
-    <div class="kpi kp"><div class="kl">Saldo mín. (peor mes)</div><div class="kv w" id="sk2">−$3.44B</div><div class="ks" id="sd2" style="color: var(--pos);">▲ +0.00B vs base</div></div>
-    <div class="kpi kp"><div class="kl">Meses en déficit</div><div class="kv w" id="sk3">1 / 12</div><div class="ks" id="sd3" style="color: var(--pos);">▲ 0 mes(es)</div></div>
+    <div class="kpi kw"><div class="kl">Flujo neto 2026</div><div class="kv p" id="sk1">$12.46B</div><div class="ks" id="sd1" style="color: var(--pos);">▲ +0.00B vs base</div></div>
+    <div class="kpi kp"><div class="kl">Saldo mín. (peor mes)</div><div class="kv p" id="sk2">$1.27B</div><div class="ks" id="sd2" style="color: var(--pos);">▲ +0.00B vs base</div></div>
+    <div class="kpi kp"><div class="kl">Meses en déficit</div><div class="kv p" id="sk3">0 / 12</div><div class="ks" id="sd3" style="color: var(--pos);">▲ 0 mes(es)</div></div>
     <div class="kpi kn"><div class="kl">Cash runway</div><div class="kv n" id="sk4">&lt;1 mes</div><div class="ks" id="sd4" style="color: var(--neg);">Crítico</div></div>
   </div>
 
@@ -312,7 +312,7 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
     <!-- PANEL DERECHO: Gráfica -->
     <div class="cc">
       <div class="st" style="margin-bottom:14px;">Saldo acumulado mensual</div>
-      <div style="position:relative;height:255px"><canvas id="c-sim" role="img" aria-label="Saldo acumulado escenario vs base" width="1185" height="344" style="display: block; box-sizing: border-box; height: 255px; width: 878px;"></canvas></div>
+      <div style="position:relative;height:255px"><canvas id="c-sim" role="img" aria-label="Saldo acumulado escenario vs base" width="878" height="255" style="display: block; box-sizing: border-box; height: 255px; width: 878px;"></canvas></div>
       <div style="display:flex;gap:16px;margin-top:10px;font-size:11px;color:var(--muted);">
         <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:20px;height:0;border-top:2px dashed #9CA3AF;"></span>Base</span>
         <span style="display:flex;align-items:center;gap:5px;"><div class="ld" style="background:#58595B;"></div>Escenario</span>
@@ -349,11 +349,11 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
 // ── RAW DATA (COP pesos exactos del Excel) ──
 // ── RAW DATA (COP pesos exactos del Excel) — mutable, se sobreescribe al cargar un nuevo archivo ──
 /* DATA_START */
-let DATA = {"IT":[15105431806,15125878121.104237,10267959907,63930848570.12,10856106620.61,100538182064.82,50277422912.714325,30502990254.06826,19663483699.552197,107851695982.99707,0,29781706926.736725],"ET":[17005825261.51248,20431321382.587997,22297096005.04,48073629014.94,25622380960.16,46519005864.12572,53700562015.38744,45944063289.036194,49707037506.62559,38359032695.566956,41726384350.741684,31655231452.66814],"AC":[1271285759.548437,1660906734.4564362,1369527116.2807198,17086746671.46072,2320472331.910721,46272690404.02072,42849551301.3476,27408478266.37967,-2635075540.693722,66857587746.73639,25131203395.994705,23257678870.06329],"ING_P":{"Socios":[0,0,0,668077.3600000001,847862.91,118566.83,0,0,0,0,0,0],"Vías Urbanas M1":[12925669021,12385797539.104237,9421210574,291818,7353801,0,0,8476602038.079841,7906780419.05079,9477913899.71002,0,1006149072.5911905],"Colegios BQ":[0,0,0,9229192596.470001,366559,5139146,0,18320494295,0,22239853855.017082,0,22239853855.01712],"Hospital Pto.":[1622262785,1317804058,0,280000000,0,0,2298238281.731854,0,2002637626.165145,0,0,0],"Escenarios Dep.":[0,0,0,1235215,0,0,8404000000,0,4959971928.606052,0,0,5035703999.128413],"Playas Sta. Verónica":[0,0,0,32788943964.09,9460825451,154400,7966206204.97722,0,4608131278.38478,0,0,0],"Calle 2":[0,1422276524,846749333,790658204,1386123179,448000,3261979172.3152504,1229893920.98842,185962447.34542835,0,0,0],"Metroplús":[557500000,0,0,746.3100000000001,351.62,700101.5,786999253.69,0,0,0,0,0],"Magangué":[0,0,0,0,0,0,900000000,2476000000,0,1300000000,0,0],"Metro Estadio":[0,0,0,20839857948.89,589416.0800000001,100531621850.49,26660000000,0,0,73333928228.26997,0,0],"Parques Integrales":[0,0,0,0,0,0,0,0,0,1500000000,0,1500000000]},"EG_P":{"Socios":[0,0,0,226130.57000000004,152282.72,129536.07999999999,0,0,0,0,0,0],"Mejoramiento":[140000000,140000000,0,0,0,0,0,0,0,0,0,0],"Vías Urbanas M1":[7300078631.108,5032708004.158,3938239154.44,3714912728.69,1262456719.6100001,2705868546.504286,4801121072.32335,2347688323.21869,2324769941.485718,0,0,0],"Colegios BQ":[3760379265.8962398,4049561637.108234,3541089089.5600004,4640988300.08,4936676161.84,6364641988.754286,7984331063.90812,7452653010.84601,8381155213.97614,6930279920.6843195,8294386175.01411,8269652677.03311],"Hospital Pto.":[1744716525.1,1367153151.4199996,776848053.24,1010047256.46,932312416,863700390.2642857,1001428425.9477146,0,0,0,0,0],"Escenarios Dep.":[406128158,394199060,516473232.2,865125296.75,658116470.69,1376855760.5,2653097649.0778055,2732216911.1210933,2529144481.7907467,1924401000.146327,1771694331.6161728,1502380011.80029],"Playas Sta. Verónica":[2378235252.4082394,3460814794.901766,2349154711.91,6307836749.41,6101482543.700001,3247924738.5342865,2099985495.619994,2100000000,2100000000,1252089765.845711,500000000,0],"Calle 2":[14239485,178673428,894604965.0900002,1961326049.98,385206773.73,601168219.7242849,1199999999.999999,1200000000,1273705462.248064,0,0,0],"Metroplús":[347000000,215000000,59880117.5,47314251.23,369442603.2,83356.09,65233.89,0,0,0,0,0],"Costos Admin.":[0,0,0,114147761.98,34098575,401600000,-401472186,0,0,0,0,0],"Magangué":[35601900,121020996,185188480.82,669334414.06,248786589.28,302245918.83000004,1737582567.5809994,1295842657.98,1295842657.98,1220983692.525,1220983692.525,748270600],"Metro Estadio":[879446044,5472190311,10035618200.28,28717285926.73,10678666744.39,30634393072.844284,32122241153.03946,28315662385.8704,31302419749.14492,26531278316.3656,29439320151.5864,20634928163.83474],"Antares":[0,0,0,10344000,14983080,0,2760540,0,0,0,0,0],"Parques Integrales":[0,0,0,14740149,0,20394336,499421000,500000000,500000000,500000000,500000000,500000000]},"PR_NAMES":["Metro Estadio","Colegios BQ","Vías Urbanas M1","Playas Sta. Verónica","Escenarios Dep.","Calle 2","Hospital Pto.","Magangué","Metroplús"],"PR_MARGIN":[16.7,15.5,20.9,48,25.2,15.5,12.2,26.1,25.7],"PRIV_M":[221366,72035,61608,54824,18401,9124,7521,4676,1345],"IP":[0,0,0,0],"EP":[0,0,0,0],"IE":[0,50277422912.714325,0,0],"EE":[7097314447.13,17019841685.499487,9019841685.499485,8919556000.309944],"S0":46272690404.02072,"MIG":{"Hospital Pto.":{"p":[0,0,0,0],"e":[0,2298238281.731854,0,0]},"Escenarios Dep.":{"p":[0,0,0,0],"e":[0,8404000000,0,0]},"Playas Sta. Verónica":{"p":[0,0,0,0],"e":[0,7966206204.97722,0,0]},"Calle 2":{"p":[0,0,0,0],"e":[0,3261979172.3152504,0,0]},"Metroplús":{"p":[0,0,0,0],"e":[0,786999253.69,0,0]},"Magangué":{"p":[0,0,0,0],"e":[0,900000000,0,0]},"Metro Estadio":{"p":[0,0,0,0],"e":[0,26660000000,0,0]}},"MEG":{"Vías Urbanas M1":{"p":[0,0,0,0],"e":[519873175.47,960224214.4646708,960224214.4646708,960224214.4646708]},"Colegios BQ":{"p":[0,0,0,0],"e":[1206080391,1596866212.7816231,1596866212.7816231,1596866212.7816231]},"Hospital Pto.":{"p":[0,0,0,0],"e":[453003138.57,200285685.18954298,200285685.18954298,100000000]},"Escenarios Dep.":{"p":[0,0,0,0],"e":[72668701.98,530619529.81556046,530619529.81556046,530619529.81556046]},"Playas Sta. Verónica":{"p":[0,0,0,0],"e":[528939787.44,419997099.123999,419997099.123999,419997099.123999]},"Calle 2":{"p":[0,0,0,0],"e":[50064369.2,240000000,240000000,240000000]},"Metroplús":{"p":[0,0,0,0],"e":[65233.89,0,0,0]},"Costos Admin.":{"p":[0,0,0,0],"e":[-401472186,0,0,0]},"Magangué":{"p":[0,0,0,0],"e":[331829621.82,347516513.51619995,347516513.51619995,347516513.51619995]},"Metro Estadio":{"p":[0,0,0,0],"e":[4315014946.76,12624448230.607891,4624448230.60789,4624448230.60789]},"Antares":{"p":[0,0,0,0],"e":[2760540,0,0,0]},"Escenarios Baq":{"p":[0,0,0,0],"e":[18486727,99884200,99884200,99884200]}},"mesActualNombre":"Julio","mesActualIdx":6,"corte":"7 jul 2026","TOTAL_PORTAFOLIO":701746824223.8062,"TOTAL_EGRESOS_PORTAFOLIO":569470830493.1572};
+let DATA = {"IT":[15105431806,15125878121.104237,10267959907,63930848570.12,10856106620.61,100538182064.82,50277422912.714325,30502990254.06826,19663483699.552197,107851695982.99707,0,29781706926.736725],"ET":[17005825261.51248,20431321382.587997,22297096005.04,48073629014.94,25622380960.16,46519005864.12572,53700562015.38744,45944063289.036194,49707037506.62559,38359032695.566956,41726384350.741684,31655231452.66814],"AC":[1271285759.548437,1660906734.4564362,1369527116.2807198,17086746671.46072,2320472331.910721,46272690404.02072,42849551301.3476,27408478266.37967,-2635075540.693722,66857587746.73639,25131203395.994705,23257678870.06329],"ING_P":{"Socios":[0,0,0,668077.3600000001,847862.91,118566.83,0,0,0,0,0,0],"Vías Urbanas M1":[12925669021,12385797539.104237,9421210574,291818,7353801,0,0,8476602038.079841,7906780419.05079,9477913899.71002,0,1006149072.5911905],"Colegios BQ":[0,0,0,9229192596.470001,366559,5139146,0,18320494295,0,22239853855.017082,0,22239853855.01712],"Hospital Pto.":[1622262785,1317804058,0,280000000,0,0,2298238281.731854,0,2002637626.165145,0,0,0],"Escenarios Dep.":[0,0,0,1235215,0,0,8404000000,0,4959971928.606052,0,0,5035703999.128413],"Playas Sta. Verónica":[0,0,0,32788943964.09,9460825451,154400,7966206204.97722,0,4608131278.38478,0,0,0],"Calle 2":[0,1422276524,846749333,790658204,1386123179,448000,3261979172.3152504,1229893920.98842,185962447.34542835,0,0,0],"Metroplús":[557500000,0,0,746.3100000000001,351.62,700101.5,786999253.69,0,0,0,0,0],"Magangué":[0,0,0,0,0,0,900000000,2476000000,0,1300000000,0,0],"Metro Estadio":[0,0,0,20839857948.89,589416.0800000001,100531621850.49,26660000000,0,0,73333928228.26997,0,0],"Parques Integrales":[0,0,0,0,0,0,0,0,0,1500000000,0,1500000000]},"EG_P":{"Socios":[0,0,0,226130.57000000004,152282.72,129536.07999999999,0,0,0,0,0,0],"Mejoramiento":[140000000,140000000,0,0,0,0,0,0,0,0,0,0],"Vías Urbanas M1":[7300078631.108,5032708004.158,3938239154.44,3714912728.69,1262456719.6100001,2705868546.504286,4801121072.32335,2347688323.21869,2324769941.485718,0,0,0],"Colegios BQ":[3760379265.8962398,4049561637.108234,3541089089.5600004,4640988300.08,4936676161.84,6364641988.754286,7984331063.90812,7452653010.84601,8381155213.97614,6930279920.6843195,8294386175.01411,8269652677.03311],"Hospital Pto.":[1744716525.1,1367153151.4199996,776848053.24,1010047256.46,932312416,863700390.2642857,1001428425.9477146,0,0,0,0,0],"Escenarios Dep.":[406128158,394199060,516473232.2,865125296.75,658116470.69,1376855760.5,2653097649.0778055,2732216911.1210933,2529144481.7907467,1924401000.146327,1771694331.6161728,1502380011.80029],"Playas Sta. Verónica":[2378235252.4082394,3460814794.901766,2349154711.91,6307836749.41,6101482543.700001,3247924738.5342865,2099985495.619994,2100000000,2100000000,1252089765.845711,500000000,0],"Calle 2":[14239485,178673428,894604965.0900002,1961326049.98,385206773.73,601168219.7242849,1199999999.999999,1200000000,1273705462.248064,0,0,0],"Metroplús":[347000000,215000000,59880117.5,47314251.23,369442603.2,83356.09,65233.89,0,0,0,0,0],"Costos Admin.":[0,0,0,114147761.98,34098575,401600000,-401472186,0,0,0,0,0],"Magangué":[35601900,121020996,185188480.82,669334414.06,248786589.28,302245918.83000004,1737582567.5809994,1295842657.98,1295842657.98,1220983692.525,1220983692.525,748270600],"Metro Estadio":[879446044,5472190311,10035618200.28,28717285926.73,10678666744.39,30634393072.844284,32122241153.03946,28315662385.8704,31302419749.14492,26531278316.3656,29439320151.5864,20634928163.83474],"Antares":[0,0,0,10344000,14983080,0,2760540,0,0,0,0,0],"Parques Integrales":[0,0,0,14740149,0,20394336,499421000,500000000,500000000,500000000,500000000,500000000]},"PR_NAMES":["Metro Estadio","Colegios BQ","Vías Urbanas M1","Playas Sta. Verónica","Escenarios Dep.","Calle 2","Hospital Pto.","Magangué","Metroplús"],"PR_MARGIN":[16.7,15.5,20.9,48,25.2,15.5,12.2,26.1,25.7],"PRIV_M":[221366,72035,61608,54824,18401,9124,7521,4676,1345],"IP":[0,0,0,0,0],"EP":[0,0,0,0,0],"IE":[0,50277422912.714325,0,0,0],"EE":[7097314447.13,17019841685.499487,9019841685.499485,8919556000.309944,11644008196.948528],"S0":46272690404.02072,"MIG":{"Hospital Pto.":{"p":[0,0,0,0,0],"e":[0,2298238281.731854,0,0,0]},"Escenarios Dep.":{"p":[0,0,0,0,0],"e":[0,8404000000,0,0,0]},"Playas Sta. Verónica":{"p":[0,0,0,0,0],"e":[0,7966206204.97722,0,0,0]},"Calle 2":{"p":[0,0,0,0,0],"e":[0,3261979172.3152504,0,0,0]},"Metroplús":{"p":[0,0,0,0,0],"e":[0,786999253.69,0,0,0]},"Magangué":{"p":[0,0,0,0,0],"e":[0,900000000,0,0,0]},"Metro Estadio":{"p":[0,0,0,0,0],"e":[0,26660000000,0,0,0]}},"MEG":{"Vías Urbanas M1":{"p":[0,0,0,0,0],"e":[519873175.47,960224214.4646708,960224214.4646708,960224214.4646708,1400575253.459338]},"Colegios BQ":{"p":[0,0,0,0,0],"e":[1206080391,1596866212.7816231,1596866212.7816231,1596866212.7816231,1987652034.5632515]},"Hospital Pto.":{"p":[0,0,0,0,0],"e":[453003138.57,200285685.18954298,200285685.18954298,100000000,47853916.99862862]},"Escenarios Dep.":{"p":[0,0,0,0,0],"e":[72668701.98,530619529.81556046,530619529.81556046,530619529.81556046,988570357.651124]},"Playas Sta. Verónica":{"p":[0,0,0,0,0],"e":[528939787.44,419997099.123999,419997099.123999,419997099.123999,311054410.807997]},"Calle 2":{"p":[0,0,0,0,0],"e":[50064369.2,240000000,240000000,240000000,429935630.799999]},"Metroplús":{"p":[0,0,0,0,0],"e":[65233.89,0,0,0,0]},"Costos Admin.":{"p":[0,0,0,0,0],"e":[-401472186,0,0,0,0]},"Magangué":{"p":[0,0,0,0,0],"e":[331829621.82,347516513.51619995,347516513.51619995,347516513.51619995,363203405.2123994]},"Metro Estadio":{"p":[0,0,0,0,0],"e":[4315014946.76,12624448230.607891,4624448230.60789,4624448230.60789,5933881514.45579]},"Antares":{"p":[0,0,0,0,0],"e":[2760540,0,0,0,0]},"Escenarios Baq":{"p":[0,0,0,0,0],"e":[18486727,99884200,99884200,99884200,181281673]}},"mesActualNombre":"Julio","mesActualIdx":6,"corte":"7 jul 2026","TOTAL_PORTAFOLIO":701746824223.8062,"TOTAL_EGRESOS_PORTAFOLIO":569470830493.1572};
 /* DATA_END */
 const MS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 const MS_FULL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const WK=['Sem 1','Sem 2','Sem 3','Sem 4'];
+function wkLabels(n){ return Array.from({length:n},(_,i)=>'Sem '+(i+1)); }
 const TC='#6B7280',GC='rgba(0,0,0,.05)';
 
 // Plugin compartido: línea vertical punteada + etiquetas "← Ejecutado | Proyectado →"
@@ -473,9 +473,10 @@ function buildCharts(){
   ]},options:{...bo,scales:{x:{ticks:{color:TC,font:{size:11},autoSkip:false,maxRotation:0},grid:{color:GC},border:{display:false}},y:{ticks:{color:TC,font:{size:11},callback:v=>v+'%'},grid:{color:GC},border:{display:false}}},plugins:{...bo.plugins,tooltip:{callbacks:{label:c=>' '+c.parsed.y.toFixed(1)+'% del ingreso anual'}}}},plugins:[separatorPlugin]});
 
   const ACEM=mAcum(d.IE,d.EE,d.S0);
-  charts.c7=new Chart(document.getElementById('c7'),{type:'bar',data:{labels:WK,datasets:[{label:'Ejecución',data:d.IE.map(v=>+(v/1e9).toFixed(2)),backgroundColor:'#16505C',borderRadius:3,barPercentage:.8}]},options:mo});
-  charts.c8=new Chart(document.getElementById('c8'),{type:'bar',data:{labels:WK,datasets:[{label:'Ejecución',data:d.EE.map(v=>+(v/1e9).toFixed(2)),backgroundColor:'#78716C',borderRadius:3,barPercentage:.8}]},options:mo});
-  charts.c9=new Chart(document.getElementById('c9'),{type:'line',data:{labels:['Inicio',...WK],datasets:[{label:'Ejecución',data:[+(d.S0/1e9).toFixed(2),...ACEM.map(v=>+(v/1e9).toFixed(2))],borderColor:'#2A2A2C',borderWidth:2,pointRadius:5,pointBackgroundColor:ACEM.map(v=>v>=0?'#16A34A':'#DC2626'),fill:false,tension:.3}]},options:mo});
+  const WKn=wkLabels(d.IE.length);
+  charts.c7=new Chart(document.getElementById('c7'),{type:'bar',data:{labels:WKn,datasets:[{label:'Ejecución',data:d.IE.map(v=>+(v/1e9).toFixed(2)),backgroundColor:'#16505C',borderRadius:3,barPercentage:.8}]},options:mo});
+  charts.c8=new Chart(document.getElementById('c8'),{type:'bar',data:{labels:WKn,datasets:[{label:'Ejecución',data:d.EE.map(v=>+(v/1e9).toFixed(2)),backgroundColor:'#78716C',borderRadius:3,barPercentage:.8}]},options:mo});
+  charts.c9=new Chart(document.getElementById('c9'),{type:'line',data:{labels:['Inicio',...WKn],datasets:[{label:'Ejecución',data:[+(d.S0/1e9).toFixed(2),...ACEM.map(v=>+(v/1e9).toFixed(2))],borderColor:'#2A2A2C',borderWidth:2,pointRadius:5,pointBackgroundColor:ACEM.map(v=>v>=0?'#16A34A':'#DC2626'),fill:false,tension:.3}]},options:mo});
   const EJD=Object.entries(d.MEG).map(([n,x])=>({n,t:x.e.reduce((a,b)=>a+b,0)})).filter(x=>x.t>0).sort((a,b)=>b.t-a.t);
   charts.c10=new Chart(document.getElementById('c10'),{type:'doughnut',data:{labels:EJD.map(x=>x.n),datasets:[{data:EJD.map(x=>+(x.t/1e9).toFixed(2)),backgroundColor:['#78716C','#58595B','#8A8B8D','#6B7F94','#9C8F7C','#7C8B7A','#9FB3C2','#B0AEAC'],borderWidth:1,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'56%',plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:9,padding:6}},tooltip:{callbacks:{label:c=>' '+c.label+': $'+c.parsed.toFixed(2)+'B'}}}}});
 }
@@ -525,6 +526,8 @@ function renderKPIs(){
   document.getElementById('kpi-mes-final-s').textContent='Cierre de '+d.mesActualNombre.toLowerCase();
   document.getElementById('st-mes-semanas').textContent='Detalle semana a semana — '+d.mesActualNombre+' 2026';
   document.getElementById('st-mes-detalle').textContent=d.mesActualNombre+' 2026';
+  const tabMes=document.getElementById('tab-mes');
+  if(tabMes) tabMes.textContent='FC Mes — '+d.mesActualNombre+' 2026';
   document.getElementById('c10-mes').textContent=d.mesActualNombre;
   document.getElementById('sub-c9').textContent='Ejecución desde saldo inicial '+fmtB(d.S0);
   const EJD=Object.entries(d.MEG).map(([n,x])=>({n,t:x.e.reduce((a,b)=>a+b,0)})).filter(x=>x.t>0).sort((a,b)=>b.t-a.t);
@@ -582,27 +585,30 @@ function mT(){
   const ia=document.getElementById('m-m').value==='acum';
   document.getElementById('m-b').textContent='COP '+(u==='M'?'Millones':'Billones');
   const d=DATA;
+  const NW=d.IE.length;
+  const WKn=wkLabels(NW);
+  const COLSPAN=NW+2;
   const ACEM=mAcum(d.IE,d.EE,d.S0);
   function gD(a){if(!ia)return a;const r=[];let s=0;for(const v of a){s+=v;r.push(s);}return r;}
   const ieD=gD(d.IE),eeD=gD(d.EE);
   const ieT=d.IE.reduce((a,b)=>a+b,0),eeT=d.EE.reduce((a,b)=>a+b,0);
-  let h='<thead><tr><th class="tl" style="position:sticky;left:0;z-index:3;min-width:165px">Proyecto</th>'+['Sem 1','Sem 2','Sem 3','Sem 4','Total'].map(w=>'<th class="t3">'+w+'</th>').join('')+'</tr></thead><tbody>';
-  h+='<tr class="sec"><td class="tn" colspan="6">▸ Ingresos</td></tr>';
+  let h='<thead><tr><th class="tl" style="position:sticky;left:0;z-index:3;min-width:165px">Proyecto</th>'+[...WKn,'Total'].map(w=>'<th class="t3">'+w+'</th>').join('')+'</tr></thead><tbody>';
+  h+='<tr class="sec"><td class="tn" colspan="'+COLSPAN+'">▸ Ingresos</td></tr>';
   Object.entries(d.MIG).forEach(([n,x])=>{
     const ed=gD(x.e);
-    const et=ia?ed[3]:x.e.reduce((a,b)=>a+b,0);
+    const et=ia?ed[ed.length-1]:x.e.reduce((a,b)=>a+b,0);
     if(!et)return;
     h+='<tr><td class="tn s">'+n+'</td>'+ed.map(v=>'<td class="tv '+(v>0?'p':'')+' ej">'+( v>0?fN(v,u):'—')+'</td>').join('')+'<td class="tv p ej" style="font-weight:700">'+fN(et,u)+'</td></tr>';
   });
   h+='<tr class="tot"><td class="tn">TOTAL INGRESOS</td>'+ieD.map(v=>'<td class="tv p ej" style="font-weight:700">'+fN(v,u)+'</td>').join('')+'<td class="tv p ej" style="font-weight:700">'+fN(ieT,u)+'</td></tr>';
-  h+='<tr class="sec"><td class="tn" colspan="6">▸ Egresos</td></tr>';
+  h+='<tr class="sec"><td class="tn" colspan="'+COLSPAN+'">▸ Egresos</td></tr>';
   Object.entries(d.MEG).forEach(([n,x])=>{
     const ed=gD(x.e);
-    const et=ia?ed[3]:x.e.reduce((a,b)=>a+b,0);
+    const et=ia?ed[ed.length-1]:x.e.reduce((a,b)=>a+b,0);
     h+='<tr><td class="tn s">'+n+'</td>'+ed.map(v=>'<td class="tv '+(v>0?'n':'')+' ej">'+( v>0?fN(v,u):'—')+'</td>').join('')+'<td class="tv n ej" style="font-weight:700">'+fN(et,u)+'</td></tr>';
   });
   h+='<tr class="tot"><td class="tn">TOTAL EGRESOS</td>'+eeD.map(v=>'<td class="tv n ej" style="font-weight:700">'+fN(v,u)+'</td>').join('')+'<td class="tv n ej" style="font-weight:700">'+fN(eeT,u)+'</td></tr>';
-  h+='<tr class="sec"><td class="tn" colspan="6">▸ Saldo de caja</td></tr>';
+  h+='<tr class="sec"><td class="tn" colspan="'+COLSPAN+'">▸ Saldo de caja</td></tr>';
   const cE=d.IE.map((v,i)=>v-d.EE[i]);
   const cEd=ia?ACEM:cE;
   const cET=cE.reduce((a,b)=>a+b,0);
@@ -1081,8 +1087,42 @@ function parseFCResumen(ws){
   return {IT,ET,AC,ING_P,EG_P,PR_NAMES,PRIV_M,PR_MARGIN,TOTAL_PORTAFOLIO,TOTAL_EGRESOS_PORTAFOLIO};
 }
 
+// Detecta dinámicamente las columnas de "Semana N" (Proyectado y Ejecutado) en la
+// hoja "FC Mes". Busca, en las filas justo arriba de la primera fila "OBRAS PUBLICAS:",
+// una fila de encabezados con celdas tipo "Semana 1", "Semana 2", ... y agrupa las
+// columnas encontradas en dos bloques (el primer bloque = semanas Proyectado, el
+// segundo = semanas Ejecutado). Esto permite que el mes tenga 4, 5 o cualquier
+// número de semanas sin tocar el código.
+function detectWeekCols(ws,ingRow,maxC){
+  let headerRow=null;
+  const searchFrom=Math.max(1,ingRow-8);
+  for(let r=searchFrom;r<ingRow;r++){
+    let cnt=0;
+    for(let c=1;c<=maxC;c++){
+      if(/^SEMANA\s*\d+/i.test(String(cellAt(ws,r,c)||'').trim())) cnt++;
+    }
+    if(cnt>=2){ headerRow=r; break; }
+  }
+  if(!headerRow) return null;
+  const found=[];
+  for(let c=1;c<=maxC;c++){
+    const v=String(cellAt(ws,headerRow,c)||'').trim();
+    const m=v.match(/^SEMANA\s*(\d+)/i);
+    if(m) found.push({c,n:+m[1]});
+  }
+  if(found.length<2) return null;
+  const groups=[[found[0]]];
+  for(let i=1;i<found.length;i++){
+    const prev=found[i-1], cur=found[i];
+    if(cur.n===1 && prev.n!==1) groups.push([cur]);
+    else groups[groups.length-1].push(cur);
+  }
+  if(groups.length<2) return null;
+  return { P: groups[0].map(x=>x.c), E: groups[1].map(x=>x.c) };
+}
+
 function parseFCMes(ws){
-  const maxR=rowCount(ws);
+  const maxR=rowCount(ws), maxC=colCount(ws);
   const obrasRows=[];
   for(let r=1;r<=maxR;r++){ if(String(cellAt(ws,r,2)||'').trim()==='OBRAS PUBLICAS:') obrasRows.push(r); }
   if(obrasRows.length<2) throw new Error('No se encontraron las 2 filas "OBRAS PUBLICAS:" en "FC Mes"');
@@ -1091,6 +1131,14 @@ function parseFCMes(ws){
   const labelB2=String(cellAt(ws,2,2)||'');
   let mesNombre='Junio', mesIdx=5;
   for(let i=0;i<MESES_ES.length;i++){ if(labelB2.toUpperCase().includes(MESES_ES[i].toUpperCase())){ mesNombre=MESES_ES[i]; mesIdx=i; break; } }
+
+  // Columnas de semanas: se detectan dinámicamente según los encabezados "Semana N"
+  // del archivo cargado. Si no se detectan (formato antiguo sin encabezados), se
+  // usa el layout clásico de 4 semanas (C-F proyectado, I-L ejecutado).
+  const detected=detectWeekCols(ws,ingRow,maxC);
+  const COLS_P = detected ? detected.P : [3,4,5,6];
+  const COLS_E = detected ? detected.E : [9,10,11,12];
+  const NW = Math.max(COLS_P.length, COLS_E.length);
 
   function projectRows(startRow){
     const rows=[];
@@ -1103,20 +1151,20 @@ function parseFCMes(ws){
   }
   const ingRows=projectRows(ingRow).filter(([r])=>r<egRow);
   const egRows=projectRows(egRow);
-  const COLS=[3,4,5,6,9,10,11,12]; // C,D,E,F,I,J,K,L (1-indexed)
-  function weeks(r){ return COLS.map(c=>cellAt(ws,r,c)||0); }
+  function weeksP(r){ return Array.from({length:NW},(_,i)=> COLS_P[i]!=null ? (cellAt(ws,r,COLS_P[i])||0) : 0); }
+  function weeksE(r){ return Array.from({length:NW},(_,i)=> COLS_E[i]!=null ? (cellAt(ws,r,COLS_E[i])||0) : 0); }
 
-  const IP=[0,0,0,0],EP=[0,0,0,0],IE=[0,0,0,0],EE=[0,0,0,0];
+  const IP=Array(NW).fill(0),EP=Array(NW).fill(0),IE=Array(NW).fill(0),EE=Array(NW).fill(0);
   const MIG={}, MEG={};
   ingRows.forEach(([r,name])=>{
-    const v=weeks(r); const p=v.slice(0,4), e=v.slice(4,8);
+    const p=weeksP(r), e=weeksE(r);
     if(p.some(x=>x)||e.some(x=>x)) MIG[cleanName(name)]={p,e};
-    for(let i=0;i<4;i++){ IP[i]+=p[i]; IE[i]+=e[i]; }
+    for(let i=0;i<NW;i++){ IP[i]+=p[i]; IE[i]+=e[i]; }
   });
   egRows.forEach(([r,name])=>{
-    const v=weeks(r); const p=v.slice(0,4), e=v.slice(4,8);
+    const p=weeksP(r), e=weeksE(r);
     if(p.some(x=>x)||e.some(x=>x)) MEG[cleanName(name)]={p,e};
-    for(let i=0;i<4;i++){ EP[i]+=p[i]; EE[i]+=e[i]; }
+    for(let i=0;i<NW;i++){ EP[i]+=p[i]; EE[i]+=e[i]; }
   });
 
   return {IP,EP,IE,EE,S0,MIG,MEG,mesNombre,mesIdx};
