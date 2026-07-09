@@ -180,7 +180,7 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
 <!-- ══ PANEL MES ══ -->
 <div id="p-mes" class="panel">
   <div class="kpi-row">
-    <div class="kpi kb"><div class="kl" id="kpi-mes-label">Saldo inicial julio</div><div class="kv b" id="kpi-mes-s0">$46.27B</div><div class="ks">Acumulado a mayo</div></div>
+    <div class="kpi kb"><div class="kl" id="kpi-mes-label">Saldo inicial julio</div><div class="kv b" id="kpi-mes-s0">$46.27B</div><div class="ks" id="kpi-mes-s0-s">Acumulado a mayo</div></div>
     <div class="kpi kp"><div class="kl">Ingresos ejecutados</div><div class="kv p" id="kpi-mes-ie">$50.28B</div><div class="ks">Total mes ejecutado</div></div>
     <div class="kpi kn"><div class="kl">Egresos ejecutados</div><div class="kv n" id="kpi-mes-ee">$53.70B</div><div class="ks">Total mes ejecutado</div></div>
     <div class="kpi kp"><div class="kl">Saldo final ejecutado</div><div class="kv p" id="kpi-mes-final">$42.85B</div><div class="ks" id="kpi-mes-final-s">Cierre de julio</div></div>
@@ -520,6 +520,8 @@ function renderKPIs(){
   const saldoFinal=d.S0+ieTot-eeTot;
   document.getElementById('kpi-mes-label').textContent='Saldo inicial '+d.mesActualNombre.toLowerCase();
   document.getElementById('kpi-mes-s0').textContent=fmtB(d.S0);
+  const prevMesIdx=(d.mesActualIdx-1+12)%12;
+  document.getElementById('kpi-mes-s0-s').textContent='Acumulado a '+MESES_ES[prevMesIdx].toLowerCase();
   document.getElementById('kpi-mes-ie').textContent=fmtB(ieTot);
   document.getElementById('kpi-mes-ee').textContent=fmtB(eeTot);
   document.getElementById('kpi-mes-final').textContent=fmtB(saldoFinal);
