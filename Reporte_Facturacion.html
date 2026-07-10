@@ -31,7 +31,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
 .pill-group{display:flex;gap:6px;flex-wrap:wrap}
 .pill{font-size:12px;padding:4px 10px;border-radius:20px;border:0.5px solid #ccc;cursor:pointer;background:#fff;color:#666;transition:all .15s;user-select:none}
 .pill.active{border-color:transparent;color:#fff}
-.pill[data-proj="VIAS"].active{background:#5C6066}
+.pill[data-proj="VIAS"].active{background:#58595B}
 .pill[data-proj="HOSPITAL"].active{background:#3B6D11}
 .pill[data-proj="COLEGIOS"].active{background:#854F0B}
 .pill[data-proj="PLAYAS"].active{background:#533AB7}
@@ -42,7 +42,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
 .kpi.kb{border-left-color:#58595B;}.kpi.kp{border-left-color:#16A34A;}.kpi.kw{border-left-color:#D97706;}.kpi.kn{border-left-color:#DC2626;}
 .kpi .label{font-size:10px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;display:flex;align-items:center;gap:4px;}
 .kpi .value{font-size:22px;font-weight:700;line-height:1;color:#111827}
-.kpi .value.p{color:#16A34A;}.kpi .value.w{color:#D97706;}.kpi .value.n{color:#DC2626;}.kpi .value.b{color:#0F2D4E;}
+.kpi .value.p{color:#16A34A;}.kpi .value.w{color:#D97706;}.kpi .value.n{color:#DC2626;}.kpi .value.b{color:#2A2A2C;}
 .kpi .sub{font-size:11px;color:#9CA3AF;margin-top:4px}
 .section{padding:0 1.5rem 1rem;background:#fff;margin-top:8px}
 .section-title{font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;padding-top:0.75rem;padding-bottom:8px;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;gap:8px;}
@@ -245,7 +245,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
 <div class="section">
   <div class="section-title">Evolución de facturación acumulada</div>
   <div class="legend-row" id="lineLegend">
-    <div class="legend-item"><div class="legend-dot" style="background:#E87B3B99;border:1.5px solid #E87B3B"></div>Fact. acum.</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#16505C99;border:1.5px solid #16505C"></div>Fact. acum.</div>
     <div class="legend-item"><div class="legend-dot" style="background:rgba(210,210,210,0.55);border:1px solid #bbb"></div>Exposición (área)</div>
     <div class="legend-item" style="gap:5px"><div style="width:20px;border-top:1.5px dashed rgba(80,80,80,0.55);flex-shrink:0"></div><span>Contrato acum.</span></div></div>
   <div class="chart-wrap" id="lineWrap" style="height:320px">
@@ -308,7 +308,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 const PROJ_COLORS = {
-  VIAS:'#5C6066', HOSPITAL:'#3B6D11', COLEGIOS:'#854F0B',
+  VIAS:'#58595B', HOSPITAL:'#3B6D11', COLEGIOS:'#854F0B',
   PLAYAS:'#533AB7', METROPOLITANO:'#993556'
 };
 const EXPO_COLOR = '#EF9F27';
@@ -449,7 +449,7 @@ function renderLine(active){
     const p=active[0];
     const pts=timelineData[p];
     const d=allData[p];
-    const color=PROJ_COLORS[p]||'#E87B3B';
+    const color=PROJ_COLORS[p]||'#16505C';
     const contrato=d?d.contrato:0;
 
     // Ordenar por fecha y acum — mantener todos los puntos
@@ -569,7 +569,7 @@ function renderLine(active){
   const contratoTotal=sortedMs.map(ms=>contratoAcumAt(ms));
 
   // Color base: mezclar colores de proyectos activos → usar el primero como referencia o naranja
-  const baseColor = active.length===1 ? PROJ_COLORS[active[0]] : '#E87B3B';
+  const baseColor = active.length===1 ? PROJ_COLORS[active[0]] : '#16505C';
 
   const datasets=[
     // Área gris = valor total contrato (fondo)
