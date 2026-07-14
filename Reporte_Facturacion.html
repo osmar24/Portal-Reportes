@@ -66,7 +66,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
 .last-updated{font-size:11px;color:#6B7280;padding:0.5rem 1.5rem 1rem;text-align:right;background:#fff}
 /* Tabs */
 .tabs{display:flex;border-bottom:1px solid #E5E7EB;background:#fff;padding:0 28px;position:sticky;top:100px;z-index:99;}
-.tab{font-size:13px;font-weight:500;line-height:1;padding:14px 20px 12px;cursor:pointer;color:#6B7280;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;user-select:none}
+.tab{padding:14px 20px 12px;font-size:13px;font-weight:500;color:#6B7280;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;margin-bottom:-1px;user-select:none;transition:all .15s;}
 .tab:hover{color:#C8302A;}
 .tab.active{color:#C8302A;border-bottom-color:#C8302A;font-weight:500}
 .tab-content{display:none}
@@ -137,8 +137,8 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
 </div>
 
 <div class="tabs">
-  <div class="tab active" id="tab-dashboard" onclick="switchTab('dashboard')">Dashboard</div>
-  <div class="tab" id="tab-datos" onclick="switchTab('datos')">Datos</div>
+  <button class="tab active" id="tab-dashboard" onclick="switchTab('dashboard')">Dashboard</button>
+  <button class="tab" id="tab-datos" onclick="switchTab('datos')">Datos</button>
 </div>
 
 <div class="controls">
