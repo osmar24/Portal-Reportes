@@ -68,6 +68,10 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--
 .card-updated{font-size:10px;color:var(--soft);margin-bottom:10px;display:flex;align-items:center;gap:5px;}
 .card-updated::before{content:'';width:6px;height:6px;border-radius:50%;background:#16A34A;flex-shrink:0;}
 .card-updated.stale::before{background:var(--soft);}
+.card-updated.old{color:var(--warn);font-weight:600;}
+.card-updated.old::before{background:var(--warn);}
+.card-updated.error{color:var(--neg);font-weight:600;}
+.card-updated.error::before{background:var(--neg);}
 .card-cta{font-size:11.5px;font-weight:600;color:var(--blue);display:flex;align-items:center;gap:5px;margin-top:auto;}
 .card-cta .arrow{transition:transform .15s;}
 .card:hover .card-cta .arrow{transform:translateX(3px);}
@@ -280,14 +284,47 @@ function extractStringLiteral(text, varName){
 
 function fmtB(v){ return '$'+(v/1e9).toFixed(2)+'B'; }
 
+const MESES3 = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function parseCorteFecha(str){
+  if(!str) return null;
+  const m = str.trim().toLowerCase().match(/^(\d{1,2})\s+([a-zé]{3})\s+(\d{4})$/i);
+  if(!m) return null;
+  const idx = MESES3.indexOf(m[2]);
+  if(idx===-1) return null;
+  return new Date(+m[3], idx, +m[1]);
+}
+
+const DIAS_STALE = 10; // a partir de cuántos días de antigüedad se marca como desactualizado
+
 function markUpdated(id, fecha){
   const el = document.getElementById(id);
   if(!el) return;
-  el.textContent = fecha ? ('Actualizado: '+fecha) : 'Sin datos en vivo';
-  el.classList.toggle('stale', !fecha);
+  el.classList.remove('error','stale','old');
+  if(!fecha){
+    el.textContent = 'Sin datos en vivo';
+    el.classList.add('stale');
+    return;
+  }
+  el.textContent = 'Actualizado: '+fecha;
+  const d = parseCorteFecha(fecha);
+  if(d){
+    const dias = Math.floor((Date.now()-d.getTime())/86400000);
+    if(dias > DIAS_STALE){
+      el.classList.add('old');
+      el.textContent += ' · hace '+dias+' días';
+    }
+  }
 }
 
-async function loadCardData(path, cb){
+function markLoadError(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.classList.remove('stale','old');
+  el.classList.add('error');
+  el.textContent = '⚠ No se pudo actualizar — mostrando último dato guardado';
+}
+
+async function loadCardData(path, cb, errorId){
   try{
     const res = await fetch(path, {cache:'no-store'});
     if(!res.ok) throw new Error('HTTP '+res.status);
@@ -297,6 +334,7 @@ async function loadCardData(path, cb){
     cb(block);
   }catch(err){
     console.warn('No se pudo actualizar la tarjeta de', path, '—', err.message);
+    if(errorId) markLoadError(errorId);
   }
 }
 
@@ -333,7 +371,7 @@ loadCardData('Reporte_Facturacion.html', (block)=>{
     document.getElementById('r-fac-mes-lbl').textContent = nombreMes.charAt(0).toUpperCase()+nombreMes.slice(1)+' '+now.getFullYear();
   }
   markUpdated('fac-updated', corte);
-});
+}, 'fac-updated');
 
 // Flujo de Caja
 loadCardData('FC_ObrasPublicas.html', (block)=>{
@@ -360,7 +398,7 @@ loadCardData('FC_ObrasPublicas.html', (block)=>{
     }
     markUpdated('fc-updated', d.corte);
   }
-});
+}, 'fc-updated');
 
 // Gestión de Pagos
 loadCardData('Gestion_Pagos.html', (block)=>{
@@ -374,7 +412,7 @@ loadCardData('Gestion_Pagos.html', (block)=>{
     }
     markUpdated('pg-updated', d.corte);
   }
-});
+}, 'pg-updated');
 
 // CxP Obligaciones por Edades
 loadCardData('CXP_Obligaciones.html', (block)=>{
@@ -398,7 +436,7 @@ loadCardData('CXP_Obligaciones.html', (block)=>{
       }
     }
   }
-});
+}, 'cxp-updated');
 </script>
 </body>
 </html>
