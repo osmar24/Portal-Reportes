@@ -16,7 +16,7 @@
 @media (max-width:640px){.portal-nav-title{display:none;}}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;font-size:13px;line-height:1.5;}
-.topbar{background:#2A2A2C;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:56px;flex-wrap:wrap;gap:10px;}
+.topbar{background:#2A2A2C;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:56px;flex-wrap:wrap;gap:10px;position:sticky;top:44px;z-index:100;}
 .topbar-l{display:flex;align-items:center;gap:12px;min-width:0;}
 .topbar-logo{width:32px;height:32px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;padding:4px;}
 .topbar h1{font-size:14px;font-weight:600;color:#fff;white-space:nowrap;}
@@ -65,7 +65,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
 .divider{height:0.5px;background:#ddd;margin:0 1.5rem}
 .last-updated{font-size:11px;color:#6B7280;padding:0.5rem 1.5rem 1rem;text-align:right;background:#fff}
 /* Tabs */
-.tabs{display:flex;border-bottom:1px solid #ddd;background:#fff;padding:0 1.5rem}
+.tabs{display:flex;border-bottom:1px solid #E5E7EB;background:#fff;padding:0 28px;position:sticky;top:100px;z-index:99;}
 .tab{font-size:13px;font-weight:500;padding:14px 20px 12px;cursor:pointer;color:#6B7280;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;user-select:none}
 .tab:hover{color:#C8302A;}
 .tab.active{color:#C8302A;border-bottom-color:#C8302A;font-weight:500}
@@ -137,8 +137,8 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
 </div>
 
 <div class="tabs">
-  <div class="tab active" id="tab-dashboard" onclick="switchTab('dashboard')">📊 Dashboard</div>
-  <div class="tab" id="tab-datos" onclick="switchTab('datos')">📋 Datos</div>
+  <div class="tab active" id="tab-dashboard" onclick="switchTab('dashboard')">Dashboard</div>
+  <div class="tab" id="tab-datos" onclick="switchTab('datos')">Datos</div>
 </div>
 
 <div class="controls">
