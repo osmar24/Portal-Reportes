@@ -36,6 +36,9 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
 .pill[data-proj="COLEGIOS"].active{background:#854F0B}
 .pill[data-proj="PLAYAS"].active{background:#533AB7}
 .pill[data-proj="METROPOLITANO"].active{background:#993556}
+.pill[data-proj="CALLE 2"].active{background:#1D6FB8}
+.pill[data-proj="MAGANGUE"].active{background:#B08900}
+.pill[data-proj="ENTORNOS"].active{background:#6D5A97}
 .pill[data-proj="ALL"].active{background:#5F5E5A}
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;padding:16px 24px;background:#fff;border-bottom:1px solid #E5E7EB;}
 .kpi{background:#fff;border:1px solid #E5E7EB;border-left:3px solid #E5E7EB;border-radius:10px;padding:14px 16px;}
@@ -150,7 +153,10 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
     <div class="pill active" data-proj="COLEGIOS">Colegios</div>
     <div class="pill active" data-proj="PLAYAS">Playas</div>
     <div class="pill active" data-proj="METROPOLITANO">Metropolitano</div>
-  <div class="pill active" data-proj="CALLE 2">Calle 2</div><div class="pill active" data-proj="MAGANGUE">Magangue</div><div class="pill active" data-proj="ENTORNOS">Entornos</div></div>
+    <div class="pill active" data-proj="CALLE 2">Calle 2</div>
+    <div class="pill active" data-proj="MAGANGUE">Magangué</div>
+    <div class="pill active" data-proj="ENTORNOS">Entornos</div>
+  </div>
 </div>
 
 <div class="tab-content active" id="content-dashboard">
@@ -163,13 +169,13 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
   </div>
   <div class="kpi kp">
     <div class="label">Total facturado</div>
-    <div class="value p" id="kpiFacturado">$292.8 MM</div>
-    <div class="sub" id="kpiPct">60% del portafolio</div>
+    <div class="value p" id="kpiFacturado">$295.7 MM</div>
+    <div class="sub" id="kpiPct">61% del portafolio</div>
   </div>
   <div class="kpi kw">
     <div class="label">Exposición total</div>
-    <div class="value w" id="kpiExposicion">$195.9 MM</div>
-    <div class="sub" id="kpiExpPct">40% por facturar</div>
+    <div class="value w" id="kpiExposicion">$193.0 MM</div>
+    <div class="sub" id="kpiExpPct">39% por facturar</div>
   </div>
 </div>
 
@@ -182,7 +188,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
     <div class="legend-item"><div class="legend-dot" style="background:#EF9F27"></div>Exposición (por facturar)</div>
   </div>
   <div class="chart-wrap" id="barWrap" style="height: 476px;">
-    <canvas id="barChart" role="img" aria-label="Gráfica de barras apiladas mostrando facturado vs exposición por proyecto" style="box-sizing: border-box; display: block; height: 476px; width: 1216px;" width="1825" height="714">Facturación por proyecto.</canvas>
+    <canvas id="barChart" role="img" aria-label="Gráfica de barras apiladas mostrando facturado vs exposición por proyecto" style="box-sizing: border-box; display: block; height: 476px; width: 1857px;" width="1857" height="476">Facturación por proyecto.</canvas>
   </div>
 </div>
 
@@ -197,23 +203,16 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
         <th>Contrato</th>
         <th>Facturado</th>
         <th>Exposición</th>
-        <th>% Avance</th>
+        <th>% Avance Fact.</th>
         <th>Estado</th>
       </tr>
     </thead>
     <tbody id="tableBody"><tr>
-      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#58595B;margin-right:6px;vertical-align:1px"></span><strong>Vías</strong></td>
-      <td>$52.1 MM</td>
-      <td>$51.3 MM</td>
-      <td style="color:#854F0B">$796.2 M</td>
-      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">98%</span><div class="bar-bg"><div class="bar-fill" style="width:98%;background:#58595B"></div></div></div></td>
-      <td><span class="badge verde">Avanzado</span></td>
-    </tr><tr>
-      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3B6D11;margin-right:6px;vertical-align:1px"></span><strong>Hospital</strong></td>
-      <td>$16.5 MM</td>
-      <td>$12.7 MM</td>
-      <td style="color:#854F0B">$3.8 MM</td>
-      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">77%</span><div class="bar-bg"><div class="bar-fill" style="width:77%;background:#3B6D11"></div></div></div></td>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#993556;margin-right:6px;vertical-align:1px"></span><strong>Metropolitano</strong></td>
+      <td>$173.0 MM</td>
+      <td>$141.5 MM</td>
+      <td style="color:#854F0B">$31.5 MM</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">82%</span><div class="bar-bg"><div class="bar-fill" style="width:82%;background:#993556"></div></div></div></td>
       <td><span class="badge amarillo">En curso</span></td>
     </tr><tr>
       <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#854F0B;margin-right:6px;vertical-align:1px"></span><strong>Colegios</strong></td>
@@ -230,32 +229,39 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
       <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">79%</span><div class="bar-bg"><div class="bar-fill" style="width:79%;background:#533AB7"></div></div></div></td>
       <td><span class="badge amarillo">En curso</span></td>
     </tr><tr>
-      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#993556;margin-right:6px;vertical-align:1px"></span><strong>Metropolitano</strong></td>
-      <td>$173.0 MM</td>
-      <td>$141.5 MM</td>
-      <td style="color:#854F0B">$31.5 MM</td>
-      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">82%</span><div class="bar-bg"><div class="bar-fill" style="width:82%;background:#993556"></div></div></div></td>
-      <td><span class="badge amarillo">En curso</span></td>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#58595B;margin-right:6px;vertical-align:1px"></span><strong>Vías</strong></td>
+      <td>$52.1 MM</td>
+      <td>$51.3 MM</td>
+      <td style="color:#854F0B">$796.2 M</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">98%</span><div class="bar-bg"><div class="bar-fill" style="width:98%;background:#58595B"></div></div></div></td>
+      <td><span class="badge verde">Avanzado</span></td>
     </tr><tr>
-      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6B7280;margin-right:6px;vertical-align:1px"></span><strong>CALLE 2</strong></td>
-      <td>$12.0 MM</td>
-      <td>$2.3 MM</td>
-      <td style="color:#854F0B">$9.6 MM</td>
-      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">19%</span><div class="bar-bg"><div class="bar-fill" style="width:19%;background:#6B7280"></div></div></div></td>
-      <td><span class="badge rojo">Inicial</span></td>
-    </tr><tr>
-      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6B7280;margin-right:6px;vertical-align:1px"></span><strong>MAGANGUE</strong></td>
-      <td>$15.2 MM</td>
-      <td>$0</td>
-      <td style="color:#854F0B">$15.2 MM</td>
-      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">0%</span><div class="bar-bg"><div class="bar-fill" style="width:0%;background:#6B7280"></div></div></div></td>
-      <td><span class="badge rojo">Inicial</span></td>
-    </tr><tr>
-      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6B7280;margin-right:6px;vertical-align:1px"></span><strong>ENTORNOS</strong></td>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6D5A97;margin-right:6px;vertical-align:1px"></span><strong>Entornos</strong></td>
       <td>$27.7 MM</td>
       <td>$0</td>
       <td style="color:#854F0B">$27.7 MM</td>
-      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">0%</span><div class="bar-bg"><div class="bar-fill" style="width:0%;background:#6B7280"></div></div></div></td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">0%</span><div class="bar-bg"><div class="bar-fill" style="width:0%;background:#6D5A97"></div></div></div></td>
+      <td><span class="badge rojo">Inicial</span></td>
+    </tr><tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3B6D11;margin-right:6px;vertical-align:1px"></span><strong>Hospital</strong></td>
+      <td>$16.5 MM</td>
+      <td>$12.7 MM</td>
+      <td style="color:#854F0B">$3.8 MM</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">77%</span><div class="bar-bg"><div class="bar-fill" style="width:77%;background:#3B6D11"></div></div></div></td>
+      <td><span class="badge amarillo">En curso</span></td>
+    </tr><tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#B08900;margin-right:6px;vertical-align:1px"></span><strong>Magangué</strong></td>
+      <td>$15.2 MM</td>
+      <td>$2.9 MM</td>
+      <td style="color:#854F0B">$12.3 MM</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">19%</span><div class="bar-bg"><div class="bar-fill" style="width:19%;background:#B08900"></div></div></div></td>
+      <td><span class="badge rojo">Inicial</span></td>
+    </tr><tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#1D6FB8;margin-right:6px;vertical-align:1px"></span><strong>Calle 2</strong></td>
+      <td>$12.0 MM</td>
+      <td>$2.3 MM</td>
+      <td style="color:#854F0B">$9.6 MM</td>
+      <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-size:12px;min-width:30px;text-align:right">19%</span><div class="bar-bg"><div class="bar-fill" style="width:19%;background:#1D6FB8"></div></div></div></td>
       <td><span class="badge rojo">Inicial</span></td>
     </tr></tbody>
   </table>
@@ -270,7 +276,14 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
     <div class="legend-item"><div class="legend-dot" style="background:rgba(210,210,210,0.55);border:1px solid #bbb"></div>Exposición (área)</div>
     <div class="legend-item" style="gap:5px"><div style="width:20px;border-top:1.5px dashed rgba(80,80,80,0.55);flex-shrink:0"></div><span>Contrato acum.</span></div></div>
   <div class="chart-wrap" id="lineWrap" style="height:320px">
-    <canvas id="lineChart" role="img" aria-label="Gráfica de evolución de facturación acumulada por proyecto" style="box-sizing: border-box; display: block; height: 320px; width: 1216px;" width="1825" height="480">Evolución de facturación acumulada por proyecto.</canvas>
+    <canvas id="lineChart" role="img" aria-label="Gráfica de evolución de facturación acumulada por proyecto" style="box-sizing: border-box; display: block; height: 320px; width: 1857px;" width="1857" height="320">Evolución de facturación acumulada por proyecto.</canvas>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">% Avance de obra por proyecto</div>
+  <div class="chart-wrap" id="avanceWrap" style="height: 476px;">
+    <canvas id="avanceChart" role="img" aria-label="Gráfica de porcentaje de avance físico de obra por proyecto" style="box-sizing: border-box; display: block; height: 476px; width: 1857px;" width="1857" height="476">% Avance de obra por proyecto.</canvas>
   </div>
 </div>
 
@@ -281,53 +294,53 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
 <div class="tab-content" id="content-datos">
 
   <!-- Cuadro resumen -->
-  <div class="datos-summary" id="datosSummary"><div class="datos-card" style="border-left-color:#6B7280">
+  <div class="datos-summary" id="datosSummary"><div class="datos-card" style="border-left-color:#1D6FB8">
       <div class="dc-label">Proyecto</div>
       <div class="dc-proj">Calle 2</div>
       <div class="dc-row"><span>Contrato</span><span>$12.0 MM</span></div>
       <div class="dc-row"><span>Facturado</span><span>$2.3 MM</span></div>
       <div class="dc-row expo"><span>Exposición</span><span>$9.6 MM</span></div>
-      <div class="dc-row"><span>Avance</span><span>19%</span></div>
-      <div class="dc-bar"><div class="dc-bar-fill" style="width:19%;background:#6B7280"></div></div>
+      <div class="dc-row"><span>Avance Fact.</span><span>19%</span></div>
+      <div class="dc-bar"><div class="dc-bar-fill" style="width:19%;background:#1D6FB8"></div></div>
     </div><div class="datos-card" style="border-left-color:#854F0B">
       <div class="dc-label">Proyecto</div>
       <div class="dc-proj">Colegios</div>
       <div class="dc-row"><span>Contrato</span><span>$111.3 MM</span></div>
       <div class="dc-row"><span>Facturado</span><span>$20.7 MM</span></div>
       <div class="dc-row expo"><span>Exposición</span><span>$90.6 MM</span></div>
-      <div class="dc-row"><span>Avance</span><span>19%</span></div>
+      <div class="dc-row"><span>Avance Fact.</span><span>19%</span></div>
       <div class="dc-bar"><div class="dc-bar-fill" style="width:19%;background:#854F0B"></div></div>
-    </div><div class="datos-card" style="border-left-color:#6B7280">
+    </div><div class="datos-card" style="border-left-color:#6D5A97">
       <div class="dc-label">Proyecto</div>
       <div class="dc-proj">Entornos</div>
       <div class="dc-row"><span>Contrato</span><span>$27.7 MM</span></div>
       <div class="dc-row"><span>Facturado</span><span>$0</span></div>
       <div class="dc-row expo"><span>Exposición</span><span>$27.7 MM</span></div>
-      <div class="dc-row"><span>Avance</span><span>0%</span></div>
-      <div class="dc-bar"><div class="dc-bar-fill" style="width:0%;background:#6B7280"></div></div>
+      <div class="dc-row"><span>Avance Fact.</span><span>0%</span></div>
+      <div class="dc-bar"><div class="dc-bar-fill" style="width:0%;background:#6D5A97"></div></div>
     </div><div class="datos-card" style="border-left-color:#3B6D11">
       <div class="dc-label">Proyecto</div>
       <div class="dc-proj">Hospital</div>
       <div class="dc-row"><span>Contrato</span><span>$16.5 MM</span></div>
       <div class="dc-row"><span>Facturado</span><span>$12.7 MM</span></div>
       <div class="dc-row expo"><span>Exposición</span><span>$3.8 MM</span></div>
-      <div class="dc-row"><span>Avance</span><span>77%</span></div>
+      <div class="dc-row"><span>Avance Fact.</span><span>77%</span></div>
       <div class="dc-bar"><div class="dc-bar-fill" style="width:77%;background:#3B6D11"></div></div>
-    </div><div class="datos-card" style="border-left-color:#6B7280">
+    </div><div class="datos-card" style="border-left-color:#B08900">
       <div class="dc-label">Proyecto</div>
-      <div class="dc-proj">Magangue</div>
+      <div class="dc-proj">Magangué</div>
       <div class="dc-row"><span>Contrato</span><span>$15.2 MM</span></div>
-      <div class="dc-row"><span>Facturado</span><span>$0</span></div>
-      <div class="dc-row expo"><span>Exposición</span><span>$15.2 MM</span></div>
-      <div class="dc-row"><span>Avance</span><span>0%</span></div>
-      <div class="dc-bar"><div class="dc-bar-fill" style="width:0%;background:#6B7280"></div></div>
+      <div class="dc-row"><span>Facturado</span><span>$2.9 MM</span></div>
+      <div class="dc-row expo"><span>Exposición</span><span>$12.3 MM</span></div>
+      <div class="dc-row"><span>Avance Fact.</span><span>19%</span></div>
+      <div class="dc-bar"><div class="dc-bar-fill" style="width:19%;background:#B08900"></div></div>
     </div><div class="datos-card" style="border-left-color:#993556">
       <div class="dc-label">Proyecto</div>
       <div class="dc-proj">Metropolitano</div>
       <div class="dc-row"><span>Contrato</span><span>$173.0 MM</span></div>
       <div class="dc-row"><span>Facturado</span><span>$141.5 MM</span></div>
       <div class="dc-row expo"><span>Exposición</span><span>$31.5 MM</span></div>
-      <div class="dc-row"><span>Avance</span><span>82%</span></div>
+      <div class="dc-row"><span>Avance Fact.</span><span>82%</span></div>
       <div class="dc-bar"><div class="dc-bar-fill" style="width:82%;background:#993556"></div></div>
     </div><div class="datos-card" style="border-left-color:#533AB7">
       <div class="dc-label">Proyecto</div>
@@ -335,7 +348,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
       <div class="dc-row"><span>Contrato</span><span>$80.9 MM</span></div>
       <div class="dc-row"><span>Facturado</span><span>$64.2 MM</span></div>
       <div class="dc-row expo"><span>Exposición</span><span>$16.7 MM</span></div>
-      <div class="dc-row"><span>Avance</span><span>79%</span></div>
+      <div class="dc-row"><span>Avance Fact.</span><span>79%</span></div>
       <div class="dc-bar"><div class="dc-bar-fill" style="width:79%;background:#533AB7"></div></div>
     </div><div class="datos-card" style="border-left-color:#58595B">
       <div class="dc-label">Proyecto</div>
@@ -343,7 +356,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
       <div class="dc-row"><span>Contrato</span><span>$52.1 MM</span></div>
       <div class="dc-row"><span>Facturado</span><span>$51.3 MM</span></div>
       <div class="dc-row expo"><span>Exposición</span><span>$796.2 M</span></div>
-      <div class="dc-row"><span>Avance</span><span>98%</span></div>
+      <div class="dc-row"><span>Avance Fact.</span><span>98%</span></div>
       <div class="dc-bar"><div class="dc-bar-fill" style="width:98%;background:#58595B"></div></div>
     </div></div>
 
@@ -351,7 +364,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
   <div class="datos-filters">
     <div class="datos-filter-group">
       <label>Proyecto</label>
-      <div class="pill-group" id="dataPillGroup"><div class="pill active" style="background: rgb(95, 94, 90); color: rgb(255, 255, 255); border-color: transparent;" onclick="toggleAllDataProjs(this)">Todos</div><div class="pill active" data-dproj="CALLE 2" onclick="toggleDataProj('CALLE 2',this)" style="background: rgb(107, 114, 128); color: rgb(255, 255, 255); border-color: transparent;">Calle 2</div><div class="pill active" data-dproj="COLEGIOS" onclick="toggleDataProj('COLEGIOS',this)" style="background: rgb(133, 79, 11); color: rgb(255, 255, 255); border-color: transparent;">Colegios</div><div class="pill active" data-dproj="ENTORNOS" onclick="toggleDataProj('ENTORNOS',this)" style="background: rgb(107, 114, 128); color: rgb(255, 255, 255); border-color: transparent;">Entornos</div><div class="pill active" data-dproj="HOSPITAL" onclick="toggleDataProj('HOSPITAL',this)" style="background: rgb(59, 109, 17); color: rgb(255, 255, 255); border-color: transparent;">Hospital</div><div class="pill active" data-dproj="MAGANGUE" onclick="toggleDataProj('MAGANGUE',this)" style="background: rgb(107, 114, 128); color: rgb(255, 255, 255); border-color: transparent;">Magangue</div><div class="pill active" data-dproj="METROPOLITANO" onclick="toggleDataProj('METROPOLITANO',this)" style="background: rgb(153, 53, 86); color: rgb(255, 255, 255); border-color: transparent;">Metropolitano</div><div class="pill active" data-dproj="PLAYAS" onclick="toggleDataProj('PLAYAS',this)" style="background: rgb(83, 58, 183); color: rgb(255, 255, 255); border-color: transparent;">Playas</div><div class="pill active" data-dproj="VIAS" onclick="toggleDataProj('VIAS',this)" style="background: rgb(88, 89, 91); color: rgb(255, 255, 255); border-color: transparent;">Vías</div></div>
+      <div class="pill-group" id="dataPillGroup"><div class="pill active" style="background:#5F5E5A;color:#fff;border-color:transparent" onclick="toggleAllDataProjs(this)">Todos</div><div class="pill active" data-dproj="CALLE 2" onclick="toggleDataProj('CALLE 2',this)" style="background: rgb(29, 111, 184); color: rgb(255, 255, 255); border-color: transparent;">Calle 2</div><div class="pill active" data-dproj="COLEGIOS" onclick="toggleDataProj('COLEGIOS',this)" style="background: rgb(133, 79, 11); color: rgb(255, 255, 255); border-color: transparent;">Colegios</div><div class="pill active" data-dproj="ENTORNOS" onclick="toggleDataProj('ENTORNOS',this)" style="background: rgb(109, 90, 151); color: rgb(255, 255, 255); border-color: transparent;">Entornos</div><div class="pill active" data-dproj="HOSPITAL" onclick="toggleDataProj('HOSPITAL',this)" style="background: rgb(59, 109, 17); color: rgb(255, 255, 255); border-color: transparent;">Hospital</div><div class="pill active" data-dproj="MAGANGUE" onclick="toggleDataProj('MAGANGUE',this)" style="background: rgb(176, 137, 0); color: rgb(255, 255, 255); border-color: transparent;">Magangué</div><div class="pill active" data-dproj="METROPOLITANO" onclick="toggleDataProj('METROPOLITANO',this)" style="background: rgb(153, 53, 86); color: rgb(255, 255, 255); border-color: transparent;">Metropolitano</div><div class="pill active" data-dproj="PLAYAS" onclick="toggleDataProj('PLAYAS',this)" style="background: rgb(83, 58, 183); color: rgb(255, 255, 255); border-color: transparent;">Playas</div><div class="pill active" data-dproj="VIAS" onclick="toggleDataProj('VIAS',this)" style="background: rgb(88, 89, 91); color: rgb(255, 255, 255); border-color: transparent;">Vías</div></div>
     </div>
     <div class="datos-filter-group">
       <label>Desde</label>
@@ -365,7 +378,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
       <label>&nbsp;</label>
       <button onclick="clearDataFilters()" style="font-size:12px;padding:5px 12px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;color:#555">Limpiar filtros</button>
     </div>
-    <span class="row-count" id="rowCount" style="align-self:flex-end;padding-bottom:4px">31 registros</span>
+    <span class="row-count" id="rowCount" style="align-self:flex-end;padding-bottom:4px">34 registros</span>
   </div>
 
   <!-- Tabla -->
@@ -383,7 +396,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
       </thead>
       <tbody id="dataTableBody">
     <tr>
-      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6B7280;margin-right:6px;vertical-align:1px"></span>Calle 2</td>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#1D6FB8;margin-right:6px;vertical-align:1px"></span>Calle 2</td>
       <td>29/01/2026</td>
       <td>FV 0</td>
       <td class="num">$12.0 MM</td>
@@ -391,9 +404,25 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
       <td class="expo">$12.0 MM</td>
     </tr>
     <tr>
-      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6B7280;margin-right:6px;vertical-align:1px"></span>Calle 2</td>
-      <td>14/07/2026</td>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#1D6FB8;margin-right:6px;vertical-align:1px"></span>Calle 2</td>
+      <td>18/02/2026</td>
       <td>FV 1</td>
+      <td class="num">$12.0 MM</td>
+      <td class="num">$773.5 M</td>
+      <td class="expo">$11.2 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#1D6FB8;margin-right:6px;vertical-align:1px"></span>Calle 2</td>
+      <td>27/02/2026</td>
+      <td>FV 2</td>
+      <td class="num">$12.0 MM</td>
+      <td class="num">$1.5 MM</td>
+      <td class="expo">$10.5 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#1D6FB8;margin-right:6px;vertical-align:1px"></span>Calle 2</td>
+      <td>24/03/2026</td>
+      <td>FV 3</td>
       <td class="num">$12.0 MM</td>
       <td class="num">$2.3 MM</td>
       <td class="expo">$9.6 MM</td>
@@ -455,7 +484,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
       <td class="expo">$90.6 MM</td>
     </tr>
     <tr>
-      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6B7280;margin-right:6px;vertical-align:1px"></span>Entornos</td>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6D5A97;margin-right:6px;vertical-align:1px"></span>Entornos</td>
       <td>01/12/2025</td>
       <td>FV 0</td>
       <td class="num">$27.7 MM</td>
@@ -503,12 +532,20 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
       <td class="expo">$3.8 MM</td>
     </tr>
     <tr>
-      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6B7280;margin-right:6px;vertical-align:1px"></span>Magangue</td>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#B08900;margin-right:6px;vertical-align:1px"></span>Magangué</td>
       <td>01/12/2025</td>
       <td>FV 0</td>
       <td class="num">$15.2 MM</td>
       <td class="num">$0</td>
       <td class="expo">$15.2 MM</td>
+    </tr>
+    <tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#B08900;margin-right:6px;vertical-align:1px"></span>Magangué</td>
+      <td>10/07/2026</td>
+      <td>FV 1</td>
+      <td class="num">$15.2 MM</td>
+      <td class="num">$2.9 MM</td>
+      <td class="expo">$12.3 MM</td>
     </tr>
     <tr>
       <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#993556;margin-right:6px;vertical-align:1px"></span>Metropolitano</td>
@@ -640,10 +677,11 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
 <script>
 const PROJ_COLORS = {
   VIAS:'#58595B', HOSPITAL:'#3B6D11', COLEGIOS:'#854F0B',
-  PLAYAS:'#533AB7', METROPOLITANO:'#993556'
+  PLAYAS:'#533AB7', METROPOLITANO:'#993556',
+  'CALLE 2':'#1D6FB8', MAGANGUE:'#B08900', ENTORNOS:'#6D5A97'
 };
 const EXPO_COLOR = '#EF9F27';
-const PROJ_NAMES = {VIAS:'Vías',HOSPITAL:'Hospital',COLEGIOS:'Colegios',PLAYAS:'Playas',METROPOLITANO:'Metropolitano'};
+const PROJ_NAMES = {VIAS:'Vías',HOSPITAL:'Hospital',COLEGIOS:'Colegios',PLAYAS:'Playas',METROPOLITANO:'Metropolitano','CALLE 2':'Calle 2',MAGANGUE:'Magangué',ENTORNOS:'Entornos'};
 
 const excelDateToJs = n => {
   if(!n || isNaN(n)) return null;
@@ -668,13 +706,13 @@ function formatCorte(){
 function renderCorte(){
   document.getElementById('corteLabel').textContent='Corte: '+corteFecha+' · Confidencial';
 }
-let activeProjs = new Set(['VIAS','HOSPITAL','COLEGIOS','PLAYAS','METROPOLITANO']);
-let barChartInst = null, lineChartInst = null;
+let activeProjs = new Set(['VIAS','HOSPITAL','COLEGIOS','PLAYAS','METROPOLITANO','CALLE 2','MAGANGUE','ENTORNOS']);
+let barChartInst = null, lineChartInst = null, avanceChartInst = null;
 
 function loadDefaultData(){
   /* DATA_START */
-  allData = {"VIAS":{"contrato":52085450531,"facturado":51289237101.020004,"exposicion":796213429.9799957},"HOSPITAL":{"contrato":16464647721,"facturado":12677557069.96,"exposicion":3787090651.040001},"COLEGIOS":{"contrato":111327609605,"facturado":20717464569.9942,"exposicion":90610145035.0058},"PLAYAS":{"contrato":80882579931,"facturado":64212616487.579994,"exposicion":16669963443.420006},"METROPOLITANO":{"contrato":173020000000,"facturado":141531169404.41,"exposicion":31488830595.589996},"CALLE 2":{"contrato":11973872415.55,"facturado":2334051690.8048,"exposicion":9639820724.7452},"MAGANGUE":{"contrato":15183397337,"facturado":0,"exposicion":15183397337},"ENTORNOS":{"contrato":27742090918,"facturado":0,"exposicion":27742090918}};
-  timelineData = {"VIAS":[{"date":"2025-10-23T05:00:00.000Z","acum":0},{"date":"2025-10-24T05:00:00.000Z","acum":10281737404.23},{"date":"2025-12-26T05:00:00.000Z","acum":25337628899.02},{"date":"2026-02-10T05:00:00.000Z","acum":40337628899.020004},{"date":"2026-03-24T05:00:00.000Z","acum":51211919433.020004},{"date":"2026-03-27T05:00:00.000Z","acum":51289237101.020004}],"HOSPITAL":[{"date":"2026-01-06T05:00:00.000Z","acum":0},{"date":"2026-01-07T05:00:00.000Z","acum":3379714137},{"date":"2026-02-03T05:00:00.000Z","acum":6125139256},{"date":"2026-03-11T05:00:00.000Z","acum":8137535915.96},{"date":"2026-05-05T05:00:00.000Z","acum":12677557069.96}],"COLEGIOS":[{"date":"2025-10-08T05:00:00.000Z","acum":0},{"date":"2025-10-08T05:00:00.000Z","acum":8182750},{"date":"2025-11-21T05:00:00.000Z","acum":6504197213.9991},{"date":"2025-11-21T05:00:00.000Z","acum":9978252276.9942},{"date":"2026-03-26T05:00:00.000Z","acum":12299181918.9942},{"date":"2026-03-26T05:00:00.000Z","acum":16175375778.9942},{"date":"2026-03-26T05:00:00.000Z","acum":20717464569.9942}],"PLAYAS":[{"date":"2025-12-12T05:00:00.000Z","acum":0},{"date":"2025-12-12T05:00:00.000Z","acum":8490935939},{"date":"2026-03-12T05:00:00.000Z","acum":30708357465.73},{"date":"2026-04-20T05:00:00.000Z","acum":51090805874.729996},{"date":"2026-05-19T05:00:00.000Z","acum":64212616487.579994}],"METROPOLITANO":[{"date":"2025-12-01T05:00:00.000Z","acum":0},{"date":"2026-06-01T05:00:00.000Z","acum":28467192767.41},{"date":"2026-06-01T05:00:00.000Z","acum":69794162954.41},{"date":"2026-06-01T05:00:00.000Z","acum":141531169404.41}],"CALLE 2":[{"date":"2026-01-29T05:00:00.000Z","acum":0},{"date":"2026-07-14T05:00:00.000Z","acum":2334051690.8048}],"MAGANGUE":[{"date":"2025-12-01T05:00:00.000Z","acum":0}],"ENTORNOS":[{"date":"2025-12-01T05:00:00.000Z","acum":0}]};
+  allData = {"VIAS":{"contrato":52085450531,"facturado":51289237101.020004,"exposicion":796213429.9799957,"avanceObra":100},"HOSPITAL":{"contrato":16464647721,"facturado":12677557069.96,"exposicion":3787090651.040001,"avanceObra":80},"COLEGIOS":{"contrato":111327609605,"facturado":20717464569.9942,"exposicion":90610145035.0058,"avanceObra":20},"PLAYAS":{"contrato":80882579931,"facturado":64212616487.579994,"exposicion":16669963443.420006,"avanceObra":80},"METROPOLITANO":{"contrato":173020000000,"facturado":141531169404.41,"exposicion":31488830595.589996,"avanceObra":90},"CALLE 2":{"contrato":11973872415.55,"facturado":2334051691.5699997,"exposicion":9639820723.98,"avanceObra":20},"MAGANGUE":{"contrato":15183397337,"facturado":2918440507.86,"exposicion":12264956829.14,"avanceObra":20},"ENTORNOS":{"contrato":27742090918,"facturado":0,"exposicion":27742090918,"avanceObra":20}};
+  timelineData = {"VIAS":[{"date":"2025-10-23T05:00:00.000Z","acum":0},{"date":"2025-10-24T05:00:00.000Z","acum":10281737404.23},{"date":"2025-12-26T05:00:00.000Z","acum":25337628899.02},{"date":"2026-02-10T05:00:00.000Z","acum":40337628899.020004},{"date":"2026-03-24T05:00:00.000Z","acum":51211919433.020004},{"date":"2026-03-27T05:00:00.000Z","acum":51289237101.020004}],"HOSPITAL":[{"date":"2026-01-06T05:00:00.000Z","acum":0},{"date":"2026-01-07T05:00:00.000Z","acum":3379714137},{"date":"2026-02-03T05:00:00.000Z","acum":6125139256},{"date":"2026-03-11T05:00:00.000Z","acum":8137535915.96},{"date":"2026-05-05T05:00:00.000Z","acum":12677557069.96}],"COLEGIOS":[{"date":"2025-10-08T05:00:00.000Z","acum":0},{"date":"2025-10-08T05:00:00.000Z","acum":8182750},{"date":"2025-11-21T05:00:00.000Z","acum":6504197213.9991},{"date":"2025-11-21T05:00:00.000Z","acum":9978252276.9942},{"date":"2026-03-26T05:00:00.000Z","acum":12299181918.9942},{"date":"2026-03-26T05:00:00.000Z","acum":16175375778.9942},{"date":"2026-03-26T05:00:00.000Z","acum":20717464569.9942}],"PLAYAS":[{"date":"2025-12-12T05:00:00.000Z","acum":0},{"date":"2025-12-12T05:00:00.000Z","acum":8490935939},{"date":"2026-03-12T05:00:00.000Z","acum":30708357465.73},{"date":"2026-04-20T05:00:00.000Z","acum":51090805874.729996},{"date":"2026-05-19T05:00:00.000Z","acum":64212616487.579994}],"METROPOLITANO":[{"date":"2025-12-01T05:00:00.000Z","acum":0},{"date":"2026-06-01T05:00:00.000Z","acum":28467192767.41},{"date":"2026-06-01T05:00:00.000Z","acum":69794162954.41},{"date":"2026-06-01T05:00:00.000Z","acum":141531169404.41}],"CALLE 2":[{"date":"2026-01-29T05:00:00.000Z","acum":0},{"date":"2026-02-18T05:00:00.000Z","acum":773503744.7},{"date":"2026-02-27T05:00:00.000Z","acum":1463036103.04},{"date":"2026-03-24T05:00:00.000Z","acum":2334051691.5699997}],"MAGANGUE":[{"date":"2025-12-01T05:00:00.000Z","acum":0},{"date":"2026-07-10T05:00:00.000Z","acum":2918440507.86}],"ENTORNOS":[{"date":"2025-12-01T05:00:00.000Z","acum":0}]};
   corteFecha = "14 jul 2026";
   /* DATA_END */
   // Si los datos vienen de un HTML descargado, las fechas llegan como texto ISO: reconstituir a Date.
@@ -685,7 +723,7 @@ function loadDefaultData(){
 }
 
 function renderAll(){
-  const active=[...activeProjs].filter(p=>allData[p]);
+  const active=[...activeProjs].filter(p=>allData[p]).sort((a,b)=>(allData[b]?.contrato||0)-(allData[a]?.contrato||0));
   if(active.length===0){
     // Limpiar KPIs
     document.getElementById('kpiContrato').textContent='—';
@@ -699,12 +737,14 @@ function renderAll(){
     // Destruir gráficas
     if(barChartInst){barChartInst.destroy();barChartInst=null;}
     if(lineChartInst){lineChartInst.destroy();lineChartInst=null;}
+    if(avanceChartInst){avanceChartInst.destroy();avanceChartInst=null;}
     return;
   }
   renderKPIs(active);
   renderBar(active);
   renderTable(active);
   renderLine(active);
+  renderAvanceObra(active);
 }
 
 function renderKPIs(active){
@@ -738,6 +778,28 @@ function renderBar(active){
       scales:{
         x:{stacked:true,ticks:{callback:v=>'$'+v.toFixed(0)+' MM'},grid:{color:'rgba(0,0,0,0.06)'}},
         y:{stacked:true,ticks:{font:{size:12}}}
+      }
+    }
+  });
+}
+
+function renderAvanceObra(active){
+  if(avanceChartInst){avanceChartInst.destroy();}
+  const labels=active.map(p=>PROJ_NAMES[p]||p);
+  const avance=active.map(p=>+(allData[p]?.avanceObra||0).toFixed(1));
+  const colors=active.map(p=>PROJ_COLORS[p]||'#6B7280');
+  document.getElementById('avanceWrap').style.height=Math.max(200,active.length*52+60)+'px';
+  avanceChartInst=new Chart(document.getElementById('avanceChart'),{
+    type:'bar',
+    data:{labels,datasets:[
+      {label:'Avance de obra',data:avance,backgroundColor:colors,borderRadius:3,borderSkipped:false}
+    ]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' Avance: '+ctx.parsed.x.toFixed(1)+'%'}}},
+      scales:{
+        x:{min:0,max:100,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,0.06)'}},
+        y:{ticks:{font:{size:12}}}
       }
     }
   });
@@ -1071,8 +1133,7 @@ loadDefaultData();function parseXlsx(file){
         const contrato=parseNum(r[cCont]);
         const acum=parseNum(r[cAcum]);
         const expo=parseNum(r[cExpo]);
-
-        if(!newData[proj]) newData[proj]={contrato:0,facturado:0,exposicion:0};
+        if(!newData[proj]) newData[proj]={contrato:0,facturado:0,exposicion:0,avanceObra:0};
         if(contrato>newData[proj].contrato) newData[proj].contrato=contrato;
         if(acum>newData[proj].facturado)    newData[proj].facturado=acum;
         if(expo>0)                          newData[proj].exposicion=expo;
@@ -1085,6 +1146,31 @@ loadDefaultData();function parseXlsx(file){
 
       const found=Object.keys(newData).filter(p=>newData[p].contrato>0||newData[p].facturado>0);
       if(found.length===0){ alert('No se encontraron proyectos con datos en la hoja '+sheetName+'.'); return; }
+
+      /* Hoja "Avance": PROYECTO + % AVANCE (avance físico real, independiente de facturación) */
+      const avanceSheetName=wb.SheetNames.find(s=>s.toLowerCase().includes('avance'));
+      if(avanceSheetName){
+        const wsAv=wb.Sheets[avanceSheetName];
+        const avRows=XLSX.utils.sheet_to_json(wsAv,{header:1, defval:null, raw:true});
+        const avHeaderIdx=avRows.findIndex(r=>r.some(c=>c&&c.toString().trim().toUpperCase()==='PROYECTO'));
+        if(avHeaderIdx>=0){
+          const avHeaders=avRows[avHeaderIdx].map(h=>h?h.toString().trim().toUpperCase():'');
+          const avColProj=avHeaders.findIndex(h=>h==='PROYECTO');
+          const avColPct=avHeaders.findIndex(h=>h.includes('AVANCE'));
+          if(avColProj>=0 && avColPct>=0){
+            for(let i=avHeaderIdx+1;i<avRows.length;i++){
+              const r=avRows[i];
+              const proj=(r[avColProj]||'').toString().trim().toUpperCase();
+              if(!proj) continue;
+              let pct=parseNum(r[avColPct]);
+              if(pct>0 && pct<=1) pct=pct*100;
+              if(!newData[proj]) newData[proj]={contrato:0,facturado:0,exposicion:0,avanceObra:0};
+              newData[proj].avanceObra=pct;
+              if(!found.includes(proj)) found.push(proj);
+            }
+          }
+        }
+      }
 
       /* Reemplazar datos completos */
       found.forEach(p=>{
@@ -1207,7 +1293,7 @@ function renderSummaryCards(){
       <div class="dc-row"><span>Contrato</span><span>${fmt(d.contrato)}</span></div>
       <div class="dc-row"><span>Facturado</span><span>${fmt(d.facturado)}</span></div>
       <div class="dc-row expo"><span>Exposición</span><span>${fmt(d.exposicion)}</span></div>
-      <div class="dc-row"><span>Avance</span><span>${pc}%</span></div>
+      <div class="dc-row"><span>Avance Fact.</span><span>${pc}%</span></div>
       <div class="dc-bar"><div class="dc-bar-fill" style="width:${pc}%;background:${color}"></div></div>
     </div>`;
   }).join('');
