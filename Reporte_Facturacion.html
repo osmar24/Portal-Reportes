@@ -184,10 +184,12 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
 <div class="section">
   <div class="section-title">Avance de facturación por proyecto</div>
   <div class="legend-row">
-    <div class="legend-item"><div class="legend-dot" style="background:#58595B"></div>Facturado</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#16505C"></div>Facturado</div>
     <div class="legend-item"><div class="legend-dot" style="background:#EF9F27"></div>Exposición (por facturar)</div>
+    <div class="legend-item"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;border:2px solid #16A34A;margin-right:4px"></span>Avance de obra (anillo: verde ≥90%, ámbar ≥50%, rojo &lt;50%)</div>
   </div>
-  <div class="chart-wrap" id="barWrap" style="height: 476px;">
+  <div class="chart-wrap" id="barWrap" style="height: 476px;margin-top:26px;">
+    <div id="avanceColHeader" style="position:absolute;top:-26px;right:26px;font-size:10.5px;font-weight:700;letter-spacing:.03em;color:#8A8B8D;text-transform:uppercase;text-align:center">Avance de obra</div>
     <canvas id="barChart" role="img" aria-label="Gráfica de barras apiladas mostrando facturado vs exposición por proyecto" style="box-sizing: border-box; display: block; height: 476px; width: 1655px;" width="1655" height="476">Facturación por proyecto.</canvas>
   </div>
 </div>
@@ -277,13 +279,6 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
     <div class="legend-item" style="gap:5px"><div style="width:20px;border-top:1.5px dashed rgba(80,80,80,0.55);flex-shrink:0"></div><span>Contrato acum.</span></div></div>
   <div class="chart-wrap" id="lineWrap" style="height:320px">
     <canvas id="lineChart" role="img" aria-label="Gráfica de evolución de facturación acumulada por proyecto" style="box-sizing: border-box; display: block; height: 320px; width: 1655px;" width="1655" height="320">Evolución de facturación acumulada por proyecto.</canvas>
-  </div>
-</div>
-
-<div class="section">
-  <div class="section-title">% Avance de obra por proyecto</div>
-  <div class="chart-wrap" id="avanceWrap" style="height: 476px;">
-    <canvas id="avanceChart" role="img" aria-label="Gráfica de porcentaje de avance físico de obra por proyecto" style="box-sizing: border-box; display: block; height: 476px; width: 1655px;" width="1655" height="476">% Avance de obra por proyecto.</canvas>
   </div>
 </div>
 
@@ -707,7 +702,7 @@ function renderCorte(){
   document.getElementById('corteLabel').textContent='Corte: '+corteFecha+' · Confidencial';
 }
 let activeProjs = new Set(['VIAS','HOSPITAL','COLEGIOS','PLAYAS','METROPOLITANO','CALLE 2','MAGANGUE','ENTORNOS']);
-let barChartInst = null, lineChartInst = null, avanceChartInst = null;
+let barChartInst = null, lineChartInst = null;
 
 function loadDefaultData(){
   /* DATA_START */
@@ -737,14 +732,12 @@ function renderAll(){
     // Destruir gráficas
     if(barChartInst){barChartInst.destroy();barChartInst=null;}
     if(lineChartInst){lineChartInst.destroy();lineChartInst=null;}
-    if(avanceChartInst){avanceChartInst.destroy();avanceChartInst=null;}
     return;
   }
   renderKPIs(active);
   renderBar(active);
   renderTable(active);
   renderLine(active);
-  renderAvanceObra(active);
 }
 
 function renderKPIs(active){
@@ -764,8 +757,65 @@ function renderBar(active){
   const labels=active.map(p=>PROJ_NAMES[p]||p);
   const facturado=active.map(p=>+((allData[p]?.facturado||0)/1e9).toFixed(2));
   const exposicion=active.map(p=>+((allData[p]?.exposicion||0)/1e9).toFixed(2));
-  const colors=active.map(p=>PROJ_COLORS[p]||'#6B7280');
+  const avanceObra=active.map(p=>+(allData[p]?.avanceObra||0).toFixed(1));
+  const colors=active.map(()=>'#16505C');
+  const totals=facturado.map((f,i)=>f+exposicion[i]);
+  const maxTotal=Math.max(...totals,1);
   document.getElementById('barWrap').style.height=Math.max(200,active.length*52+60)+'px';
+  const avanceLabelPlugin={
+    id:'avanceLabelPlugin',
+    beforeDatasetsDraw(chart){
+      const {ctx,chartArea}=chart;
+      const n=active.length;
+      const rowH=chartArea.height/n;
+      const dividerX=chartArea.right+22;
+      ctx.save();
+      // líneas horizontales de fila extendidas hasta la columna de avance de obra
+      ctx.strokeStyle='rgba(0,0,0,0.06)';
+      ctx.lineWidth=1;
+      for(let i=0;i<=n;i++){
+        const yLine=chartArea.top+i*rowH;
+        ctx.beginPath();
+        ctx.moveTo(chartArea.left,yLine+0.5);
+        ctx.lineTo(chart.width-4,yLine+0.5);
+        ctx.stroke();
+      }
+      ctx.restore();
+    },
+    afterDatasetsDraw(chart){
+      const {ctx,scales:{x},chartArea}=chart;
+      const meta=chart.getDatasetMeta(1);
+      ctx.save();
+      const cx=chartArea.right+52;
+      meta.data.forEach((bar,i)=>{
+        const pctVal=avanceObra[i];
+        const statusColor=pctVal>=90?'#16A34A':pctVal>=50?'#D97706':'#DC2626';
+        const cy=bar.y;
+        const r=14;
+        // fondo del anillo
+        ctx.beginPath();
+        ctx.arc(cx,cy,r,0,Math.PI*2);
+        ctx.strokeStyle='rgba(0,0,0,0.08)';
+        ctx.lineWidth=3;
+        ctx.stroke();
+        // progreso del anillo
+        ctx.beginPath();
+        ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+(Math.PI*2*(pctVal/100)));
+        ctx.strokeStyle=statusColor;
+        ctx.lineWidth=3;
+        ctx.lineCap='round';
+        ctx.stroke();
+        // texto porcentaje dentro del anillo (compacto)
+        const pctText=Math.round(pctVal)+'%';
+        ctx.font='700 9px Inter, Arial, sans-serif';
+        ctx.fillStyle='#2A2A2C';
+        ctx.textAlign='center';
+        ctx.textBaseline='middle';
+        ctx.fillText(pctText,cx,cy+0.5);
+      });
+      ctx.restore();
+    }
+  };
   barChartInst=new Chart(document.getElementById('barChart'),{
     type:'bar',
     data:{labels,datasets:[
@@ -774,34 +824,14 @@ function renderBar(active){
     ]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      layout:{padding:{right:125,top:4}},
       plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': $'+ctx.parsed.x.toFixed(1)+' MM'}}},
       scales:{
-        x:{stacked:true,ticks:{callback:v=>'$'+v.toFixed(0)+' MM'},grid:{color:'rgba(0,0,0,0.06)'}},
+        x:{stacked:true,suggestedMax:maxTotal*1.22,ticks:{callback:v=>'$'+v.toFixed(0)+' MM'},grid:{color:'rgba(0,0,0,0.06)'}},
         y:{stacked:true,ticks:{font:{size:12}}}
       }
-    }
-  });
-}
-
-function renderAvanceObra(active){
-  if(avanceChartInst){avanceChartInst.destroy();}
-  const labels=active.map(p=>PROJ_NAMES[p]||p);
-  const avance=active.map(p=>+(allData[p]?.avanceObra||0).toFixed(1));
-  const colors=active.map(p=>PROJ_COLORS[p]||'#6B7280');
-  document.getElementById('avanceWrap').style.height=Math.max(200,active.length*52+60)+'px';
-  avanceChartInst=new Chart(document.getElementById('avanceChart'),{
-    type:'bar',
-    data:{labels,datasets:[
-      {label:'Avance de obra',data:avance,backgroundColor:colors,borderRadius:3,borderSkipped:false}
-    ]},
-    options:{
-      indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' Avance: '+ctx.parsed.x.toFixed(1)+'%'}}},
-      scales:{
-        x:{min:0,max:100,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,0.06)'}},
-        y:{ticks:{font:{size:12}}}
-      }
-    }
+    },
+    plugins:[avanceLabelPlugin]
   });
 }
 
