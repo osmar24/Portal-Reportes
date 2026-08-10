@@ -456,6 +456,27 @@ loadCardData('CXP_Obligaciones.html', (block)=>{
     }
   }
 }, 'cxp-updated');
+
+// Ejecución PyG
+const MESES_LARGO = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const MESES3_PYG = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+loadCardData('Reporte_PyG.html', (block)=>{
+  const rawStr = extractObjectLiteral(block, 'const RAW_DATA');
+  if(rawStr){
+    const d = JSON.parse(rawStr);
+    if(d.totals && d.totals.pct_m_acum!=null){
+      document.getElementById('pyg-margen').textContent = (d.totals.pct_m_acum*100).toFixed(1)+'%';
+    }
+    if(d.projects){
+      const nproy = d.projects.filter(p=>!p.is_subitem).length;
+      document.getElementById('pyg-nproy').textContent = nproy;
+    }
+    if(d.corte){
+      const [y,m,dy] = d.corte.split('-');
+      markUpdated('pyg-updated', dy+' '+MESES3_PYG[+m-1]+' '+y);
+    }
+  }
+}, 'pyg-updated');
 </script>
 </body>
 </html>
