@@ -127,13 +127,13 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
 </div>
 
 <div class="tab-bar">
-  <button class="tab" onclick="go('res',this)">FC Resumen — O.P.</button>
-  <button class="tab on" id="tab-mes" onclick="go('mes',this)">FC Mes — Agosto 2026</button>
+  <button class="tab on" onclick="go('res',this)">FC Resumen — O.P.</button>
+  <button class="tab" id="tab-mes" onclick="go('mes',this)">FC Mes — Agosto 2026</button>
   <button class="tab" onclick="go('sim',this)">Simulador de escenarios</button>
 </div>
 
 <!-- ══ PANEL RESUMEN ══ -->
-<div id="p-res" class="panel">
+<div id="p-res" class="panel on">
   <div class="kpi-row">
     <div class="kpi kb"><div class="kl">Portafolio total</div><div class="kv b" id="kpi-portafolio">$701.75B</div><div class="ks">Ingresos contractuales</div></div>
     <div class="kpi kw"><div class="kl">Flujo neto 2026</div><div class="kv w" id="kpi-flujoneto">−$9.26B</div><div class="ks" id="kpi-flujoneto-s">2 de 12 meses negativos</div></div>
@@ -153,15 +153,15 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
     <div style="position:relative;height:250px"><canvas id="c1" role="img" aria-label="Ingresos y egresos 2026" style="box-sizing: border-box; display: block; height: 250px; width: 1811px;" width="1811" height="250"></canvas></div>
   </div>
   <div class="g2">
-    <div class="cc"><h3>Flujo neto mensual (COP Billones)</h3><p class="sub" id="sub-c2">2 mes(es) con saldo acumulado negativo en 2026</p><div style="position:relative;height:210px"><canvas id="c2" role="img" aria-label="Flujo neto 2026" style="box-sizing: border-box; display: block; height: 210px; width: 1638px;" width="1638" height="210"></canvas></div></div>
-    <div class="cc"><h3>Saldo acumulado (COP Billones)</h3><p class="sub" id="sub-c3">Saldo mínimo −$8.39B en septiembre, cierra diciembre en $1.13B</p><div style="position:relative;height:210px"><canvas id="c3" role="img" aria-label="Saldo acumulado 2026" style="box-sizing: border-box; display: block; height: 210px; width: 1638px;" width="1638" height="210"></canvas></div></div>
+    <div class="cc"><h3>Flujo neto mensual (COP Billones)</h3><p class="sub" id="sub-c2">2 mes(es) con saldo acumulado negativo en 2026</p><div style="position:relative;height:210px"><canvas id="c2" role="img" aria-label="Flujo neto 2026" style="box-sizing: border-box; display: block; height: 210px; width: 878px;" width="878" height="210"></canvas></div></div>
+    <div class="cc"><h3>Saldo acumulado (COP Billones)</h3><p class="sub" id="sub-c3">Saldo mínimo −$8.39B en septiembre, cierra diciembre en $1.13B</p><div style="position:relative;height:210px"><canvas id="c3" role="img" aria-label="Saldo acumulado 2026" style="box-sizing: border-box; display: block; height: 210px; width: 878px;" width="878" height="210"></canvas></div></div>
   </div>
 
   <div class="st">Análisis de portafolio</div>
   <div class="g3">
-    <div class="cc"><h3>Participación por proyecto</h3><p class="sub" id="sub-c4">Metro Estadio = 48.4% del portafolio</p><div style="position:relative;height:220px"><canvas id="c4" role="img" aria-label="Participación por proyecto" style="box-sizing: border-box; display: block; height: 220px; width: 1074px;" width="1074" height="220"></canvas></div></div>
-    <div class="cc"><h3>Margen total del proyecto (%)</h3><p class="sub">Ciclo de vida completo 2025-2028 · Verde ≥ 20% · Amarillo ≥ 12% · Naranja 0-12% · Rojo &lt;0% (déficit)</p><div style="position:relative;height:220px"><canvas id="c5" role="img" aria-label="Margen total por proyecto (ciclo de vida completo)" style="box-sizing: border-box; display: block; height: 220px; width: 1074px;" width="1074" height="220"></canvas></div></div>
-    <div class="cc"><h3>Concentración de ingresos mensual</h3><p class="sub">% del total anual 2026</p><div style="position:relative;height:220px"><canvas id="c6" role="img" aria-label="Concentración mensual" style="box-sizing: border-box; display: block; height: 220px; width: 1074px;" width="1074" height="220"></canvas></div></div>
+    <div class="cc"><h3>Participación por proyecto</h3><p class="sub" id="sub-c4">Metro Estadio = 48.4% del portafolio</p><div style="position:relative;height:220px"><canvas id="c4" role="img" aria-label="Participación por proyecto" style="box-sizing: border-box; display: block; height: 220px; width: 567px;" width="567" height="220"></canvas></div></div>
+    <div class="cc"><h3>Margen total del proyecto (%)</h3><p class="sub">Ciclo de vida completo 2025-2028 · Verde ≥ 20% · Amarillo ≥ 12% · Naranja 0-12% · Rojo &lt;0% (déficit)</p><div style="position:relative;height:220px"><canvas id="c5" role="img" aria-label="Margen total por proyecto (ciclo de vida completo)" style="box-sizing: border-box; display: block; height: 220px; width: 567px;" width="567" height="220"></canvas></div></div>
+    <div class="cc"><h3>Concentración de ingresos mensual</h3><p class="sub">% del total anual 2026</p><div style="position:relative;height:220px"><canvas id="c6" role="img" aria-label="Concentración mensual" style="box-sizing: border-box; display: block; height: 220px; width: 567px;" width="567" height="220"></canvas></div></div>
   </div>
 
   <div class="st">Detalle mensual por proyecto</div>
@@ -179,7 +179,7 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
 </div>
 
 <!-- ══ PANEL MES ══ -->
-<div id="p-mes" class="panel on">
+<div id="p-mes" class="panel">
   <div class="kpi-row">
     <div class="kpi kb"><div class="kl" id="kpi-mes-label">Saldo inicial agosto</div><div class="kv b" id="kpi-mes-s0">$9.45B</div><div class="ks" id="kpi-mes-s0-s">Acumulado a julio</div></div>
     <div class="kpi kp"><div class="kl">Ingresos ejecutados</div><div class="kv p" id="kpi-mes-ie">$38.93B</div><div class="ks">Total mes ejecutado</div></div>
