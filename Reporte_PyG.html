@@ -242,19 +242,31 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
 <div class="panel" id="p-tendencia">
   <p class="note" style="padding:0 0 14px;">Esta vista acumula un snapshot por cada corte mensual cargado. Actualmente hay <strong id="histCount">2</strong> corte(s) guardado(s). Al cargar el Excel del mes siguiente y descargar, el histórico se conserva y se agrega el nuevo punto.</p>
   <div class="g1 cc">
+    <h3>Evolución % Gastos Administrativos por Proyecto</h3>
+    <p class="sub">Directo de la hoja "Admon" del Excel · la línea base de cada proyecto está en la tabla de abajo · valores por encima de 50% se recortan en el gráfico (dato real visible al pasar el mouse)</p>
+    <div style="position:relative;height:320px"><canvas id="chartTendenciaAdmon"></canvas></div>
+  </div>
+  <div class="tw">
+    <div class="ts"><table id="admonTable">
+      <thead><tr><th class="tl">Proyecto</th><th>Último mes</th><th>Línea Base</th><th>Estado</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </div>
+  <div class="g1 cc">
     <h3>Evolución del margen acumulado del portafolio</h3>
     <p class="sub">% sobre producción</p>
-    <div style="position:relative;height:280px"><canvas id="chartTendenciaMargen" height="280" style="display: block; box-sizing: border-box; height: 280px; width: 1811px;" width="1811"></canvas></div>
+    <div style="position:relative;height:280px"><canvas id="chartTendenciaMargen"></canvas></div>
   </div>
   <div class="g1 cc">
     <h3>Evolución producción vs facturación</h3>
     <p class="sub">Millones COP</p>
-    <div style="position:relative;height:280px"><canvas id="chartTendenciaProdFact" height="280" style="display: block; box-sizing: border-box; height: 280px; width: 1811px;" width="1811"></canvas></div>
+    <div style="position:relative;height:280px"><canvas id="chartTendenciaProdFact"></canvas></div>
   </div>
 </div>
 
 <script>
 /* DATA_START */
+let ADMON_DATA = {"labels": ["May 25", "Jun 25", "Jul 25", "Ago 25", "Sep 25", "Oct 25", "Nov 25", "Dic 25", "Ene 26", "Feb 26", "Mar 26", "Abr 26", "May 26", "Jun 26"], "byProject": {"vias": {"values": [0.09339856163562887, 0.06179915062474058, 0.05595996449455805, 0.06385771876143893, 0.0514637413212252, 0.05380949338256251, 0.04599454022974347, 0.046551609655690045, 0.05263618912981291, 0.05462630737689566, 0.05800236477706487, 0.05810348186940943, 0.05766914993955095, 0.05971956297753319], "linea_base": 0.07}, "colegios": {"values": [null, null, null, null, 0.12055726338270516, 0.12457832986524975, 0.12433029279514088, 0.1247432435244854, 0.12333323300788841, 0.11521623926358139, 0.10610836028769992, 0.10505425094041267, 0.09936615909510323, 0.09511621379424372], "linea_base": 0.07}, "metro": {"values": [null, null, null, null, null, null, null, null, 2.2124804583261772, 0.05495967978296982, 0.04707856280774326, 0.041814301113008, 0.038955351196587155, 0.03755515985108914], "linea_base": 0.07}, "mtto_escenarios": {"values": [null, null, null, null, null, null, null, null, null, null, null, null, null, null], "linea_base": 0.07}, "hospital": {"values": [null, null, 0.15277951172110096, 0, 0, 0, 0.11303883610615426, 0.13434738220038794, 0.07033462502023308, 0.0760433988636118, 0.08450050659115314, 0.09513927252467945, 0.0756830296198396, 0.06762488344360941], "linea_base": 0.07}, "escenarios_pdo": {"values": [null, null, null, null, null, null, null, null, null, 0.18359703710128772, 0.10082030203782273, 0.10864582706617777, 0.07521781352384149, 0.05669853120767031], "linea_base": 0.05}, "playas": {"values": [null, null, null, null, null, null, 0.038096338291830754, 0.03571796956365489, 0.030885453054800716, 0.035162194776694605, 0.04434231792095588, 0.043841713293974634, 0.039039563249519134, 0.04061826895851857], "linea_base": 0.07}, "calle2": {"values": [null, null, null, null, null, null, null, null, null, 0.01892948061444546, 0.03273354875848079, 0.044117373343421036, 0.04588545338983443, 0.047737740821666194], "linea_base": 0.06}, "magangue": {"values": [null, null, null, null, null, null, null, null, null, null, 0.16176758108243994, 0.1425022076124561, 0.16945746661111302, 0.08069318918716877], "linea_base": 0.07}}};
 const RAW_DATA = {"corte": "2026-06-30", "mes_label": "Junio 2026", "projects": [{"num": 1, "key": "vias", "name": "Vías Urbanas BQ", "color": "#58595B", "contrato": 84118002607.565, "pct_ejec": 0.9774965999196977, "vr_prod": 82225061540.93106, "pct_cobro": 0.9749627534028538, "vr_fact": 82011919433.02, "pct_desv": -0.0025989162232098705, "vr_desv": -213142107.91105652, "m_linea_base": null, "m_mes_anterior": 0.2969405851924823, "costos": 57923726354.12225, "margen_acum": 24301335186.808807, "pct_m_acum": 0.2955465734095167, "pct_m_proy": null, "pct_saldo": 0.022503400080302233, "vr_saldo": 1892941066.6339417, "pct_pagado": 0.608810454902722, "vr_pagado": 51211919433.020004, "vr_por_pagar": 30800000000, "pct_x_fact": 0.025037246597146273, "vr_x_facturar": 2106083174.5449982, "actas": [["ACTA N°1", 10048981591, "AGOSTO ", "Pagada"], ["ACTA N°2", 14900000000, "OCTUBRE ", "Pagada"], ["ACTA N°3", 15000000000, "DICIEMBRE ", "Pagada"], ["ACTA N°4", 10874290534, "FEBRERO", "Pagada"], ["ACTA N°5", 388647308.0200043, "Intereses", "Pagada"], ["ACTA N°6", 30800000000, "JUNIO", "En elaboración"]]}, {"num": 2, "key": "colegios", "name": "Colegios BQ", "color": "#854F0B", "contrato": 179527871245.9181, "pct_ejec": 0.3616541903391504, "vr_prod": 64927006918.75375, "pct_cobro": 0.3944181463724117, "vr_fact": 70809050199, "pct_desv": 0.08306908882008017, "vr_desv": 5882043280.246246, "m_linea_base": 0.142, "m_mes_anterior": 0.1737173736104996, "costos": 54536967951.36438, "margen_acum": 10390038967.389374, "pct_m_acum": 0.160026458333293, "pct_m_proy": 0.1759911779912997, "pct_saldo": 0.6383458096608496, "vr_saldo": 114600864327.16434, "pct_pagado": 0.11481256551393913, "vr_pagado": 20612055479, "vr_por_pagar": 50196994720, "pct_x_fact": 0.6055818536275883, "vr_x_facturar": 108718821046.91809, "actas": [["ACTA N°1", 3474055063, "JULIO - JUNIO - AGOSTO", "Pagada"], ["ACTA N°2", 6496014464, "SEPTIEMBRE", "Pagada"], ["ACTA N°3", 2244122896, "OCTUBRE", "Pagada"], ["ACTA N°4", 3866791668, "NOVIEMBRE", "Pagada"], ["ACTA N°5", 4531071388, "DICIEMBRE ", "Pagada"], ["ACTA N°6", 8709550672, "ENERO ", "En proceso de cobro"], ["ACTA N°7", 6138756295, "FEBRERO", "En proceso de cobro"], ["ACTA N°8", 7491641675, "MARZO", "En proceso de cobro"], ["ACTA N°9", 7119059197, "ABRIL", "En proceso de cobro"], ["ACTA N°10", 10999656114, "MAYO", "En proceso de cobro"], ["ACTA N°11", 9738330767, "JUNIO", "En elaboración"]]}, {"num": 3, "key": "metro", "name": "Metropolitano / Metro Estadio", "color": "#993556", "contrato": 423503842975.94604, "pct_ejec": 0.34438581157168824, "vr_prod": 145848714667, "pct_cobro": 0.4052924323469454, "vr_fact": 171642902628, "pct_desv": 0.15027820880484347, "vr_desv": 25794187961, "m_linea_base": 0.14581521243987325, "m_mes_anterior": 0.21940889174780306, "costos": 108937590706.16425, "margen_acum": 36911123960.835754, "pct_m_acum": 0.2530781573571682, "pct_m_proy": 0.1794831767053117, "pct_saldo": 0.6556141884283118, "vr_saldo": 277655128308.94604, "pct_pagado": 0.33342319967335016, "vr_pagado": 141206006399, "vr_por_pagar": 30436896229, "pct_x_fact": 0.5947075676530545, "vr_x_facturar": 251860940347.94604, "actas": [["ACTA N°1", 28142029762, "ENERO", "Pagada"], ["ACTA N°2", 41326970187, "FEBRERO-MARZO", "Pagada"], ["ACTA N°3", 71737006450, "ABRIL-MAYO", "Pagada"], ["ACTA N°4", 30436896229, "JUNIO", "En proceso de cobro"]]}, {"num": 4, "key": "mtto_escenarios", "name": "Mtto. Escenarios Deportivos (Distrito)", "color": "#16505C", "contrato": 142043000000, "pct_ejec": 0, "vr_prod": 0, "pct_cobro": 0, "vr_fact": 0, "pct_desv": null, "vr_desv": 0, "m_linea_base": null, "m_mes_anterior": null, "costos": 0, "margen_acum": 0, "pct_m_acum": null, "pct_m_proy": null, "pct_saldo": 1, "vr_saldo": 142043000000, "pct_pagado": null, "vr_pagado": null, "vr_por_pagar": null, "pct_x_fact": 1, "vr_x_facturar": 142043000000, "actas": []}, {"num": 5, "key": "hospital", "name": "Hospital Pto. Colombia", "color": "#3B6D11", "contrato": 16464647724.850006, "pct_ejec": 0.9012037461797473, "vr_prod": 14838002209.164679, "pct_cobro": 0.9999999824514917, "vr_fact": 16464647435.919998, "pct_desv": 0.09879623800547098, "vr_desv": 1626645226.7553196, "m_linea_base": 0.18530358282930276, "m_mes_anterior": 0.21907540120062619, "costos": 11614137069.355858, "margen_acum": 3223865139.8088207, "pct_m_acum": 0.21727083568012973, "pct_m_proy": 0.2111863771587276, "pct_saldo": 0.0987962538202527, "vr_saldo": 1626645515.6853275, "pct_pagado": 0.4942429410753842, "vr_pagado": 8137535915.3, "vr_por_pagar": 8327111520.619998, "pct_x_fact": 1.754850834120731e-08, "vr_x_facturar": 288.9300079345703, "actas": [["ACTA N°1", 3379714137.3, "DICIEMBRE", "Pagada"], ["ACTA N°2", 2745425119, "ENERO", "Pagada"], ["ACTA N°3", 2012396659, "FEBRERO", "Pagada"], ["ACTA N°4", 4540021184, "MARZO-ABRIL", "Facturado"], ["ACTA N°5", 3787090336.62, "MAYO-JUNIO", "En proceso de cobro"]]}, {"num": 6, "key": "escenarios_pdo", "name": "Escenarios Deportivos (P.D.O.)", "color": "#16505C", "contrato": 27905037586, "pct_ejec": 0.42241355790404833, "vr_prod": 11787466210.148457, "pct_cobro": 0.49046465581528204, "vr_fact": 13686434655.13, "pct_desv": 0.13874821988572197, "vr_desv": 1898968444.9815426, "m_linea_base": 0.29028160400584446, "m_mes_anterior": 0.3377659663616054, "costos": 7234683625.546341, "margen_acum": 4552782584.602116, "pct_m_acum": 0.3862392903983371, "pct_m_proy": 0.3090992574469188, "pct_saldo": 0.5775864420959517, "vr_saldo": 16117571375.851543, "pct_pagado": 0, "vr_pagado": 0, "vr_por_pagar": 13686434655.13, "pct_x_fact": 0.5095353441847179, "vr_x_facturar": 14218602930.87, "actas": [["ACTA N°1", 3363420991, "FEBRERO-MARZO", "En proceso de cobro"], ["ACTA N°2", 3019102917.41, "ABRIL", "En proceso de cobro"], ["ACTA N°3", 4845284340.35, "MAYO-JUNIO", "En proceso de cobro"], ["ACTA N°4", 2458626406.369999, "JUNIO", "En proceso de cobro"]]}, {"num": 7, "key": "playas", "name": "Playas Sta. Verónica", "color": "#533AB7", "contrato": 81857987659.37094, "pct_ejec": 0.6186031909554217, "vr_prod": 50637612371.2764, "pct_cobro": 0.8867121249455816, "vr_fact": 72584470181.21, "pct_desv": 0.302362995212921, "vr_desv": 21946857809.93361, "m_linea_base": 0.3514269799485151, "m_mes_anterior": 0.43720955905325043, "costos": 28725788347.17482, "margen_acum": 21911824024.101578, "pct_m_acum": 0.4327183490296396, "pct_m_proy": 0.4312050888687736, "pct_saldo": 0.3813968090445783, "vr_saldo": 31220375288.094543, "pct_pagado": 0.7844392260506426, "vr_pagado": 64212616485.58, "vr_por_pagar": 8371853695.630005, "pct_x_fact": 0.11328787505441835, "vr_x_facturar": 9273517478.160934, "actas": [["ACTA N°1", 8490935939, "DICIEMBRE", "Pagada"], ["ACTA N°2", 22217421526.64, "ENERO ", "Pagada"], ["ACTA N°3", 20382448408, "FEBRERO-MARZO", "Pagada"], ["ACTA N°4", 13121810611.94, "ABRIL-MAYO", "Pagada"], ["ACTA N°5", 8371853695.630005, "JUNIO", "En proceso de cobro"]]}, {"num": 8, "key": "calle2", "name": "Calle 2", "color": "#1D6FB8", "contrato": 11943776608.049763, "pct_ejec": 0.5203852735075141, "vr_prod": 6215365456.892625, "pct_cobro": 0.4275080294057628, "vr_fact": 5106060401.37, "pct_desv": -0.21725263085900606, "vr_desv": -1109305055.522625, "m_linea_base": 0.14549919541435238, "m_mes_anterior": 0.18212499355801648, "costos": 5016647945.818938, "margen_acum": 1198717511.0736866, "pct_m_acum": 0.19286356037911664, "pct_m_proy": 0.16728650580756885, "pct_saldo": 0.47961472649248593, "vr_saldo": 5728411151.157138, "pct_pagado": 0.24090277001922406, "vr_pagado": 2877288869.37, "vr_por_pagar": 2228771532, "pct_x_fact": 0.5724919705942372, "vr_x_facturar": 6837716206.679763, "actas": [["ACTA N°1", 2877288869.37, "FEBRERO-MARZO", "Pagada"], ["ACTA N°2", 2228771532, "ABRIL-MAYO-JUNIO", "Facturado"]]}, {"num": 9, "key": "magangue", "name": "Magangué", "color": "#B08900", "contrato": 15093507526.000002, "pct_ejec": 0.27829161563041827, "vr_prod": 4200396594.9404182, "pct_cobro": 0.292737821228685, "vr_fact": 4418440507.860001, "pct_desv": 0.04934861350553487, "vr_desv": 218043912.91958237, "m_linea_base": 0.18710177116713436, "m_mes_anterior": 0.1408026634312082, "costos": 3343359611.6820765, "margen_acum": 857036983.2583418, "pct_m_acum": 0.2040371578937771, "pct_m_proy": 0.19811384049862182, "pct_saldo": 0.7217083843695817, "vr_saldo": 10893110931.059584, "pct_pagado": 0, "vr_pagado": 0, "vr_por_pagar": 4418440507.860001, "pct_x_fact": 0.7072621787713149, "vr_x_facturar": 10675067018.140001, "actas": [["ACTA N°1", 2918440507.86, "MARZO-ABRIL-MAYO", "En proceso de cobro"], ["ACTA N°2", 1500000000, "JUNIO", "En elaboración"]]}], "totals": {"contrato": 982457673933.6998, "vr_prod": 380679625969.10736, "vr_fact": 436723925441.51, "vr_desv": 56044299472.40262, "costos": 277332901611.2289, "margen_acum": 103346724357.87848, "vr_saldo": 601778047964.5924, "vr_pagado": 288257422581.27, "vr_por_pagar": 148466502860.24, "vr_x_facturar": 545733748492.1898, "pct_m_acum": 0.27147952584745155}, "actas_resumen": {"pagado": {"val": 288257422581.27, "pct": 0.6600449524029478}, "facturado": {"val": 6768792716, "pct": 0.015499019681958178}, "en_proceso": {"val": 99659379377.24, "pct": 0.22819766349299148}, "en_elaboracion": {"val": 42038330767, "pct": 0.09625836442210252}, "total": {"val": 436723925441.51, "pct": 1}}};
 const HISTORY = [{"corte": "2026-05-30", "mes_label": "Mayo 2026", "pct_m_acum": 0.26562201045300915, "vr_prod": 316599722274.0085, "vr_fact": 352881612080.41, "margen_acum": 84095854739.28648, "vias_pct_m_acum": 0.2969405851924823, "projects": [{"key": "vias", "pct_m_acum": 0.2969405851924823, "vr_prod": 79475940940.87294, "vr_fact": 51211919433.020004, "margen_acum": 23599632411.70597}, {"key": "colegios", "pct_m_acum": 0.1737173736104996, "vr_prod": 56219300942.86813, "vr_fact": 60582141488.56, "margen_acum": 9766269306.013336}, {"key": "metro", "pct_m_acum": 0.21940889174780306, "vr_prod": 108504462586.33878, "vr_fact": 141206006399, "margen_acum": 23806843885.759552}, {"key": "mtto_escenarios", "pct_m_acum": null, "vr_prod": 0, "vr_fact": 0, "margen_acum": 0}, {"key": "hospital", "pct_m_acum": 0.21907540120062619, "vr_prod": 11835293343.773329, "vr_fact": 16464647435.919998, "margen_acum": 2592821637.6142426}, {"key": "escenarios_pdo", "pct_m_acum": 0.3900678559098361, "vr_prod": 7400788446.567692, "vr_fact": 11179650081.41, "margen_acum": 2886809681.394946}, {"key": "playas", "pct_m_acum": 0.43720955905325043, "vr_prod": 46344399056.99778, "vr_fact": 64212616485.58, "margen_acum": 20262214276.297874}, {"key": "calle2", "pct_m_acum": 0.18212499355801648, "vr_prod": 5349518600.8825, "vr_fact": 5106060401.86, "margen_acum": 974281040.7242146}, {"key": "magangue", "pct_m_acum": 0.1408026634312082, "vr_prod": 1470018355.707341, "vr_fact": 2918570355.06, "margen_acum": 206982499.77635884}]}, {"corte": "2026-06-30", "mes_label": "Junio 2026", "pct_m_acum": 0.27147952584745155, "vr_prod": 380679625969.10736, "vr_fact": 436723925441.51, "margen_acum": 103346724357.87848, "vias_pct_m_acum": 0.2955465734095167, "projects": [{"key": "vias", "pct_m_acum": 0.2955465734095167, "vr_prod": 82225061540.93106, "vr_fact": 82011919433.02, "margen_acum": 24301335186.808807}, {"key": "colegios", "pct_m_acum": 0.160026458333293, "vr_prod": 64927006918.75375, "vr_fact": 70809050199, "margen_acum": 10390038967.389374}, {"key": "metro", "pct_m_acum": 0.2530781573571682, "vr_prod": 145848714667, "vr_fact": 171642902628, "margen_acum": 36911123960.835754}, {"key": "mtto_escenarios", "pct_m_acum": null, "vr_prod": 0, "vr_fact": 0, "margen_acum": 0}, {"key": "hospital", "pct_m_acum": 0.21727083568012973, "vr_prod": 14838002209.164679, "vr_fact": 16464647435.919998, "margen_acum": 3223865139.8088207}, {"key": "escenarios_pdo", "pct_m_acum": 0.3862392903983371, "vr_prod": 11787466210.148457, "vr_fact": 13686434655.13, "margen_acum": 4552782584.602116}, {"key": "playas", "pct_m_acum": 0.4327183490296396, "vr_prod": 50637612371.2764, "vr_fact": 72584470181.21, "margen_acum": 21911824024.101578}, {"key": "calle2", "pct_m_acum": 0.19286356037911664, "vr_prod": 6215365456.892625, "vr_fact": 5106060401.37, "margen_acum": 1198717511.0736866}, {"key": "magangue", "pct_m_acum": 0.2040371578937771, "vr_prod": 4200396594.9404182, "vr_fact": 4418440507.860001, "margen_acum": 857036983.2583418}]}];
 /* DATA_END */
@@ -589,6 +601,54 @@ function renderTendencia(){
     ] },
     options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}} }
   });
+  renderTendenciaAdmon();
+}
+
+function computeAdmonYMax(){
+  // Se ignoran valores atípicos (>50%, ej. arranques con base de producción casi nula)
+  // para que la escala del eje no se aplaste por un solo pico puntual.
+  let vals = [];
+  Object.values(ADMON_DATA.byProject).forEach(a=>{
+    a.values.forEach(v=>{ if(v!=null && v<0.5) vals.push(v); });
+    if(a.linea_base!=null) vals.push(a.linea_base);
+  });
+  if(!vals.length) return 30;
+  const max = Math.max(...vals) * 100;
+  return Math.ceil((max*1.25)/5)*5;
+}
+
+function renderTendenciaAdmon(){
+  const projs = mainProjects().filter(p=>activeProjs.has(p.key));
+  const datasets = projs.map(p=>{
+    const a = ADMON_DATA.byProject[p.key];
+    return { label:p.name, data: a ? a.values.map(v=> v!=null ? v*100 : null) : ADMON_DATA.labels.map(()=>null),
+      borderColor:p.color, backgroundColor:'transparent', tension:.25, pointRadius:2.5, spanGaps:true };
+  });
+  destroyChart('tAdmon');
+  charts.tAdmon = new Chart(document.getElementById('chartTendenciaAdmon'), {
+    type:'line', data:{ labels: ADMON_DATA.labels, datasets },
+    options:{ responsive:true, maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{legend:{position:'bottom', labels:{boxWidth:10,font:{size:10.5}}},
+        tooltip:{ mode:'index', intersect:false, callbacks:{ label:(ctx)=> `${ctx.dataset.label}: ${ctx.parsed.y!=null?ctx.parsed.y.toFixed(1):'—'}%` } } },
+      scales:{ y:{ min:0, max: computeAdmonYMax(), title:{display:true,text:'% Admon'} } } }
+  });
+  const tbody = document.querySelector('#admonTable tbody');
+  tbody.innerHTML = projs.map(p=>{
+    const a = ADMON_DATA.byProject[p.key];
+    if(!a) return '';
+    const vals = a.values.filter(v=>v!=null);
+    const ultimo = vals.length ? vals[vals.length-1] : null;
+    const lb = a.linea_base;
+    let estado = '—', color = '#8A8B8D';
+    if(ultimo!=null && lb!=null){
+      if(ultimo <= lb){ estado='Dentro de línea base'; color='#16A34A'; }
+      else{ estado='Por encima de línea base'; color='#DC2626'; }
+    }
+    return `<tr><td class="tn"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${p.color};margin-right:6px;"></span>${p.name}</td>
+      <td class="tv">${ultimo!=null?fmtPct(ultimo):'—'}</td><td class="tv">${lb!=null?fmtPct(lb):'—'}</td>
+      <td><span style="display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:9px;background:${color};color:#fff;">${estado}</span></td></tr>`;
+  }).join('') || '<tr><td class="tn" colspan="4">No hay proyectos seleccionados en el filtro.</td></tr>';
 }
 
 function rebuildAll(){
@@ -632,6 +692,44 @@ function pickPygSheet(wb, pygCandidates, corteMonthIdx){
   if(nonEnero.length > 1) return nonEnero[0]; // ambiguous — take the first non-Enero as best guess
   // 3) Fallback: only Enero-like sheets available.
   return pygCandidates[0];
+}
+
+const ADMON_CANON = {
+  'DISTRITO: VIAS URBANAS BQ(C. COMPLETO)':'vias', 'DISTRITO: COLEGIOS BQ (**)':'colegios', 'METRO ESTADIO(*)':'metro',
+  'MANTENIMIENTO DE ESCENARIOS':'mtto_escenarios', 'E.S.E HOSPITAL DE PUERTO COLOMBIA':'hospital',
+  'P.D.O: ESCENARIOS DEPORTIVOS ':'escenarios_pdo', 'P.D.O: ESTABILIZACIÓN DE LAS PLAYAS DE SANTA VERÓNICA':'playas',
+  'CALLE 2 - PUERTO COLOMBIA':'calle2', 'PARQ. LAS AMERICAS MAGANGUÉ':'magangue',
+};
+const MESES3_ADMON = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+function parseAdmonSheet(wb){
+  const admonName = findSheetStartingWith(wb,'Admon');
+  if(!admonName) return null;
+  const ws = XLSX.utils.sheet_to_json(wb.Sheets[admonName], {header:1, raw:true, cellDates:true});
+  const get = (arr,r,c) => (arr[r] && arr[r][c]!==undefined) ? arr[r][c] : null;
+  // Fila con nombre en col C (idx2); las fechas mensuales viven en la primera fila de datos
+  // ("Obras Alcaldia Distrital de BQ"), en las columnas F..S (idx5..18); línea base en col U (idx19).
+  let headerRow = -1;
+  for(let r=0; r<15; r++){
+    const v0 = get(ws,r,5);
+    if(v0 instanceof Date){ headerRow = r; break; }
+  }
+  if(headerRow<0) return null;
+  const labels = [];
+  for(let c=5; c<19; c++){
+    const v = get(ws,headerRow,c);
+    if(v instanceof Date) labels.push(`${MESES3_ADMON[v.getMonth()]} ${String(v.getFullYear()).slice(2)}`);
+  }
+  const byProject = {};
+  for(let r=headerRow; r<headerRow+30; r++){
+    const name = get(ws,r,2);
+    if(!name || typeof name !== 'string') continue;
+    const key = ADMON_CANON[name.trim()] || ADMON_CANON[name];
+    if(!key) continue;
+    const values = []; for(let c=5;c<19;c++) values.push(get(ws,r,c));
+    const lb = get(ws,r,19);
+    byProject[key] = { values, linea_base: (typeof lb==='number') ? lb : null };
+  }
+  return { labels, byProject };
 }
 
 function parseExcelToData(wb){
@@ -766,7 +864,9 @@ function parseExcelToData(wb){
     pct_m_acum: null, vr_saldo: sum(p=>p.vr_saldo), vr_pagado: sum(p=>p.vr_pagado), vr_por_pagar: sum(p=>p.vr_por_pagar), vr_x_facturar: sum(p=>p.vr_x_facturar) };
   totals.pct_m_acum = totals.vr_prod ? totals.margen_acum/totals.vr_prod : null;
 
-  return {corte, mes_label:mesLabel, projects, totals, actas_resumen:actasResumen};
+  const admon = parseAdmonSheet(wb);
+
+  return {corte, mes_label:mesLabel, projects, totals, actas_resumen:actasResumen, admon};
 }
 
 document.getElementById('fileInput').addEventListener('change', function(e){
@@ -777,6 +877,7 @@ document.getElementById('fileInput').addEventListener('change', function(e){
       const wb = XLSX.read(evt.target.result, {type:'array', cellDates:true, cellStyles:true});
       const parsed = parseExcelToData(wb); if(!parsed) return;
       DATA = parsed;
+      if(parsed.admon) ADMON_DATA = parsed.admon;
 
       // "Mes Anterior" para Vías Urbanas: como su margen se calcula sobre una base
       // combinada (producción/facturación del alcance Completo + costo del alcance Vías),
@@ -808,8 +909,8 @@ document.getElementById('fileInput').addEventListener('change', function(e){
 
 function downloadHTML(){
   const html = document.documentElement.outerHTML;
-  const newHtml = html.replace(/const RAW_DATA = [\s\S]*?;\n\s*const HISTORY = [\s\S]*?;\n(?=\/\* DATA_END)/,
-    `const RAW_DATA = ${JSON.stringify(DATA)};\nconst HISTORY = ${JSON.stringify(HISTORY)};\n`);
+  const newHtml = html.replace(/let ADMON_DATA = [\s\S]*?;\n\s*const RAW_DATA = [\s\S]*?;\n\s*const HISTORY = [\s\S]*?;\n(?=\/\* DATA_END)/,
+    `let ADMON_DATA = ${JSON.stringify(ADMON_DATA)};\nconst RAW_DATA = ${JSON.stringify(DATA)};\nconst HISTORY = ${JSON.stringify(HISTORY)};\n`);
   const blob = new Blob(['<!DOCTYPE html>\n'+newHtml], {type:'text/html'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
