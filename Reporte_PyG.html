@@ -83,6 +83,13 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
 .more-btn{display:block;margin:14px auto 0;padding:8px 18px;border:1px solid var(--line);border-radius:8px;background:var(--white);color:var(--blue);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
 .more-btn:hover{background:var(--pale2);}
 @media(max-width:900px){.g2,.g3{grid-template-columns:1fr}.panel{padding:16px}.topbar,.tab-bar{padding:0 16px}}
+.pill-row{display:none;padding:0.6rem 1.5rem;background:#fff;border-bottom:1px solid var(--line, #E5E3E2);flex-wrap:wrap;gap:6px;align-items:center;}
+.pill-row.on{display:flex;}
+.pill-row .pill-label{font-size:11px;color:var(--muted,#6B7280);font-weight:600;margin-right:4px;}
+.pill-group{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.pill{font-size:12px;padding:4px 10px;border-radius:20px;border:0.5px solid #ccc;cursor:pointer;background:#fff;color:#666;transition:all .15s;user-select:none;}
+.pill.active{border-color:transparent;color:#fff;}
+.pill[data-proj="ALL"].active{background:#5F5E5A;}
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -129,6 +136,11 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
   <button class="tab" onclick="go('detalle',this)">Detalle por Proyecto</button>
   <button class="tab" onclick="go('actas',this)">Actas / Trazabilidad</button>
   <button class="tab" onclick="go('tendencia',this)">Tendencia</button>
+</div>
+
+<div class="pill-row" id="projFilterRow">
+  <span class="pill-label">Proyectos:</span>
+  <div class="pill-group" id="projPillGroup"></div>
 </div>
 
 <!-- ═══════════ TAB 1: RESUMEN EJECUTIVO ═══════════ -->
@@ -182,40 +194,7 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
 
 <!-- ═══════════ TAB 2: DETALLE POR PROYECTO ═══════════ -->
 <div class="panel" id="p-detalle">
-  <div class="tb" style="background:var(--white);border:1px solid var(--line);border-radius:10px;margin-bottom:18px;">
-    <label>Proyecto:</label>
-    <select id="projectSelector"><option value="1">Vías Urbanas BQ</option><option value="2">Colegios BQ</option><option value="3">Metropolitano / Metro Estadio</option><option value="4">Mtto. Escenarios Deportivos (Distrito)</option><option value="5">Hospital Pto. Colombia</option><option value="6">Escenarios Deportivos (P.D.O.)</option><option value="7">Playas Sta. Verónica</option><option value="8">Calle 2</option><option value="9">Magangué</option></select>
-  </div>
-  <div id="detailContent">
-    <div style="margin-bottom:14px;"><span class="badge" style="background:#58595B;color:#fff;">Vías Urbanas BQ</span>
-      
-    </div>
-    <div class="kpi-row">
-      <div class="kpi kb"><div class="kl">Vr. Contrato</div><div class="kv b">84.118 M</div></div>
-      <div class="kpi kb"><div class="kl">% Ejecución</div><div class="kv b">97.7%</div></div>
-      <div class="kpi kb"><div class="kl">Producción</div><div class="kv b">82.225 M</div></div>
-      <div class="kpi kw"><div class="kl">Facturación + Actas</div><div class="kv w">82.012 M</div></div>
-      <div class="kpi kn"><div class="kl">Desviación Fact.</div><div class="kv n">-213 M</div></div>
-      <div class="kpi kb"><div class="kl">Costos (SINCO)</div><div class="kv b">57.924 M</div></div>
-      <div class="kpi kp"><div class="kl">Margen Acumulado</div><div class="kv p">24.301 M</div></div>
-      <div class="kpi kb"><div class="kl">% Margen Acum.</div><div class="kv b">29.6%</div></div>
-      <div class="kpi kb"><div class="kl">% Margen Mes Ant.</div><div class="kv b">29.7%</div></div>
-      <div class="kpi kb"><div class="kl">% Margen Proy. Cierre</div><div class="kv b">—</div></div>
-      <div class="kpi kw"><div class="kl">Saldo por Ejecutar</div><div class="kv w">1.893 M</div></div>
-      <div class="kpi kp"><div class="kl">Pagado</div><div class="kv p">51.212 M</div></div>
-      <div class="kpi kn"><div class="kl">Por Pagar (Cartera)</div><div class="kv n">30.800 M</div></div>
-      <div class="kpi kb"><div class="kl">Saldo por Facturar</div><div class="kv b">2.106 M</div></div>
-    </div>
-    <div class="g2">
-      <div class="cc"><h3>Cascada financiera</h3><div style="position:relative;height:260px"><canvas id="detailCascada" height="260" style="display: block; box-sizing: border-box; height: 260px; width: 878px;" width="878"></canvas></div></div>
-      <div class="cc"><h3>Ciclo facturación → cobro</h3><div style="position:relative;height:260px"><canvas id="detailCiclo" height="260" style="display: block; box-sizing: border-box; height: 260px; width: 878px;" width="878"></canvas></div></div>
-    </div>
-    <div class="tw">
-      <div class="ts"><table><thead><tr><th class="tl">Acta</th><th>Valor</th><th>Periodo</th></tr></thead>
-        <tbody><tr><td class="tn">ACTA N°1</td><td class="tv">10.049 M</td><td class="tv">AGOSTO </td></tr><tr><td class="tn">ACTA N°2</td><td class="tv">14.900 M</td><td class="tv">OCTUBRE </td></tr><tr><td class="tn">ACTA N°3</td><td class="tv">15.000 M</td><td class="tv">DICIEMBRE </td></tr><tr><td class="tn">ACTA N°4</td><td class="tv">10.874 M</td><td class="tv">FEBRERO</td></tr><tr><td class="tn">ACTA N°5</td><td class="tv">389 M</td><td class="tv">Intereses</td></tr><tr><td class="tn">ACTA N°6</td><td class="tv">30.800 M</td><td class="tv">JUNIO</td></tr></tbody>
-      </table></div>
-    </div>
-  </div>
+  <div id="detailContent"></div>
 </div>
 
 <!-- ═══════════ TAB 3: ACTAS / TRAZABILIDAD ═══════════ -->
@@ -276,20 +255,94 @@ tr:not(.sec):not(.tot):hover td.tn{background:#F7EAE9;}
 
 <script>
 /* DATA_START */
-const RAW_DATA = {"corte":"2026-06-30","mes_label":"Junio 2026","projects":[{"num":1,"key":"vias","name":"Vías Urbanas BQ","color":"#58595B","contrato":84118002607.565,"pct_ejec":0.9774965999196977,"vr_prod":82225061540.93106,"pct_cobro":0.9749627534028538,"vr_fact":82011919433.02,"pct_desv":-0.0025989162232098705,"vr_desv":-213142107.91105652,"m_linea_base":null,"m_mes_anterior":0.2969405851924823,"costos":57923726354.12225,"margen_acum":24301335186.808807,"pct_m_acum":0.2955465734095167,"pct_m_proy":null,"pct_saldo":0.022503400080302233,"vr_saldo":1892941066.6339417,"pct_pagado":0.608810454902722,"vr_pagado":51211919433.020004,"vr_por_pagar":30800000000,"pct_x_fact":0.025037246597146273,"vr_x_facturar":2106083174.5449982,"actas":[["ACTA N°1",10048981591,"AGOSTO "],["ACTA N°2",14900000000,"OCTUBRE "],["ACTA N°3",15000000000,"DICIEMBRE "],["ACTA N°4",10874290534,"FEBRERO"],["ACTA N°5",388647308.0200043,"Intereses"],["ACTA N°6",30800000000,"JUNIO"]]},{"num":2,"key":"colegios","name":"Colegios BQ","color":"#854F0B","contrato":179527871245.9181,"pct_ejec":0.3616541903391504,"vr_prod":64927006918.75375,"pct_cobro":0.3944181463724117,"vr_fact":70809050199,"pct_desv":0.08306908882008017,"vr_desv":5882043280.246246,"m_linea_base":0.142,"m_mes_anterior":0.1737173736104996,"costos":54536967951.36438,"margen_acum":10390038967.389374,"pct_m_acum":0.160026458333293,"pct_m_proy":0.1759911779912997,"pct_saldo":0.6383458096608496,"vr_saldo":114600864327.16434,"pct_pagado":0.11481256551393913,"vr_pagado":20612055479,"vr_por_pagar":50196994720,"pct_x_fact":0.6055818536275883,"vr_x_facturar":108718821046.91809,"actas":[["ACTA N°1",3474055063,"JULIO - JUNIO - AGOSTO"],["ACTA N°2",6496014464,"SEPTIEMBRE"],["ACTA N°3",2244122896,"OCTUBRE"],["ACTA N°4",3866791668,"NOVIEMBRE"],["ACTA N°5",4531071388,"DICIEMBRE "],["ACTA N°6",8709550672,"ENERO "],["ACTA N°7",6138756295,"FEBRERO"],["ACTA N°8",7491641675,"MARZO"],["ACTA N°9",7119059197,"ABRIL"],["ACTA N°10",10999656114,"MAYO"],["ACTA N°11",9738330767,"JUNIO"]]},{"num":3,"key":"metro","name":"Metropolitano / Metro Estadio","color":"#993556","contrato":423503842975.94604,"pct_ejec":0.34438581157168824,"vr_prod":145848714667,"pct_cobro":0.4052924323469454,"vr_fact":171642902628,"pct_desv":0.15027820880484347,"vr_desv":25794187961,"m_linea_base":0.14581521243987325,"m_mes_anterior":0.21940889174780306,"costos":108937590706.16425,"margen_acum":36911123960.835754,"pct_m_acum":0.2530781573571682,"pct_m_proy":0.1794831767053117,"pct_saldo":0.6556141884283118,"vr_saldo":277655128308.94604,"pct_pagado":0.33342319967335016,"vr_pagado":141206006399,"vr_por_pagar":30436896229,"pct_x_fact":0.5947075676530545,"vr_x_facturar":251860940347.94604,"actas":[["ACTA N°1",28142029762,"ENERO"],["ACTA N°2",41326970187,"FEBRERO-MARZO"],["ACTA N°3",71737006450,"ABRIL-MAYO"],["ACTA N°4",30436896229,"JUNIO"]]},{"num":4,"key":"mtto_escenarios","name":"Mtto. Escenarios Deportivos (Distrito)","color":"#16505C","contrato":142043000000,"pct_ejec":0,"vr_prod":0,"pct_cobro":0,"vr_fact":0,"pct_desv":null,"vr_desv":0,"m_linea_base":null,"m_mes_anterior":null,"costos":0,"margen_acum":0,"pct_m_acum":null,"pct_m_proy":null,"pct_saldo":1,"vr_saldo":142043000000,"pct_pagado":null,"vr_pagado":null,"vr_por_pagar":null,"pct_x_fact":1,"vr_x_facturar":142043000000,"actas":[]},{"num":5,"key":"hospital","name":"Hospital Pto. Colombia","color":"#3B6D11","contrato":16464647724.850006,"pct_ejec":0.9012037461797473,"vr_prod":14838002209.164679,"pct_cobro":0.9999999824514917,"vr_fact":16464647435.919998,"pct_desv":0.09879623800547098,"vr_desv":1626645226.7553196,"m_linea_base":0.18530358282930276,"m_mes_anterior":0.21907540120062619,"costos":11614137069.355858,"margen_acum":3223865139.8088207,"pct_m_acum":0.21727083568012973,"pct_m_proy":0.2111863771587276,"pct_saldo":0.0987962538202527,"vr_saldo":1626645515.6853275,"pct_pagado":0.4942429410753842,"vr_pagado":8137535915.3,"vr_por_pagar":8327111520.619998,"pct_x_fact":1.754850834120731e-8,"vr_x_facturar":288.9300079345703,"actas":[["ACTA N°1",3379714137.3,"DICIEMBRE"],["ACTA N°2",2745425119,"ENERO"],["ACTA N°3",2012396659,"FEBRERO"],["ACTA N°4",4540021184,"MARZO-ABRIL"],["ACTA N°5",3787090336.62,"MAYO-JUNIO"]]},{"num":6,"key":"escenarios_pdo","name":"Escenarios Deportivos (P.D.O.)","color":"#16505C","contrato":27905037586,"pct_ejec":0.42241355790404833,"vr_prod":11787466210.148457,"pct_cobro":0.49046465581528204,"vr_fact":13686434655.13,"pct_desv":0.13874821988572197,"vr_desv":1898968444.9815426,"m_linea_base":0.29028160400584446,"m_mes_anterior":0.3377659663616054,"costos":7234683625.546341,"margen_acum":4552782584.602116,"pct_m_acum":0.3862392903983371,"pct_m_proy":0.3090992574469188,"pct_saldo":0.5775864420959517,"vr_saldo":16117571375.851543,"pct_pagado":0,"vr_pagado":0,"vr_por_pagar":13686434655.13,"pct_x_fact":0.5095353441847179,"vr_x_facturar":14218602930.87,"actas":[["ACTA N°1",3363420991,"FEBRERO-MARZO"],["ACTA N°2",3019102917.41,"ABRIL"],["ACTA N°3",4845284340.35,"MAYO-JUNIO"],["ACTA N°4",2458626406.369999,"JUNIO"]]},{"num":7,"key":"playas","name":"Playas Sta. Verónica","color":"#533AB7","contrato":81857987659.37094,"pct_ejec":0.6186031909554217,"vr_prod":50637612371.2764,"pct_cobro":0.8867121249455816,"vr_fact":72584470181.21,"pct_desv":0.302362995212921,"vr_desv":21946857809.93361,"m_linea_base":0.3514269799485151,"m_mes_anterior":0.43720955905325043,"costos":28725788347.17482,"margen_acum":21911824024.101578,"pct_m_acum":0.4327183490296396,"pct_m_proy":0.4312050888687736,"pct_saldo":0.3813968090445783,"vr_saldo":31220375288.094543,"pct_pagado":0.7844392260506426,"vr_pagado":64212616485.58,"vr_por_pagar":8371853695.630005,"pct_x_fact":0.11328787505441835,"vr_x_facturar":9273517478.160934,"actas":[["ACTA N°1",8490935939,"DICIEMBRE"],["ACTA N°2",22217421526.64,"ENERO "],["ACTA N°3",20382448408,"FEBRERO-MARZO"],["ACTA N°4",13121810611.94,"ABRIL-MAYO"],["ACTA N°5",8371853695.630005,"JUNIO"]]},{"num":8,"key":"calle2","name":"Calle 2","color":"#1D6FB8","contrato":11943776608.049763,"pct_ejec":0.5203852735075141,"vr_prod":6215365456.892625,"pct_cobro":0.4275080294057628,"vr_fact":5106060401.37,"pct_desv":-0.21725263085900606,"vr_desv":-1109305055.522625,"m_linea_base":0.14549919541435238,"m_mes_anterior":0.18212499355801648,"costos":5016647945.818938,"margen_acum":1198717511.0736866,"pct_m_acum":0.19286356037911664,"pct_m_proy":0.16728650580756885,"pct_saldo":0.47961472649248593,"vr_saldo":5728411151.157138,"pct_pagado":0.24090277001922406,"vr_pagado":2877288869.37,"vr_por_pagar":2228771532,"pct_x_fact":0.5724919705942372,"vr_x_facturar":6837716206.679763,"actas":[["ACTA N°1",2877288869.37,"FEBRERO-MARZO"],["ACTA N°2",2228771532,"ABRIL-MAYO-JUNIO"]]},{"num":9,"key":"magangue","name":"Magangué","color":"#B08900","contrato":15093507526.000002,"pct_ejec":0.27829161563041827,"vr_prod":4200396594.9404182,"pct_cobro":0.292737821228685,"vr_fact":4418440507.860001,"pct_desv":0.04934861350553487,"vr_desv":218043912.91958237,"m_linea_base":0.18710177116713436,"m_mes_anterior":0.1408026634312082,"costos":3343359611.6820765,"margen_acum":857036983.2583418,"pct_m_acum":0.2040371578937771,"pct_m_proy":0.19811384049862182,"pct_saldo":0.7217083843695817,"vr_saldo":10893110931.059584,"pct_pagado":0,"vr_pagado":0,"vr_por_pagar":4418440507.860001,"pct_x_fact":0.7072621787713149,"vr_x_facturar":10675067018.140001,"actas":[["ACTA N°1",2918440507.86,"MARZO-ABRIL-MAYO"],["ACTA N°2",1500000000,"JUNIO"]]}],"totals":{"contrato":982457673933.6998,"vr_prod":380679625969.10736,"vr_fact":436723925441.51,"vr_desv":56044299472.40262,"costos":277332901611.2289,"margen_acum":103346724357.87848,"vr_saldo":601778047964.5924,"vr_pagado":288257422581.27,"vr_por_pagar":148466502860.24,"vr_x_facturar":545733748492.1898,"pct_m_acum":0.27147952584745155},"actas_resumen":{"pagado":{"val":288257422581.27,"pct":0.6600449524029478},"facturado":{"val":6768792716,"pct":0.015499019681958178},"en_proceso":{"val":99659379377.24,"pct":0.22819766349299148},"en_elaboracion":{"val":42038330767,"pct":0.09625836442210252},"total":{"val":436723925441.51,"pct":1}}};
-const HISTORY = [{"corte":"2026-05-30","mes_label":"Mayo 2026","pct_m_acum":0.26562201045300915,"vr_prod":316599722274.0085,"vr_fact":352881612080.41,"margen_acum":84095854739.28648,"vias_pct_m_acum":0.2969405851924823},{"corte":"2026-06-30","mes_label":"Junio 2026","pct_m_acum":0.27147952584745155,"vr_prod":380679625969.10736,"vr_fact":436723925441.51,"margen_acum":103346724357.87848,"vias_pct_m_acum":0.2955465734095167}];
+const RAW_DATA = {"corte": "2026-06-30", "mes_label": "Junio 2026", "projects": [{"num": 1, "key": "vias", "name": "Vías Urbanas BQ", "color": "#58595B", "contrato": 84118002607.565, "pct_ejec": 0.9774965999196977, "vr_prod": 82225061540.93106, "pct_cobro": 0.9749627534028538, "vr_fact": 82011919433.02, "pct_desv": -0.0025989162232098705, "vr_desv": -213142107.91105652, "m_linea_base": null, "m_mes_anterior": 0.2969405851924823, "costos": 57923726354.12225, "margen_acum": 24301335186.808807, "pct_m_acum": 0.2955465734095167, "pct_m_proy": null, "pct_saldo": 0.022503400080302233, "vr_saldo": 1892941066.6339417, "pct_pagado": 0.608810454902722, "vr_pagado": 51211919433.020004, "vr_por_pagar": 30800000000, "pct_x_fact": 0.025037246597146273, "vr_x_facturar": 2106083174.5449982, "actas": [["ACTA N°1", 10048981591, "AGOSTO ", "Pagada"], ["ACTA N°2", 14900000000, "OCTUBRE ", "Pagada"], ["ACTA N°3", 15000000000, "DICIEMBRE ", "Pagada"], ["ACTA N°4", 10874290534, "FEBRERO", "Pagada"], ["ACTA N°5", 388647308.0200043, "Intereses", "Pagada"], ["ACTA N°6", 30800000000, "JUNIO", "En elaboración"]]}, {"num": 2, "key": "colegios", "name": "Colegios BQ", "color": "#854F0B", "contrato": 179527871245.9181, "pct_ejec": 0.3616541903391504, "vr_prod": 64927006918.75375, "pct_cobro": 0.3944181463724117, "vr_fact": 70809050199, "pct_desv": 0.08306908882008017, "vr_desv": 5882043280.246246, "m_linea_base": 0.142, "m_mes_anterior": 0.1737173736104996, "costos": 54536967951.36438, "margen_acum": 10390038967.389374, "pct_m_acum": 0.160026458333293, "pct_m_proy": 0.1759911779912997, "pct_saldo": 0.6383458096608496, "vr_saldo": 114600864327.16434, "pct_pagado": 0.11481256551393913, "vr_pagado": 20612055479, "vr_por_pagar": 50196994720, "pct_x_fact": 0.6055818536275883, "vr_x_facturar": 108718821046.91809, "actas": [["ACTA N°1", 3474055063, "JULIO - JUNIO - AGOSTO", "Pagada"], ["ACTA N°2", 6496014464, "SEPTIEMBRE", "Pagada"], ["ACTA N°3", 2244122896, "OCTUBRE", "Pagada"], ["ACTA N°4", 3866791668, "NOVIEMBRE", "Pagada"], ["ACTA N°5", 4531071388, "DICIEMBRE ", "Pagada"], ["ACTA N°6", 8709550672, "ENERO ", "En proceso de cobro"], ["ACTA N°7", 6138756295, "FEBRERO", "En proceso de cobro"], ["ACTA N°8", 7491641675, "MARZO", "En proceso de cobro"], ["ACTA N°9", 7119059197, "ABRIL", "En proceso de cobro"], ["ACTA N°10", 10999656114, "MAYO", "En proceso de cobro"], ["ACTA N°11", 9738330767, "JUNIO", "En elaboración"]]}, {"num": 3, "key": "metro", "name": "Metropolitano / Metro Estadio", "color": "#993556", "contrato": 423503842975.94604, "pct_ejec": 0.34438581157168824, "vr_prod": 145848714667, "pct_cobro": 0.4052924323469454, "vr_fact": 171642902628, "pct_desv": 0.15027820880484347, "vr_desv": 25794187961, "m_linea_base": 0.14581521243987325, "m_mes_anterior": 0.21940889174780306, "costos": 108937590706.16425, "margen_acum": 36911123960.835754, "pct_m_acum": 0.2530781573571682, "pct_m_proy": 0.1794831767053117, "pct_saldo": 0.6556141884283118, "vr_saldo": 277655128308.94604, "pct_pagado": 0.33342319967335016, "vr_pagado": 141206006399, "vr_por_pagar": 30436896229, "pct_x_fact": 0.5947075676530545, "vr_x_facturar": 251860940347.94604, "actas": [["ACTA N°1", 28142029762, "ENERO", "Pagada"], ["ACTA N°2", 41326970187, "FEBRERO-MARZO", "Pagada"], ["ACTA N°3", 71737006450, "ABRIL-MAYO", "Pagada"], ["ACTA N°4", 30436896229, "JUNIO", "En proceso de cobro"]]}, {"num": 4, "key": "mtto_escenarios", "name": "Mtto. Escenarios Deportivos (Distrito)", "color": "#16505C", "contrato": 142043000000, "pct_ejec": 0, "vr_prod": 0, "pct_cobro": 0, "vr_fact": 0, "pct_desv": null, "vr_desv": 0, "m_linea_base": null, "m_mes_anterior": null, "costos": 0, "margen_acum": 0, "pct_m_acum": null, "pct_m_proy": null, "pct_saldo": 1, "vr_saldo": 142043000000, "pct_pagado": null, "vr_pagado": null, "vr_por_pagar": null, "pct_x_fact": 1, "vr_x_facturar": 142043000000, "actas": []}, {"num": 5, "key": "hospital", "name": "Hospital Pto. Colombia", "color": "#3B6D11", "contrato": 16464647724.850006, "pct_ejec": 0.9012037461797473, "vr_prod": 14838002209.164679, "pct_cobro": 0.9999999824514917, "vr_fact": 16464647435.919998, "pct_desv": 0.09879623800547098, "vr_desv": 1626645226.7553196, "m_linea_base": 0.18530358282930276, "m_mes_anterior": 0.21907540120062619, "costos": 11614137069.355858, "margen_acum": 3223865139.8088207, "pct_m_acum": 0.21727083568012973, "pct_m_proy": 0.2111863771587276, "pct_saldo": 0.0987962538202527, "vr_saldo": 1626645515.6853275, "pct_pagado": 0.4942429410753842, "vr_pagado": 8137535915.3, "vr_por_pagar": 8327111520.619998, "pct_x_fact": 1.754850834120731e-08, "vr_x_facturar": 288.9300079345703, "actas": [["ACTA N°1", 3379714137.3, "DICIEMBRE", "Pagada"], ["ACTA N°2", 2745425119, "ENERO", "Pagada"], ["ACTA N°3", 2012396659, "FEBRERO", "Pagada"], ["ACTA N°4", 4540021184, "MARZO-ABRIL", "Facturado"], ["ACTA N°5", 3787090336.62, "MAYO-JUNIO", "En proceso de cobro"]]}, {"num": 6, "key": "escenarios_pdo", "name": "Escenarios Deportivos (P.D.O.)", "color": "#16505C", "contrato": 27905037586, "pct_ejec": 0.42241355790404833, "vr_prod": 11787466210.148457, "pct_cobro": 0.49046465581528204, "vr_fact": 13686434655.13, "pct_desv": 0.13874821988572197, "vr_desv": 1898968444.9815426, "m_linea_base": 0.29028160400584446, "m_mes_anterior": 0.3377659663616054, "costos": 7234683625.546341, "margen_acum": 4552782584.602116, "pct_m_acum": 0.3862392903983371, "pct_m_proy": 0.3090992574469188, "pct_saldo": 0.5775864420959517, "vr_saldo": 16117571375.851543, "pct_pagado": 0, "vr_pagado": 0, "vr_por_pagar": 13686434655.13, "pct_x_fact": 0.5095353441847179, "vr_x_facturar": 14218602930.87, "actas": [["ACTA N°1", 3363420991, "FEBRERO-MARZO", "En proceso de cobro"], ["ACTA N°2", 3019102917.41, "ABRIL", "En proceso de cobro"], ["ACTA N°3", 4845284340.35, "MAYO-JUNIO", "En proceso de cobro"], ["ACTA N°4", 2458626406.369999, "JUNIO", "En proceso de cobro"]]}, {"num": 7, "key": "playas", "name": "Playas Sta. Verónica", "color": "#533AB7", "contrato": 81857987659.37094, "pct_ejec": 0.6186031909554217, "vr_prod": 50637612371.2764, "pct_cobro": 0.8867121249455816, "vr_fact": 72584470181.21, "pct_desv": 0.302362995212921, "vr_desv": 21946857809.93361, "m_linea_base": 0.3514269799485151, "m_mes_anterior": 0.43720955905325043, "costos": 28725788347.17482, "margen_acum": 21911824024.101578, "pct_m_acum": 0.4327183490296396, "pct_m_proy": 0.4312050888687736, "pct_saldo": 0.3813968090445783, "vr_saldo": 31220375288.094543, "pct_pagado": 0.7844392260506426, "vr_pagado": 64212616485.58, "vr_por_pagar": 8371853695.630005, "pct_x_fact": 0.11328787505441835, "vr_x_facturar": 9273517478.160934, "actas": [["ACTA N°1", 8490935939, "DICIEMBRE", "Pagada"], ["ACTA N°2", 22217421526.64, "ENERO ", "Pagada"], ["ACTA N°3", 20382448408, "FEBRERO-MARZO", "Pagada"], ["ACTA N°4", 13121810611.94, "ABRIL-MAYO", "Pagada"], ["ACTA N°5", 8371853695.630005, "JUNIO", "En proceso de cobro"]]}, {"num": 8, "key": "calle2", "name": "Calle 2", "color": "#1D6FB8", "contrato": 11943776608.049763, "pct_ejec": 0.5203852735075141, "vr_prod": 6215365456.892625, "pct_cobro": 0.4275080294057628, "vr_fact": 5106060401.37, "pct_desv": -0.21725263085900606, "vr_desv": -1109305055.522625, "m_linea_base": 0.14549919541435238, "m_mes_anterior": 0.18212499355801648, "costos": 5016647945.818938, "margen_acum": 1198717511.0736866, "pct_m_acum": 0.19286356037911664, "pct_m_proy": 0.16728650580756885, "pct_saldo": 0.47961472649248593, "vr_saldo": 5728411151.157138, "pct_pagado": 0.24090277001922406, "vr_pagado": 2877288869.37, "vr_por_pagar": 2228771532, "pct_x_fact": 0.5724919705942372, "vr_x_facturar": 6837716206.679763, "actas": [["ACTA N°1", 2877288869.37, "FEBRERO-MARZO", "Pagada"], ["ACTA N°2", 2228771532, "ABRIL-MAYO-JUNIO", "Facturado"]]}, {"num": 9, "key": "magangue", "name": "Magangué", "color": "#B08900", "contrato": 15093507526.000002, "pct_ejec": 0.27829161563041827, "vr_prod": 4200396594.9404182, "pct_cobro": 0.292737821228685, "vr_fact": 4418440507.860001, "pct_desv": 0.04934861350553487, "vr_desv": 218043912.91958237, "m_linea_base": 0.18710177116713436, "m_mes_anterior": 0.1408026634312082, "costos": 3343359611.6820765, "margen_acum": 857036983.2583418, "pct_m_acum": 0.2040371578937771, "pct_m_proy": 0.19811384049862182, "pct_saldo": 0.7217083843695817, "vr_saldo": 10893110931.059584, "pct_pagado": 0, "vr_pagado": 0, "vr_por_pagar": 4418440507.860001, "pct_x_fact": 0.7072621787713149, "vr_x_facturar": 10675067018.140001, "actas": [["ACTA N°1", 2918440507.86, "MARZO-ABRIL-MAYO", "En proceso de cobro"], ["ACTA N°2", 1500000000, "JUNIO", "En elaboración"]]}], "totals": {"contrato": 982457673933.6998, "vr_prod": 380679625969.10736, "vr_fact": 436723925441.51, "vr_desv": 56044299472.40262, "costos": 277332901611.2289, "margen_acum": 103346724357.87848, "vr_saldo": 601778047964.5924, "vr_pagado": 288257422581.27, "vr_por_pagar": 148466502860.24, "vr_x_facturar": 545733748492.1898, "pct_m_acum": 0.27147952584745155}, "actas_resumen": {"pagado": {"val": 288257422581.27, "pct": 0.6600449524029478}, "facturado": {"val": 6768792716, "pct": 0.015499019681958178}, "en_proceso": {"val": 99659379377.24, "pct": 0.22819766349299148}, "en_elaboracion": {"val": 42038330767, "pct": 0.09625836442210252}, "total": {"val": 436723925441.51, "pct": 1}}};
+const HISTORY = [{"corte": "2026-05-30", "mes_label": "Mayo 2026", "pct_m_acum": 0.26562201045300915, "vr_prod": 316599722274.0085, "vr_fact": 352881612080.41, "margen_acum": 84095854739.28648, "vias_pct_m_acum": 0.2969405851924823, "projects": [{"key": "vias", "pct_m_acum": 0.2969405851924823, "vr_prod": 79475940940.87294, "vr_fact": 51211919433.020004, "margen_acum": 23599632411.70597}, {"key": "colegios", "pct_m_acum": 0.1737173736104996, "vr_prod": 56219300942.86813, "vr_fact": 60582141488.56, "margen_acum": 9766269306.013336}, {"key": "metro", "pct_m_acum": 0.21940889174780306, "vr_prod": 108504462586.33878, "vr_fact": 141206006399, "margen_acum": 23806843885.759552}, {"key": "mtto_escenarios", "pct_m_acum": null, "vr_prod": 0, "vr_fact": 0, "margen_acum": 0}, {"key": "hospital", "pct_m_acum": 0.21907540120062619, "vr_prod": 11835293343.773329, "vr_fact": 16464647435.919998, "margen_acum": 2592821637.6142426}, {"key": "escenarios_pdo", "pct_m_acum": 0.3900678559098361, "vr_prod": 7400788446.567692, "vr_fact": 11179650081.41, "margen_acum": 2886809681.394946}, {"key": "playas", "pct_m_acum": 0.43720955905325043, "vr_prod": 46344399056.99778, "vr_fact": 64212616485.58, "margen_acum": 20262214276.297874}, {"key": "calle2", "pct_m_acum": 0.18212499355801648, "vr_prod": 5349518600.8825, "vr_fact": 5106060401.86, "margen_acum": 974281040.7242146}, {"key": "magangue", "pct_m_acum": 0.1408026634312082, "vr_prod": 1470018355.707341, "vr_fact": 2918570355.06, "margen_acum": 206982499.77635884}]}, {"corte": "2026-06-30", "mes_label": "Junio 2026", "pct_m_acum": 0.27147952584745155, "vr_prod": 380679625969.10736, "vr_fact": 436723925441.51, "margen_acum": 103346724357.87848, "vias_pct_m_acum": 0.2955465734095167, "projects": [{"key": "vias", "pct_m_acum": 0.2955465734095167, "vr_prod": 82225061540.93106, "vr_fact": 82011919433.02, "margen_acum": 24301335186.808807}, {"key": "colegios", "pct_m_acum": 0.160026458333293, "vr_prod": 64927006918.75375, "vr_fact": 70809050199, "margen_acum": 10390038967.389374}, {"key": "metro", "pct_m_acum": 0.2530781573571682, "vr_prod": 145848714667, "vr_fact": 171642902628, "margen_acum": 36911123960.835754}, {"key": "mtto_escenarios", "pct_m_acum": null, "vr_prod": 0, "vr_fact": 0, "margen_acum": 0}, {"key": "hospital", "pct_m_acum": 0.21727083568012973, "vr_prod": 14838002209.164679, "vr_fact": 16464647435.919998, "margen_acum": 3223865139.8088207}, {"key": "escenarios_pdo", "pct_m_acum": 0.3862392903983371, "vr_prod": 11787466210.148457, "vr_fact": 13686434655.13, "margen_acum": 4552782584.602116}, {"key": "playas", "pct_m_acum": 0.4327183490296396, "vr_prod": 50637612371.2764, "vr_fact": 72584470181.21, "margen_acum": 21911824024.101578}, {"key": "calle2", "pct_m_acum": 0.19286356037911664, "vr_prod": 6215365456.892625, "vr_fact": 5106060401.37, "margen_acum": 1198717511.0736866}, {"key": "magangue", "pct_m_acum": 0.2040371578937771, "vr_prod": 4200396594.9404182, "vr_fact": 4418440507.860001, "margen_acum": 857036983.2583418}]}];
 /* DATA_END */
 
 let DATA = RAW_DATA;
 const fmtCOP = (v, decimals=0) => (v===null||v===undefined||isNaN(v)) ? "—" : new Intl.NumberFormat('es-CO',{maximumFractionDigits:decimals}).format(v/1000000) + " M";
 const fmtPct = (v, decimals=1) => (v===null||v===undefined||isNaN(v)) ? "—" : (v*100).toFixed(decimals) + "%";
+
+// Estado de cada acta: primero se usa el color de la celda tal como viene del Excel
+// (leído por el parser en vivo y guardado como 4to valor de cada acta: [label,valor,periodo,estado]).
+// Si ese dato no está disponible (Excel sin formato, o datos antiguos sin color guardado),
+// se recurre a un cálculo de respaldo: el valor "Pagado" del proyecto siempre coincide con
+// la suma acumulada de las primeras N actas (se pagan en orden), así que las actas dentro
+// de esa suma quedan "Pagada" y el resto "Por Cobrar" (o "Parcial" si el corte cae a la mitad).
+function estadoActasCalculado(actas, vrPagado){
+  if(!actas || !actas.length) return [];
+  const pagado = vrPagado || 0;
+  const EPS = 1000; // tolerancia por redondeo de decimales
+  let cum = 0;
+  return actas.map(a=>{
+    const prev = cum;
+    cum += (a[1]||0);
+    if(cum <= pagado + EPS) return 'Pagada';
+    if(prev < pagado - EPS) return 'Parcial';
+    return 'Por Cobrar';
+  });
+}
+function estadoActas(actas, vrPagado){
+  if(!actas || !actas.length) return [];
+  const calculado = estadoActasCalculado(actas, vrPagado);
+  return actas.map((a,i)=> a[3] || calculado[i]);
+}
+function estadoBadge(estado){
+  const map = {
+    'Pagada':['#16A34A','#fff'], 'Facturado':['#78716C','#fff'],
+    'En proceso de cobro':['#1D6FB8','#fff'], 'En elaboración':['#D97706','#fff'],
+    'Parcial':['#D97706','#fff'], 'Por Cobrar':['#DC2626','#fff']
+  };
+  const [bg,fg] = map[estado] || ['#8A8B8D','#fff'];
+  return `<span style="display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:9px;background:${bg};color:${fg};white-space:nowrap;">${estado||'—'}</span>`;
+}
 const mainProjects = () => DATA.projects.filter(p => !p.is_subitem);
+
+// Filtro de proyectos compartido entre Detalle por Proyecto, Actas/Trazabilidad y Tendencia.
+let activeProjs = new Set();
+let projFilterInitialized = false;
+function renderProjPills(){
+  const projs = mainProjects();
+  if(!projFilterInitialized){ activeProjs = new Set(projs.map(p=>p.key)); projFilterInitialized = true; }
+  const group = document.getElementById('projPillGroup');
+  const allActive = activeProjs.size === projs.length;
+  const pills = [`<div class="pill${allActive?' active':''}" data-proj="ALL" style="${allActive?'background:#5F5E5A;color:#fff;border-color:transparent':''}">Todos</div>`]
+    .concat(projs.map(p=>{
+      const active = activeProjs.has(p.key);
+      const style = active ? `background:${p.color};color:#fff;border-color:transparent` : '';
+      return `<div class="pill${active?' active':''}" data-proj="${p.key}" style="${style}">${p.name}</div>`;
+    }));
+  group.innerHTML = pills.join('');
+  group.querySelectorAll('.pill').forEach(pill=>{
+    pill.addEventListener('click', ()=>{
+      const proj = pill.dataset.proj;
+      const projs2 = mainProjects();
+      if(proj==='ALL'){
+        if(activeProjs.size===projs2.length){ activeProjs.clear(); }
+        else{ activeProjs = new Set(projs2.map(p=>p.key)); }
+      } else {
+        if(activeProjs.has(proj)){
+          if(activeProjs.size===1) return; // siempre queda al menos 1 activo
+          activeProjs.delete(proj);
+        } else {
+          activeProjs.add(proj);
+        }
+      }
+      renderProjPills();
+      renderDetalleTab();
+      renderActasTab();
+      renderTendencia();
+    });
+  });
+}
 
 function go(id, btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   btn.classList.add('on');
   document.getElementById('p-'+id).classList.add('on');
+  const showFilter = (id==='detalle' || id==='actas' || id==='tendencia');
+  document.getElementById('projFilterRow').classList.toggle('on', showFilter);
 }
 
 function renderCorte(){
@@ -370,24 +423,53 @@ function renderSemaforo(){
   }).join('');
 }
 
-function populateSelector(){
-  const sel = document.getElementById('projectSelector');
-  sel.innerHTML = DATA.projects.map(p => `<option value="${p.num}">${p.is_subitem?'↳ ':''}${p.name}</option>`).join('');
-  sel.onchange = () => renderDetail(sel.value);
-  renderDetail(sel.value);
+function computeAggregate(projs){
+  const sum = (fn) => projs.reduce((s,p)=> s + (fn(p)||0), 0);
+  const contrato = sum(p=>p.contrato), vr_prod = sum(p=>p.vr_prod), vr_fact = sum(p=>p.vr_fact),
+    vr_desv = sum(p=>p.vr_desv), costos = sum(p=>p.costos), margen_acum = sum(p=>p.margen_acum),
+    vr_saldo = sum(p=>p.vr_saldo), vr_pagado = sum(p=>p.vr_pagado), vr_por_pagar = sum(p=>p.vr_por_pagar),
+    vr_x_facturar = sum(p=>p.vr_x_facturar);
+  return {
+    key:'AGG', color:'#2A2A2C', contrato, vr_prod, vr_fact, vr_desv, costos, margen_acum, vr_saldo, vr_pagado, vr_por_pagar, vr_x_facturar,
+    pct_ejec: contrato ? vr_prod/contrato : null, pct_cobro: contrato ? vr_fact/contrato : null,
+    pct_desv: vr_prod ? vr_desv/vr_prod : null, pct_m_acum: vr_prod ? margen_acum/vr_prod : null,
+    m_mes_anterior: null, pct_m_proy: null,
+  };
 }
 
-function renderDetail(num){
-  const p = DATA.projects.find(x => String(x.num) === String(num));
-  if(!p) return;
+function renderDetalleTab(){
+  const projs = mainProjects().filter(p=>activeProjs.has(p.key));
   const el = document.getElementById('detailContent');
-  const desvCls = p.vr_desv>=0 ? 'kp' : 'kn';
-  el.innerHTML = `
-    <div style="margin-bottom:14px;"><span class="badge" style="background:${p.color};color:#fff;">${p.name}</span>
-      ${p.is_subitem?'<span class="badge crit" style="margin-left:6px;">Vista de contrato completo (facturación)</span>':''}
+  if(!projs.length){ el.innerHTML = '<div class="note">No hay proyectos seleccionados en el filtro.</div>'; return; }
+
+  let html = '';
+  if(projs.length > 1){
+    const agg = computeAggregate(projs);
+    html += `<div class="cc" style="margin-bottom:18px;">
+      <div style="margin-bottom:14px;">
+        <h3 style="margin:0;font-size:17px;">Consolidado</h3>
+        <span style="font-size:11.5px;color:var(--muted,#6B7280);">${projs.length} proyectos · ${projs.map(p=>p.name).join(' · ')}</span>
+      </div>
+      ${renderProjectKPIsHTML(agg)}
+      <div class="g2">
+        <div class="cc"><h3>Cascada financiera (suma)</h3><div style="position:relative;height:260px"><canvas id="detailCascada-AGG"></canvas></div></div>
+        <div class="cc"><h3>Ciclo facturación → cobro (suma)</h3><div style="position:relative;height:260px"><canvas id="detailCiclo-AGG"></canvas></div></div>
+      </div>
     </div>
+    <div class="st" style="margin:4px 0 10px;">Detalle individual por proyecto</div>`;
+  }
+  html += projs.map(p => renderProjectBlockHTML(p)).join('<div style="height:8px;"></div>');
+  el.innerHTML = html;
+
+  if(projs.length > 1) renderProjectBlockCharts(computeAggregate(projs));
+  projs.forEach(p => renderProjectBlockCharts(p));
+}
+
+function renderProjectKPIsHTML(p){
+  const desvCls = p.vr_desv>=0 ? 'kp' : 'kn';
+  return `
     <div class="kpi-row">
-      <div class="kpi kb"><div class="kl">Vr. Contrato</div><div class="kv b">${fmtCOP(p.contrato)}</div></div>
+      <div class="kpi kb"><div class="kl">Contratado</div><div class="kv b">${fmtCOP(p.contrato)}</div></div>
       <div class="kpi kb"><div class="kl">% Ejecución</div><div class="kv b">${fmtPct(p.pct_ejec)}</div></div>
       <div class="kpi kb"><div class="kl">Producción</div><div class="kv b">${fmtCOP(p.vr_prod)}</div></div>
       <div class="kpi kw"><div class="kl">Facturación + Actas</div><div class="kv w">${fmtCOP(p.vr_fact)}</div></div>
@@ -401,24 +483,41 @@ function renderDetail(num){
       <div class="kpi kp"><div class="kl">Pagado</div><div class="kv p">${fmtCOP(p.vr_pagado)}</div></div>
       <div class="kpi kn"><div class="kl">Por Pagar (Cartera)</div><div class="kv n">${fmtCOP(p.vr_por_pagar)}</div></div>
       <div class="kpi kb"><div class="kl">Saldo por Facturar</div><div class="kv b">${fmtCOP(p.vr_x_facturar)}</div></div>
+    </div>`;
+}
+
+function renderProjectBlockHTML(p){
+  const estadosActasP = estadoActas(p.actas, p.vr_pagado);
+  return `
+    <div class="cc" style="margin-bottom:18px;">
+    <div style="margin-bottom:14px;"><span class="badge" style="background:${p.color};color:#fff;">${p.name}</span>
+      ${p.is_subitem?'<span class="badge crit" style="margin-left:6px;">Vista de contrato completo (facturación)</span>':''}
     </div>
+    ${renderProjectKPIsHTML(p)}
     <div class="g2">
-      <div class="cc"><h3>Cascada financiera</h3><div style="position:relative;height:260px"><canvas id="detailCascada"></canvas></div></div>
-      <div class="cc"><h3>Ciclo facturación → cobro</h3><div style="position:relative;height:260px"><canvas id="detailCiclo"></canvas></div></div>
+      <div class="cc"><h3>Cascada financiera</h3><div style="position:relative;height:260px"><canvas id="detailCascada-${p.key}"></canvas></div></div>
+      <div class="cc"><h3>Ciclo facturación → cobro</h3><div style="position:relative;height:260px"><canvas id="detailCiclo-${p.key}"></canvas></div></div>
     </div>
     <div class="tw">
-      <div class="ts"><table><thead><tr><th class="tl">Acta</th><th>Valor</th><th>Periodo</th></tr></thead>
-        <tbody>${p.actas.length ? p.actas.map(a=>`<tr><td class="tn">${a[0]}</td><td class="tv">${fmtCOP(a[1])}</td><td class="tv">${a[2]||'—'}</td></tr>`).join('') : '<tr><td class="tn" colspan="3">Sin actas registradas.</td></tr>'}</tbody>
+      <div class="ts"><table><thead><tr><th class="tl">Acta</th><th>Valor</th><th>Periodo</th><th>Estado</th></tr></thead>
+        <tbody>${p.actas.length ? p.actas.map((a,i)=>`<tr><td class="tn">${a[0]}</td><td class="tv">${fmtCOP(a[1])}</td><td class="tv">${a[2]||'—'}</td><td class="tv">${estadoBadge(estadosActasP[i])}</td></tr>`).join('') : '<tr><td class="tn" colspan="4">Sin actas registradas.</td></tr>'}</tbody>
       </table></div>
     </div>
+    </div>
   `;
-  destroyChart('dCascada'); destroyChart('dCiclo');
-  charts.dCascada = new Chart(document.getElementById('detailCascada'), {
+}
+
+function renderProjectBlockCharts(p){
+  destroyChart('dCascada-'+p.key); destroyChart('dCiclo-'+p.key);
+  const elC = document.getElementById('detailCascada-'+p.key);
+  const elD = document.getElementById('detailCiclo-'+p.key);
+  if(!elC || !elD) return;
+  charts['dCascada-'+p.key] = new Chart(elC, {
     type:'bar', data:{ labels:['Producción','Costos','Margen'],
       datasets:[{ data:[(p.vr_prod||0)/1e6, -(p.costos||0)/1e6, (p.margen_acum||0)/1e6], backgroundColor:['#16505C','#DC2626','#16A34A'], borderRadius:4, barPercentage:0.5 }] },
     options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} }
   });
-  charts.dCiclo = new Chart(document.getElementById('detailCiclo'), {
+  charts['dCiclo-'+p.key] = new Chart(elD, {
     type:'bar', data:{ labels:['Producción','Facturado+Actas','Pagado','Por Pagar'],
       datasets:[{ data:[(p.vr_prod||0)/1e6,(p.vr_fact||0)/1e6,(p.vr_pagado||0)/1e6,(p.vr_por_pagar||0)/1e6], backgroundColor:['#16505C','#78716C','#16A34A','#DC2626'], borderRadius:4 }] },
     options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} }
@@ -426,40 +525,67 @@ function renderDetail(num){
 }
 
 function renderActasTab(){
-  const r = DATA.actas_resumen;
+  const projs = mainProjects().filter(p=>activeProjs.has(p.key));
+  // Resumen recalculado a partir de las actas de los proyectos filtrados, agrupado por su
+  // estado real (color del Excel, con el cálculo por acumulado como respaldo).
+  const resumen = { 'Pagada':0, 'Facturado':0, 'En proceso de cobro':0, 'En elaboración':0 };
+  projs.forEach(p=>{
+    const estados = estadoActas(p.actas, p.vr_pagado);
+    p.actas.forEach((a,i)=>{
+      const est = estados[i];
+      const key = (est==='Pagada') ? 'Pagada' : (est==='Facturado') ? 'Facturado' : (est==='En elaboración') ? 'En elaboración' : 'En proceso de cobro'; // 'Por Cobrar'/'Parcial' del fallback caen aquí
+      resumen[key] += (a[1]||0);
+    });
+  });
+  const total = Object.values(resumen).reduce((s,v)=>s+v,0) || 1;
   document.getElementById('actas-kpi-row').innerHTML = `
-    <div class="kpi kp"><div class="kl">Pagado</div><div class="kv p">${fmtCOP(r.pagado.val)}</div><div class="ks">${fmtPct(r.pagado.pct)}</div></div>
-    <div class="kpi kb"><div class="kl">Facturado (pend. cobro)</div><div class="kv b">${fmtCOP(r.facturado.val)}</div><div class="ks">${fmtPct(r.facturado.pct)}</div></div>
-    <div class="kpi kw"><div class="kl">En Proceso de Cobro</div><div class="kv w">${fmtCOP(r.en_proceso.val)}</div><div class="ks">${fmtPct(r.en_proceso.pct)}</div></div>
-    <div class="kpi kb"><div class="kl">En Elaboración</div><div class="kv b">${fmtCOP(r.en_elaboracion.val)}</div><div class="ks">${fmtPct(r.en_elaboracion.pct)}</div></div>
+    <div class="kpi kp"><div class="kl">Pagado</div><div class="kv p">${fmtCOP(resumen['Pagada'])}</div><div class="ks">${fmtPct(resumen['Pagada']/total)}</div></div>
+    <div class="kpi kb"><div class="kl">Facturado (pend. cobro)</div><div class="kv b">${fmtCOP(resumen['Facturado'])}</div><div class="ks">${fmtPct(resumen['Facturado']/total)}</div></div>
+    <div class="kpi kw"><div class="kl">En Proceso de Cobro</div><div class="kv w">${fmtCOP(resumen['En proceso de cobro'])}</div><div class="ks">${fmtPct(resumen['En proceso de cobro']/total)}</div></div>
+    <div class="kpi kb"><div class="kl">En Elaboración</div><div class="kv b">${fmtCOP(resumen['En elaboración'])}</div><div class="ks">${fmtPct(resumen['En elaboración']/total)}</div></div>
   `;
   destroyChart('actasEstado');
   charts.actasEstado = new Chart(document.getElementById('chartActasEstado'), {
     type:'bar', data:{ labels:['Pagado','En proceso','En elaboración','Facturado pend.'],
-      datasets:[{ data:[r.pagado.val/1e6, r.en_proceso.val/1e6, r.en_elaboracion.val/1e6, r.facturado.val/1e6], backgroundColor:['#16A34A','#1D6FB8','#D97706','#78716C'], borderRadius:5 }] },
+      datasets:[{ data:[resumen['Pagada']/1e6, resumen['En proceso de cobro']/1e6, resumen['En elaboración']/1e6, resumen['Facturado']/1e6], backgroundColor:['#16A34A','#1D6FB8','#D97706','#78716C'], borderRadius:5 }] },
     options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} }
   });
-  document.getElementById('actasGrid').innerHTML = mainProjects().filter(p=>p.actas && p.actas.length).map(p=>{
+  const withActas = projs.filter(p=>p.actas && p.actas.length);
+  document.getElementById('actasGrid').innerHTML = withActas.length ? withActas.map(p=>{
     const total = p.actas.reduce((s,a)=>s+a[1],0);
+    const estados = estadoActas(p.actas, p.vr_pagado);
     return `<div class="cc"><h3><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${p.color};margin-right:6px;"></span>${p.name}</h3>
-      ${p.actas.map(a=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px dashed var(--line);"><span>${a[0]} <span style="color:var(--muted);font-size:10.5px;">· ${a[2]||''}</span></span><span>${fmtCOP(a[1])}</span></div>`).join('')}
+      ${p.actas.map((a,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:4px 0;border-bottom:1px dashed var(--line);gap:8px;"><span>${a[0]} <span style="color:var(--muted);font-size:10.5px;">· ${a[2]||''}</span></span><span style="display:flex;align-items:center;gap:8px;">${fmtCOP(a[1])} ${estadoBadge(estados[i])}</span></div>`).join('')}
       <div style="display:flex;justify-content:space-between;font-weight:700;font-size:13px;padding-top:8px;margin-top:4px;border-top:1.5px solid var(--line);color:var(--navy);"><span>Total</span><span>${fmtCOP(total)}</span></div>
     </div>`;
-  }).join('');
+  }).join('') : '<div class="note">No hay actas para los proyectos seleccionados.</div>';
 }
 
 function renderTendencia(){
   document.getElementById('histCount').textContent = HISTORY.length;
   const labels = HISTORY.map(h=>h.mes_label);
+  const allKeys = mainProjects().map(p=>p.key);
+  const filtered = activeProjs.size < allKeys.length;
+  const seriesFor = (h) => {
+    if(!filtered || !h.projects){
+      return { pct_m_acum: h.pct_m_acum, vr_prod: h.vr_prod, vr_fact: h.vr_fact };
+    }
+    const sel = h.projects.filter(p=>activeProjs.has(p.key));
+    const vr_prod = sel.reduce((s,p)=>s+(p.vr_prod||0),0);
+    const margen_acum = sel.reduce((s,p)=>s+(p.margen_acum||0),0);
+    const vr_fact = sel.reduce((s,p)=>s+(p.vr_fact||0),0);
+    return { pct_m_acum: vr_prod ? margen_acum/vr_prod : null, vr_prod, vr_fact };
+  };
+  const series = HISTORY.map(seriesFor);
   destroyChart('tMargen'); destroyChart('tProdFact');
   charts.tMargen = new Chart(document.getElementById('chartTendenciaMargen'), {
-    type:'line', data:{ labels, datasets:[{ label:'% Margen Acumulado', data: HISTORY.map(h=>h.pct_m_acum*100), borderColor:'#16A34A', backgroundColor:'rgba(22,163,74,.12)', fill:true, tension:.3, pointRadius:4 }] },
+    type:'line', data:{ labels, datasets:[{ label:'% Margen Acumulado', data: series.map(s=>s.pct_m_acum!=null?s.pct_m_acum*100:null), borderColor:'#16A34A', backgroundColor:'rgba(22,163,74,.12)', fill:true, tension:.3, pointRadius:4 }] },
     options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} }
   });
   charts.tProdFact = new Chart(document.getElementById('chartTendenciaProdFact'), {
     type:'line', data:{ labels, datasets:[
-      {label:'Producción', data: HISTORY.map(h=>h.vr_prod/1e6), borderColor:'#16505C', backgroundColor:'rgba(22,80,92,.1)', fill:true, tension:.3},
-      {label:'Facturación+Actas', data: HISTORY.map(h=>h.vr_fact/1e6), borderColor:'#78716C', backgroundColor:'rgba(120,113,108,.1)', fill:true, tension:.3},
+      {label:'Producción', data: series.map(s=>s.vr_prod/1e6), borderColor:'#16505C', backgroundColor:'rgba(22,80,92,.1)', fill:true, tension:.3},
+      {label:'Facturación+Actas', data: series.map(s=>s.vr_fact/1e6), borderColor:'#78716C', backgroundColor:'rgba(120,113,108,.1)', fill:true, tension:.3},
     ] },
     options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}} }
   });
@@ -467,7 +593,7 @@ function renderTendencia(){
 
 function rebuildAll(){
   renderCorte(); renderKPIs(); renderChartProdFact(); renderChartActasDonut(); renderChartCascada();
-  renderSemaforo(); populateSelector(); renderActasTab(); renderTendencia();
+  renderSemaforo(); renderProjPills(); renderDetalleTab(); renderActasTab(); renderTendencia();
 }
 
 /* ═══ CARGA DE EXCEL ═══ */
@@ -553,9 +679,24 @@ function parseExcelToData(wb){
     cxc[num] = { pct_fact:get(wsCXC,r,5), vr_fact_actas:get(wsCXC,r,6), pct_pagado:get(wsCXC,r,8), vr_pagado:get(wsCXC,r,9), vr_por_pagar:get(wsCXC,r,11), pct_x_fact:get(wsCXC,r,13), vr_x_facturar:get(wsCXC,r,14) }; }
   const cxcViasCompleto = { pct_fact:get(wsCXC,10,5), vr_fact_actas:get(wsCXC,10,6), pct_pagado:get(wsCXC,10,8), vr_pagado:get(wsCXC,10,9), vr_por_pagar:get(wsCXC,10,11), pct_x_fact:get(wsCXC,10,13), vr_x_facturar:get(wsCXC,10,14) };
 
+  // Color de celda -> estado del acta. El Excel resalta cada acta con un color de fondo
+  // (gris=Pagada, verde=Facturado, beige=En proceso de cobro, naranja=En elaboración),
+  // igual que la leyenda "Resumen:" de la hoja Actas. Se lee directo del estilo de la
+  // celda en vez de inferirlo, y solo si no hay color se recurre al cálculo por acumulado.
+  const RGB_ESTADO_MAP = { 'ADB9CA':'Pagada', '92D050':'Facturado', 'FFF2CC':'En proceso de cobro', 'F8CBAD':'En elaboración' };
+  function colorEstadoActa(sheet, rArrayIdx, colIdx0){
+    try{
+      const addr = XLSX.utils.encode_cell({ r: rArrayIdx+1, c: colIdx0 });
+      const cell = sheet[addr];
+      const rgb = cell && cell.s && cell.s.fgColor && cell.s.fgColor.rgb;
+      return rgb ? (RGB_ESTADO_MAP[rgb.toUpperCase()] || null) : null;
+    }catch(err){ return null; }
+  }
+
   const actasCols = [['vias',1,2],['colegios',3,4],['hospital',5,6],['escenarios_pdo',7,8],['playas',9,10],['calle2',11,12],['magangue',13,14],['metro',15,16],['mtto_escenarios',17,18]];
   const actas = {};
-  actasCols.forEach(([key,vc,pc])=>{ const items = []; for(let r=2; r<18; r++){ const label = get(wsAC,r,0); const val = get(wsAC,r,vc); const per = get(wsAC,r,pc); if(val && label && !String(label).toUpperCase().includes('TOTAL')) items.push([label,val,per]); } actas[key]=items; });
+  const wsACRaw = wb.Sheets[actasName];
+  actasCols.forEach(([key,vc,pc])=>{ const items = []; for(let r=2; r<18; r++){ const label = get(wsAC,r,0); const val = get(wsAC,r,vc); const per = get(wsAC,r,pc); if(val && label && !String(label).toUpperCase().includes('TOTAL')){ const estado = colorEstadoActa(wsACRaw, r, vc); items.push([label,val,per,estado]); } } actas[key]=items; });
   const actasResumen = (function(){
     const findLabelRow = (label, colIdx) => {
       for(let r=10; r<40; r++){
@@ -633,7 +774,7 @@ document.getElementById('fileInput').addEventListener('change', function(e){
   const reader = new FileReader();
   reader.onload = function(evt){
     try{
-      const wb = XLSX.read(evt.target.result, {type:'array', cellDates:true});
+      const wb = XLSX.read(evt.target.result, {type:'array', cellDates:true, cellStyles:true});
       const parsed = parseExcelToData(wb); if(!parsed) return;
       DATA = parsed;
 
@@ -655,7 +796,8 @@ document.getElementById('fileInput').addEventListener('change', function(e){
 
       const idx = HISTORY.findIndex(h=>h.corte===DATA.corte);
       const snap = {corte:DATA.corte, mes_label:DATA.mes_label, pct_m_acum:DATA.totals.pct_m_acum, vr_prod:DATA.totals.vr_prod, vr_fact:DATA.totals.vr_fact, margen_acum:DATA.totals.margen_acum,
-        vias_pct_m_acum: viasNow ? viasNow.pct_m_acum : null};
+        vias_pct_m_acum: viasNow ? viasNow.pct_m_acum : null,
+        projects: mainProjects().map(p=>({key:p.key, pct_m_acum:p.pct_m_acum, vr_prod:p.vr_prod, vr_fact:p.vr_fact, margen_acum:p.margen_acum}))};
       if(idx>=0) HISTORY[idx]=snap; else HISTORY.push(snap);
       HISTORY.sort((a,b)=> new Date(a.corte)-new Date(b.corte));
       rebuildAll();
