@@ -323,7 +323,17 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:#F8FAFC;color:#111827;
   </div>
 </div>
 
-<div class="last-updated" id="updatedTs">Última actualización: 18/8/2026, 3:52:29 p. m.</div>
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-title">Facturación ejecutada por mes</div>
+  <p class="section-subtitle" id="monthlyChartSubtitle">El mes de mayor facturación fue jun 26, con $141.5 MM.</p>
+  <div class="chart-wrap" id="monthlyWrap" style="height:280px">
+    <canvas id="monthlyChart" role="img" aria-label="Gráfica de barras apiladas de facturación mensual por proyecto" style="box-sizing: border-box; display: block; height: 280px; width: 1216px;" width="1825" height="420"></canvas>
+  </div>
+</div>
+
+<div class="last-updated" id="updatedTs">Datos base: jun 2026 | Fuente: RELACION_FACTURACION.xlsx</div>
 
 <div class="alert-band show" id="alertBand"><div class="alert-line">⚠ <b>Entornos</b>: 20% de obra, 0% facturado ($5.5 MM sin radicar)</div><div class="alert-line">⚠ <b>Entornos, Calle 2, Colegios, Vías</b>: sin facturar hace más de 240 días</div></div>
 
@@ -723,7 +733,7 @@ function renderCorte(){
   document.getElementById('corteLabel').textContent='Corte: '+corteFecha+' · Confidencial';
 }
 let activeProjs = new Set(['VIAS','HOSPITAL','COLEGIOS','PLAYAS','METROPOLITANO','CALLE 2','MAGANGUE','ENTORNOS']);
-let barChartInst = null, lineChartInst = null;
+let barChartInst = null, lineChartInst = null, monthlyChartInst = null;
 
 function loadDefaultData(){
   /* DATA_START */
@@ -819,6 +829,7 @@ function renderAll(){
     // Destruir gráficas
     if(barChartInst){barChartInst.destroy();barChartInst=null;}
     if(lineChartInst){lineChartInst.destroy();lineChartInst=null;}
+    if(monthlyChartInst){monthlyChartInst.destroy();monthlyChartInst=null;}
     return;
   }
   const corte=computeDerived(active);
@@ -827,6 +838,7 @@ function renderAll(){
   renderBar(active);
   renderTable(active);
   renderLine(active);
+  renderMonthly(active);
 }
 
 function renderKPIs(active, corte){
@@ -1280,6 +1292,74 @@ function renderLine(active){
       }
     }
   });
+}
+
+function renderMonthly(active){
+  if(monthlyChartInst){monthlyChartInst.destroy();}
+
+  // Recopilar todos los meses (YYYY-MM) presentes en las facturas de los proyectos activos
+  const monthKeys=new Set();
+  active.forEach(p=>(timelineData[p]||[]).forEach(pt=>{
+    if(pt.date && (pt.valorFactura||0)>0) monthKeys.add(pt.date.getFullYear()+'-'+String(pt.date.getMonth()+1).padStart(2,'0'));
+  }));
+  const sortedMonths=[...monthKeys].sort();
+  const mesesCortos=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const labels=sortedMonths.map(k=>{
+    const [y,m]=k.split('-');
+    return mesesCortos[+m-1]+' '+y.slice(2);
+  });
+
+  const datasets=active.map(p=>{
+    const byMonth={};
+    (timelineData[p]||[]).forEach(pt=>{
+      if(!pt.date || !(pt.valorFactura>0)) return;
+      const k=pt.date.getFullYear()+'-'+String(pt.date.getMonth()+1).padStart(2,'0');
+      byMonth[k]=(byMonth[k]||0)+pt.valorFactura;
+    });
+    return {
+      label:PROJ_NAMES[p]||p,
+      data:sortedMonths.map(k=>+(( byMonth[k]||0)/1e9).toFixed(3)),
+      backgroundColor:PROJ_COLORS[p]||'#6B7280',
+      borderRadius:3, borderSkipped:false
+    };
+  });
+
+  document.getElementById('monthlyWrap').style.height='280px';
+  monthlyChartInst=new Chart(document.getElementById('monthlyChart'),{
+    type:'bar',
+    data:{labels,datasets},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true, position:'bottom', labels:{boxWidth:10,font:{size:11}}},
+        tooltip:{
+          mode:'index', intersect:false,
+          callbacks:{
+            label:ctx=>' '+ctx.dataset.label+': $'+ctx.parsed.y.toFixed(2)+' MM',
+            footer:items=>{
+              const total=items.reduce((s,it)=>s+it.parsed.y,0);
+              return 'Total mes: $'+total.toFixed(2)+' MM';
+            }
+          }
+        }
+      },
+      scales:{
+        x:{stacked:true, grid:{display:false}, ticks:{font:{size:10.5}}},
+        y:{stacked:true, ticks:{callback:v=>'$'+v.toFixed(0)+' MM'}, grid:{color:'rgba(0,0,0,0.06)'}}
+      }
+    }
+  });
+
+  const sub=document.getElementById('monthlyChartSubtitle');
+  if(sub){
+    if(sortedMonths.length){
+      const totalsByMonth=sortedMonths.map((k,i)=>datasets.reduce((s,d)=>s+d.data[i],0));
+      const maxI=totalsByMonth.indexOf(Math.max(...totalsByMonth));
+      sub.textContent='El mes de mayor facturación fue '+labels[maxI]+', con $'+totalsByMonth[maxI].toFixed(1)+' MM.';
+    } else {
+      sub.textContent='No hay facturas registradas para los proyectos seleccionados.';
+    }
+  }
 }
 
 loadDefaultData();function parseXlsx(file){
