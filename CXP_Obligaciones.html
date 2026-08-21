@@ -83,6 +83,18 @@ tr.tot td{font-weight:700;background:var(--pale2);border-top:2px solid var(--lin
 .proj-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
 .ppill{padding:5px 14px;border-radius:99px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--line);background:var(--white);color:var(--muted);transition:all .15s;}
 .ppill:hover,.ppill.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+/* selector de semana (dropdown + flechas) */
+.wk-nav{display:flex;align-items:center;gap:6px;}
+.wk-arrow{width:26px;height:26px;border-radius:6px;border:1px solid var(--line);background:var(--white);color:var(--navy);font-size:14px;line-height:1;cursor:pointer;transition:all .15s;}
+.wk-arrow:hover:not(:disabled){border-color:var(--navy);background:var(--pale);}
+.wk-arrow:disabled{opacity:.35;cursor:not-allowed;}
+#gWeekSelect{padding:5px 10px;border-radius:99px;font-size:11px;font-weight:600;border:1px solid var(--line);background:var(--white);color:var(--navy);cursor:pointer;min-width:100px;}
+#gWeekSelect:hover{border-color:var(--mid);}
+/* tablas ordenables */
+table.sortable thead th{cursor:pointer;user-select:none;position:relative;}
+table.sortable thead th:hover{background:#33343a;}
+table.sortable thead th.sort-asc::after{content:' ▲';font-size:9px;opacity:.85;}
+table.sortable thead th.sort-desc::after{content:' ▼';font-size:9px;opacity:.85;}
 .note{font-size:11px;color:var(--muted);font-style:italic;padding:8px 16px;}
 .badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:99px;background:var(--pale);color:var(--blue);}
 .badge.crit{background:#FCE8E8;color:var(--neg);}
@@ -123,7 +135,7 @@ tr.tot td{font-weight:700;background:var(--pale2);border-top:2px solid var(--lin
     <a href="index.html">Inicio</a>
     <a href="Reporte_Facturacion.html">Facturación</a>
     <a href="FC_ObrasPublicas.html">Flujo de Caja</a>
-    <a href="Gestion_Pagos.html">Pagos Proveedores</a>
+    <a href="Gestion_Pagos.html">Pagos a Proveedores</a>
     <a href="CXP_Obligaciones.html" class="active">CxP por Edades</a>
     <a href="Reporte_PyG.html">PyG <span style="font-size:9px;background:var(--warn,#D97706);color:#fff;padding:1px 5px;border-radius:8px;margin-left:3px;vertical-align:1px;">EN CONSTRUCCIÓN</span></a>
   </div>
@@ -149,137 +161,427 @@ tr.tot td{font-weight:700;background:var(--pale2);border-top:2px solid var(--lin
 </div>
 
 <div class="tab-bar">
-  <button class="tab on" onclick="go('evolucion',this)">📈 Evolución Semanal</button>
-  <button class="tab" onclick="go('semana',this)">📋 Semana Actual</button>
-  <button class="tab" onclick="go('proyectos',this)">🏗️ Por Proyecto</button>
-  <button class="tab" onclick="go('criticos',this)">⚠️ Proveedores Críticos</button>
-  <button class="tab" onclick="go('provdet',this)">🔎 Detalle Proveedor</button>
-  <button class="tab" onclick="go('comparativo',this)">🔍 Comparativo de Períodos</button>
+  <button class="tab on" onclick="goTab('situacion',this)">Situación</button>
+  <button class="tab" onclick="goTab('evolucion',this)">Evolución</button>
+  <button class="tab" onclick="goTab('proveedores',this)">Proveedores</button>
 </div>
 
-<!-- ════════ TAB 1: EVOLUCIÓN SEMANAL ════════ -->
-<div class="panel on" id="p-evolucion">
+<div style="background:var(--white);border-bottom:1px solid var(--line);padding:10px 28px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+  <span style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Semana de corte:</span>
+  <div class="wk-nav">
+    <button class="wk-arrow" id="wk-prev" onclick="stepWeek(-1)" title="Semana anterior">‹</button>
+    <select id="gWeekSelect" onchange="setWeek(+this.value)"><option value="0">05/May</option><option value="1">12/May</option><option value="2">19/May</option><option value="3">25/May</option><option value="4">02/Jun</option><option value="5">10/Jun</option><option value="6">17/Jun</option><option value="7">23/Jun</option><option value="8">01/Jul</option><option value="9">07/Jul</option><option value="10">14/Jul</option><option value="11">22/Jul</option><option value="12">28/Jul</option><option value="13">04/Ago</option><option value="14">10/Ago</option><option value="15" selected="">18/Ago (última)</option></select>
+    <button class="wk-arrow" id="wk-next" onclick="stepWeek(1)" title="Semana siguiente" disabled="">›</button>
+  </div>
+  <span style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-left:8px;">Proyecto:</span>
+  <div class="proj-pills" id="gProjPills" style="margin-bottom:0;"><button class="ppill on" onclick="setProj('ALL')">Todos los proyectos</button><button class="ppill" onclick="setProj('Metro')">Metro</button><button class="ppill" onclick="setProj('Colegios')">Colegios</button><button class="ppill" onclick="setProj('Vías')">Vías</button><button class="ppill" onclick="setProj('Playas')">Playas</button><button class="ppill" onclick="setProj('Calle 2')">Calle 2</button><button class="ppill" onclick="setProj('Hospital Pto.')">Hospital Pto.</button><button class="ppill" onclick="setProj('Escenarios')">Escenarios</button><button class="ppill" onclick="setProj('Magangué')">Magangué</button></div>
+</div>
+
+<!-- ════════ TAB 1: SITUACIÓN ════════ -->
+<div class="panel on" id="p-situacion">
   <div class="kpi-row">
-    <div class="kpi kb"><div class="kl">Total CxP Actual</div><div class="kv b" id="kpi-total">$20.52B</div><div class="ks" id="kpi-total-s">Semana 18/Ago</div></div>
-    <div class="kpi kt"><div class="kl">Contabilizado</div><div class="kv t" id="kpi-cont">$12.50B</div><div class="ks" id="kpi-cont-s">En SincoERP para pago</div></div>
-    <div class="kpi kw"><div class="kl">Sin Contabilizar</div><div class="kv w" id="kpi-sinc">$8.02B</div><div class="ks" id="kpi-sinc-s">Fase previa / sin asociar</div></div>
-    <div class="kpi kp"><div class="kl">Variación semanal</div><div class="kv n" id="kpi-delta" style="font-size:18px;">▲ +$613.6M</div><div class="ks" id="kpi-delta-s">3.1% vs 10/Ago</div></div>
-    <div class="kpi kw"><div class="kl">Cartera 90+ días</div><div class="kv w" id="kpi-90">$310.1M</div><div class="ks">Antigüedad crítica</div></div>
-    <div class="kpi kb"><div class="kl">Semanas registradas</div><div class="kv b" id="kpi-nweeks">16</div><div class="ks">Historial cargado</div></div>
+    <div class="kpi kb"><div class="kl" id="kpi-total-label">Total CxP Actual</div><div class="kv b" id="kpi-total">$20.517,7M</div><div class="ks" id="kpi-total-s">Semana 18/Ago</div></div>
+    <div class="kpi kt"><div class="kl">Contabilizado</div><div class="kv t" id="kpi-cont">$12.497,4M</div><div class="ks" id="kpi-cont-s">En SincoERP para pago</div></div>
+    <div class="kpi kw" id="kpi-hallazgo-card">
+      <div class="kl">% Sin Contabilizar — hallazgo principal</div>
+      <div style="display:flex;align-items:flex-end;gap:10px;">
+        <div class="kv w" id="kpi-sincpct" style="font-size:22px;">39.1%</div>
+        <div style="position:relative;height:28px;width:76px;flex-shrink:0;"><canvas id="c3" width="76" height="28" style="box-sizing: border-box; display: block; height: 28px; width: 76px;"></canvas></div>
+      </div>
+    </div>
+    <div class="kpi kb"><div class="kl">Variación semanal</div><div class="kv b" id="kpi-delta" style="font-size:18px;">+$613,6M</div><div class="ks" id="kpi-delta-s">3.1% vs 10/Ago</div></div>
+    <div class="kpi kw"><div class="kl">Cartera 90+ días*</div><div class="kv w" id="kpi-90">$310,1M</div><div class="ks">*Antigüedad de lo contabilizado, no vencimiento real</div></div>
+    <div class="kpi kb"><div class="kl" id="kpi-top1-label">Concentración top-1 proveedor</div><div class="kv b" id="kpi-top1">18.0%</div><div class="ks" id="kpi-top1-s">ULTRACEM SAS — $3.702,1M</div></div>
+  </div>
+  <p class="note" id="kpi-nweeks-note" style="padding:0 0 14px;">16 semanas de historial cargadas (05/May — 18/Ago 2026).</p>
+
+  <div class="g2">
+    <div class="cc">
+      <h3>Cartera contabilizada por edad</h3>
+      <p class="sub">Distribución del saldo contabilizado según tramo de antigüedad (agrupado)</p>
+      <div style="position:relative;height:190px"><canvas id="c4" role="img" style="box-sizing: border-box; display: block; height: 190px; width: 878px;" width="878" height="190"></canvas></div>
+    </div>
+    <div class="cc">
+      <h3>CxP por proyecto</h3>
+      <p class="sub">Distribución del total entre proyectos esta semana, de mayor a menor</p>
+      <div id="c5-chart-wrap" style="position:relative;height:190px"><canvas id="c5" role="img" style="box-sizing: border-box; display: block; height: 190px; width: 878px;" width="878" height="190"></canvas></div>
+      <div id="c5-placeholder" class="note" style="display:none;padding:24px 0;text-align:center;">Este gráfico compara proyectos entre sí — selecciona "Todos los proyectos" arriba para verlo.</div>
+    </div>
   </div>
 
-  <div class="st">Evolución total de CxP — semana a semana</div>
+  <div class="st" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+    <span id="sit-tbl-title">Detalle por proyecto — semana seleccionada</span>
+    <div style="display:flex;gap:6px;">
+      <button class="ppill on" id="gran-proyecto-btn" onclick="setGranularidad('proyecto')" style="opacity: 1; cursor: pointer;">Por proyecto</button>
+      <button class="ppill" id="gran-proveedor-btn" onclick="setGranularidad('proveedor')">Por proveedor</button>
+    </div>
+  </div>
+  <div class="tw"><div class="ts"><table id="sit-tbl" class="sortable" data-sortable-init="1"><thead><tr><th class="tl">Proyecto</th><th>Total CxP</th><th>Contabilizado</th><th>Sin Contabilizar</th><th>0-30 días</th><th>31-60 días</th><th>61-90 días</th><th>90+ días</th></tr></thead><tbody><tr><td class="tn">Metro</td><td class="tv">$15.572,6M</td><td class="tv">$9.781,0M</td><td class="tv w">$5.791,6M</td><td class="tv">$6.320,7M</td><td class="tv">$3.194,4M</td><td class="tv">$265,9M</td><td class="tv ">—</td></tr><tr><td class="tn">Colegios</td><td class="tv">$2.216,4M</td><td class="tv">$1.196,8M</td><td class="tv w">$1.019,6M</td><td class="tv">$700,6M</td><td class="tv">$486,6M</td><td class="tv">$9,4M</td><td class="tv ">—</td></tr><tr><td class="tn">Vías</td><td class="tv">$1.994,5M</td><td class="tv">$1.319,7M</td><td class="tv w">$674,8M</td><td class="tv">$994,0M</td><td class="tv">$325,7M</td><td class="tv">—</td><td class="tv ">—</td></tr><tr><td class="tn">Escenarios</td><td class="tv">$288,2M</td><td class="tv">$27,1M</td><td class="tv w">$261,1M</td><td class="tv">$27,1M</td><td class="tv">—</td><td class="tv">—</td><td class="tv ">—</td></tr><tr><td class="tn">Calle 2</td><td class="tv">$166,9M</td><td class="tv">$54,5M</td><td class="tv w">$112,4M</td><td class="tv">$25,8M</td><td class="tv">$0,0M</td><td class="tv">$0,2M</td><td class="tv n">$28,5M</td></tr><tr><td class="tn">Hospital Pto.</td><td class="tv">$135,2M</td><td class="tv">$74,5M</td><td class="tv w">$60,8M</td><td class="tv">$32,4M</td><td class="tv">$35,9M</td><td class="tv">$5,0M</td><td class="tv n">$1,1M</td></tr><tr><td class="tn">Playas</td><td class="tv">$73,2M</td><td class="tv">$30,0M</td><td class="tv w">$43,2M</td><td class="tv">$28,2M</td><td class="tv">$1,7M</td><td class="tv">—</td><td class="tv ">—</td></tr><tr><td class="tn">Magangué</td><td class="tv">$70,6M</td><td class="tv">$13,9M</td><td class="tv w">$56,7M</td><td class="tv">$13,6M</td><td class="tv">$0,3M</td><td class="tv">—</td><td class="tv ">—</td></tr><tr class="tot"><td class="tn">TOTAL</td><td class="tv">$20.517,7M</td><td class="tv">$12.497,4M</td><td class="tv w">$8.020,2M</td><td class="tv">$8.142,6M</td><td class="tv">$4.044,6M</td><td class="tv">$280,5M</td><td class="tv n">$29,6M</td></tr></tbody></table></div></div>
+
+  <div class="cc" style="background:#FFFBEB;border-color:#FDE68A;">
+    <p style="font-size:12px;color:#92400E;line-height:1.6;">
+      <strong>Lectura del hallazgo:</strong> el saldo total casi no se movió en 15 semanas (+6.9%), pero por debajo de eso el <strong>contabilizado bajó y el sin contabilizar subió</strong> en una magnitud comparable (ver pestaña Evolución → Comparativo de Períodos). Parte de lo que luce como gestión de pagos es traslado de facturas a un limbo administrativo sin tramo de antigüedad asignado, no necesariamente una mejora real de la cartera.
+    </p>
+    <p style="font-size:11px;color:#92400E;margin-top:8px;">
+      <strong>Pendiente (requiere datos que este reporte no tiene hoy):</strong> "90+ días" es antigüedad de lo contabilizado, no vencimiento — para calcular cartera realmente <em>vencida</em> hace falta la fecha de vencimiento pactada por factura (o el plazo por proveedor). Con eso también se podría construir el calendario de vencimientos a 90 días y el DPO real (que además requiere compras del período).
+    </p>
+  </div>
+</div>
+
+<!-- ════════ TAB 2: EVOLUCIÓN ════════ -->
+<div class="panel" id="p-evolucion">
   <div class="g1 cc">
-    <h3>CxP total, Contabilizado y Sin Contabilizar (COP Billones)</h3>
+    <h3 id="evo-title">CxP total, Contabilizado y Sin Contabilizar (COP Millones)</h3>
     <p class="sub" id="sub-c1">Selecciona un punto para ver el desglose de esa semana</p>
     <div class="leg">
       <div class="li"><div class="ld" style="background:#2A2A2C;border-radius:50%"></div>Total CxP</div>
       <div class="li"><div class="ld" style="background:#16505C;border-radius:50%"></div>Contabilizado</div>
       <div class="li"><div class="ld" style="background:#D97706;border-radius:50%"></div>Sin Contabilizar</div>
     </div>
-    <div style="position:relative;height:280px"><canvas id="c1" role="img" style="box-sizing: border-box; display: block; height: 280px; width: 1171px;" width="1756" height="420"></canvas></div>
+    <div style="position:relative;height:280px"><canvas id="c1" role="img" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div>
   </div>
 
   <div class="g2">
     <div class="cc">
       <h3>Evolución de la cartera por edad (contabilizado)</h3>
-      <p class="sub">Desglose semanal por tramo de antigüedad (COP Billones)</p>
-      <div class="leg" id="leg-c2"><div class="li"><div class="ld" style="background:#16505C"></div>30 días</div><div class="li"><div class="ld" style="background:#2E7D8C"></div>60 días</div><div class="li"><div class="ld" style="background:#D97706"></div>90 días</div><div class="li"><div class="ld" style="background:#B45309"></div>120 días</div><div class="li"><div class="ld" style="background:#DC2626"></div>150 días</div><div class="li"><div class="ld" style="background:#9B1C1C"></div>180 días</div><div class="li"><div class="ld" style="background:#6B1414"></div>270 días</div><div class="li"><div class="ld" style="background:#3D0000"></div>360 días</div><div class="li"><div class="ld" style="background:#1A0000"></div>361&gt; días</div></div>
-      <div style="position:relative;height:240px"><canvas id="c2" role="img" style="box-sizing: border-box; display: block; height: 240px; width: 878px;" width="1317" height="360"></canvas></div>
+      <p class="sub">Desglose semanal por tramo de antigüedad, agrupado (COP Millones)</p>
+      <div class="leg" id="leg-c2"><div class="li"><div class="ld" style="background:#16505C"></div>0–30 días</div><div class="li"><div class="ld" style="background:#2E7D8C"></div>31–60 días</div><div class="li"><div class="ld" style="background:#D97706"></div>61–90 días</div><div class="li"><div class="ld" style="background:#DC2626"></div>90+ días</div></div>
+      <div style="position:relative;height:240px"><canvas id="c2" role="img" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div>
     </div>
     <div class="cc">
       <h3>% Sin Contabilizar sobre el total</h3>
       <p class="sub">Una proporción alta indica acumulación de facturas sin procesar</p>
-      <div style="position:relative;height:240px"><canvas id="c3" role="img" style="box-sizing: border-box; display: block; height: 240px; width: 878px;" width="1317" height="360"></canvas></div>
-    </div>
-  </div>
-</div>
-
-<!-- ════════ TAB 2: SEMANA ACTUAL ════════ -->
-<div class="panel" id="p-semana">
-  <div style="margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-    <span style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Semana:</span>
-    <div class="week-pills" id="weekPills" style="margin-bottom:0;"><button class="wpill" onclick="selectWeek(0,'weekPills','semana')">05/May</button><button class="wpill" onclick="selectWeek(1,'weekPills','semana')">12/May</button><button class="wpill" onclick="selectWeek(2,'weekPills','semana')">19/May</button><button class="wpill" onclick="selectWeek(3,'weekPills','semana')">25/May</button><button class="wpill" onclick="selectWeek(4,'weekPills','semana')">02/Jun</button><button class="wpill" onclick="selectWeek(5,'weekPills','semana')">10/Jun</button><button class="wpill" onclick="selectWeek(6,'weekPills','semana')">17/Jun</button><button class="wpill" onclick="selectWeek(7,'weekPills','semana')">23/Jun</button><button class="wpill" onclick="selectWeek(8,'weekPills','semana')">01/Jul</button><button class="wpill" onclick="selectWeek(9,'weekPills','semana')">07/Jul</button><button class="wpill" onclick="selectWeek(10,'weekPills','semana')">14/Jul</button><button class="wpill" onclick="selectWeek(11,'weekPills','semana')">22/Jul</button><button class="wpill" onclick="selectWeek(12,'weekPills','semana')">28/Jul</button><button class="wpill" onclick="selectWeek(13,'weekPills','semana')">04/Ago</button><button class="wpill" onclick="selectWeek(14,'weekPills','semana')">10/Ago</button><button class="wpill on" onclick="selectWeek(15,'weekPills','semana')">18/Ago</button></div>
-  </div>
-
-  <div class="kpi-row">
-    <div class="kpi kb"><div class="kl">Total CxP</div><div class="kv b" id="sw-total">$20.52B</div><div class="ks" id="sw-fecha">18 ago 2026</div></div>
-    <div class="kpi kt"><div class="kl">Contabilizado</div><div class="kv t" id="sw-cont">$12.50B</div><div class="ks">Registrado en SincoERP</div></div>
-    <div class="kpi kw"><div class="kl">Sin Contabilizar</div><div class="kv w" id="sw-sinc">$8.02B</div><div class="ks">Sin asociar / fase previa</div></div>
-    <div class="kpi kp"><div class="kl">Variación vs anterior</div><div class="kv n" id="sw-delta" style="font-size:18px;">▲ +$613.6M</div><div class="ks" id="sw-delta-s">3.1% vs 10/Ago</div></div>
-  </div>
-
-  <div class="g2">
-    <div class="cc">
-      <h3>Cartera contabilizada por edad</h3>
-      <p class="sub">Distribución del saldo contabilizado según tramo de antigüedad</p>
-      <div style="position:relative;height:240px"><canvas id="c4" role="img" style="box-sizing: border-box; display: block; height: 240px; width: 559px;" width="838" height="360"></canvas></div>
-    </div>
-    <div class="cc">
-      <h3>CxP por proyecto</h3>
-      <p class="sub">Distribución del total entre proyectos esta semana</p>
-      <div style="position:relative;height:240px"><canvas id="c5" role="img" style="box-sizing: border-box; display: block; height: 240px; width: 559px;" width="838" height="360"></canvas></div>
+      <div style="position:relative;height:240px"><canvas id="c9" role="img" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div>
     </div>
   </div>
 
-  <div class="st">Detalle por proyecto — semana seleccionada</div>
-  <div class="tw"><div class="ts"><table id="sw-tbl"><thead><tr><th class="tl">Proyecto</th><th>Total CxP</th><th>Contabilizado</th><th>Sin Contabilizar</th><th>30 días</th><th>60 días</th><th>90+ días</th></tr></thead><tbody><tr><td class="tn">Metro</td><td class="tv">$15572.6M</td><td class="tv">$9781.0M</td><td class="tv w">$5791.6M</td><td class="tv">$6320.7M</td><td class="tv">$3194.4M</td><td class="tv w">$265.9M</td></tr><tr><td class="tn">Colegios</td><td class="tv">$2216.4M</td><td class="tv">$1196.8M</td><td class="tv w">$1019.6M</td><td class="tv">$700.6M</td><td class="tv">$486.6M</td><td class="tv w">$9.4M</td></tr><tr><td class="tn">Vías</td><td class="tv">$1994.5M</td><td class="tv">$1319.7M</td><td class="tv w">$674.8M</td><td class="tv">$994.0M</td><td class="tv">$325.7M</td><td class="tv ">—</td></tr><tr><td class="tn">Escenarios</td><td class="tv">$288.2M</td><td class="tv">$27.1M</td><td class="tv w">$261.1M</td><td class="tv">$27.1M</td><td class="tv">—</td><td class="tv ">—</td></tr><tr><td class="tn">Calle 2</td><td class="tv">$166.9M</td><td class="tv">$54.5M</td><td class="tv w">$112.4M</td><td class="tv">$25.8M</td><td class="tv">$0.0M</td><td class="tv w">$28.6M</td></tr><tr><td class="tn">Hospital Pto.</td><td class="tv">$135.2M</td><td class="tv">$74.5M</td><td class="tv w">$60.8M</td><td class="tv">$32.4M</td><td class="tv">$35.9M</td><td class="tv w">$6.2M</td></tr><tr><td class="tn">Playas</td><td class="tv">$73.2M</td><td class="tv">$30.0M</td><td class="tv w">$43.2M</td><td class="tv">$28.2M</td><td class="tv">$1.7M</td><td class="tv ">—</td></tr><tr><td class="tn">Magangué</td><td class="tv">$70.6M</td><td class="tv">$13.9M</td><td class="tv w">$56.7M</td><td class="tv">$13.6M</td><td class="tv">$0.3M</td><td class="tv ">—</td></tr><tr class="tot"><td class="tn">TOTAL</td><td class="tv">$20517.7M</td><td class="tv">$12497.4M</td><td class="tv w">$8020.2M</td><td class="tv">$8142.6M</td><td class="tv">$4044.6M</td><td class="tv n">$310.1M</td></tr></tbody></table></div></div>
+  <div id="evo-proj-detail" style="display:none;">
+    <div class="st" id="evo-proj-detail-title">Detalle por semana</div>
+    <div class="tw" style="margin-bottom:24px;"><div class="ts"><table id="evo-proj-tbl"></table></div></div>
+  </div>
+
+  <div class="st">Comparativo de Períodos</div>
+  <div style="background:var(--white);border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+    <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Comparar:</span>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <label style="font-size:11px;color:var(--muted);font-weight:600;">Desde</label>
+      <select id="cmp-desde" onchange="renderComparativo()" style="font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;font-family:inherit;"><option value="0">05 may 2026</option><option value="1">12 may 2026</option><option value="2">19 may 2026</option><option value="3">25 may 2026</option><option value="4">02 jun 2026</option><option value="5">10 jun 2026</option><option value="6">17 jun 2026</option><option value="7">23 jun 2026</option><option value="8">01 jul 2026</option><option value="9">07 jul 2026</option><option value="10">14 jul 2026</option><option value="11">22 jul 2026</option><option value="12">28 jul 2026</option><option value="13">04 ago 2026</option><option value="14">10 ago 2026</option><option value="15">18 ago 2026</option></select>
+    </div>
+    <div style="font-size:18px;color:var(--soft);">→</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <label style="font-size:11px;color:var(--muted);font-weight:600;">Hasta</label>
+      <select id="cmp-hasta" onchange="renderComparativo()" style="font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;font-family:inherit;"><option value="0">05 may 2026</option><option value="1">12 may 2026</option><option value="2">19 may 2026</option><option value="3">25 may 2026</option><option value="4">02 jun 2026</option><option value="5">10 jun 2026</option><option value="6">17 jun 2026</option><option value="7">23 jun 2026</option><option value="8">01 jul 2026</option><option value="9">07 jul 2026</option><option value="10">14 jul 2026</option><option value="11">22 jul 2026</option><option value="12">28 jul 2026</option><option value="13">04 ago 2026</option><option value="14">10 ago 2026</option><option value="15">18 ago 2026</option></select>
+    </div>
+    <span style="font-size:11px;color:var(--soft);margin-left:auto;">▼ verde = baja CxP (bueno) · ▲ rojo = sube CxP (alerta)</span>
+  </div>
+
+  <div class="kpi-row" id="cmp-kpis">
+    <div class="kpi kb">
+      <div class="kl">Saldo Inicial</div>
+      <div class="kv b">$19.200,5M</div>
+      <div class="ks">05 may 2026</div>
+    </div>
+    <div class="kpi kb">
+      <div class="kl">Saldo Final</div>
+      <div class="kv b">$20.517,7M</div>
+      <div class="ks">18 ago 2026</div>
+    </div>
+    <div class="kpi kb">
+      <div class="kl">Variación Total CxP</div>
+      <div class="kv b" style="font-size:18px;">+$1.317,2M</div>
+      <div class="ks">6.9% en 15 semanas — el signo por sí solo no indica mejora o deterioro, ver desglose contabilizado/sin contabilizar abajo</div>
+    </div>
+    <div class="kpi kp">
+      <div class="kl">Reducción en Contabilizado</div>
+      <div class="kv p">▼ $1.703,1M</div>
+      <div class="ks">Saldo contabilizado liberado</div>
+    </div>
+    <div class="kpi kw">
+      <div class="kl">Aumento en Sin Contabilizar</div>
+      <div class="kv w">▲ $3.020,2M</div>
+      <div class="ks">Sin contabilizar creció</div>
+    </div>
+  </div>
+
+  <div class="g1 cc" style="margin-bottom:20px;">
+    <h3 id="cmp-chart-title">Variación por proyecto — 05/May → 18/Ago</h3>
+    <p class="sub">Δ en COP Millones — barras verdes = baja (positivo), rojas = sube (alerta)</p>
+    <div style="position:relative;height:260px"><canvas id="c8" role="img" style="box-sizing: border-box; display: block; height: 260px; width: 1811px;" width="1811" height="260"></canvas></div>
+  </div>
+
+  <div class="st">Detalle por proyecto</div>
+  <div class="tw" style="margin-bottom:24px;"><div class="ts"><table id="cmp-proj-tbl" class="sortable" data-sortable-init="1"><thead><tr><th class="tl">Proyecto</th><th>Saldo 05/May</th><th class="sort-desc">Saldo 18/Ago</th><th>Δ COP</th><th>Δ %</th><th>Pagos est.</th><th>Nueva fact. est.</th></tr></thead><tbody><tr>
+      <td class="tn">Metro</td>
+      <td class="tv">$9.950,2M</td>
+      <td class="tv">$15.572,6M</td>
+      <td class="tv n" style="font-weight:700;">▲ +$5.622,3M</td>
+      <td class="tv n">+56.5%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">▲ $4.073,5M</td>
+    </tr><tr>
+      <td class="tn">Colegios</td>
+      <td class="tv">$4.315,3M</td>
+      <td class="tv">$2.216,4M</td>
+      <td class="tv p" style="font-weight:700;">▼ $2.098,9M</td>
+      <td class="tv p">-48.6%</td>
+      <td class="tv p">▼ $1.453,7M</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn">Vías</td>
+      <td class="tv">$2.777,3M</td>
+      <td class="tv">$1.994,5M</td>
+      <td class="tv p" style="font-weight:700;">▼ $782,8M</td>
+      <td class="tv p">-28.2%</td>
+      <td class="tv p">▼ $940,4M</td>
+      <td class="tv w">▲ $157,5M</td>
+    </tr><tr>
+      <td class="tn">Escenarios</td>
+      <td class="tv">$386,1M</td>
+      <td class="tv">$288,2M</td>
+      <td class="tv p" style="font-weight:700;">▼ $97,9M</td>
+      <td class="tv p">-25.4%</td>
+      <td class="tv p">▼ $204,6M</td>
+      <td class="tv w">▲ $106,7M</td>
+    </tr><tr>
+      <td class="tn">Calle 2</td>
+      <td class="tv">$758,2M</td>
+      <td class="tv">$166,9M</td>
+      <td class="tv p" style="font-weight:700;">▼ $591,3M</td>
+      <td class="tv p">-78.0%</td>
+      <td class="tv p">▼ $551,3M</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn">Hospital Pto.</td>
+      <td class="tv">$712,4M</td>
+      <td class="tv">$135,2M</td>
+      <td class="tv p" style="font-weight:700;">▼ $577,2M</td>
+      <td class="tv p">-81.0%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn">Playas</td>
+      <td class="tv">$254,8M</td>
+      <td class="tv">$73,2M</td>
+      <td class="tv p" style="font-weight:700;">▼ $181,6M</td>
+      <td class="tv p">-71.3%</td>
+      <td class="tv p">▼ $107,8M</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn">Magangué</td>
+      <td class="tv">$46,0M</td>
+      <td class="tv">$70,6M</td>
+      <td class="tv n" style="font-weight:700;">▲ +$24,6M</td>
+      <td class="tv n">+53.5%</td>
+      <td class="tv p">▼ $9,0M</td>
+      <td class="tv w">▲ $33,6M</td>
+    </tr><tr class="tot"><td class="tn">TOTAL EMPRESA</td><td class="tv">$19.200,5M</td><td class="tv">$20.517,7M</td><td class="tv n" style="font-weight:700;">▲ +$1.317,2M</td><td class="tv n">+6.9%</td><td class="tv p">▼ $1.703,1M</td><td class="tv w">▲ $3.020,2M</td></tr></tbody></table></div></div>
+
+  <div class="st">Proveedores críticos — evolución en el período</div>
+  <div class="tw"><div class="ts"><table id="cmp-crit-tbl" class="sortable" data-sortable-init="1"><thead><tr><th class="tl">Proveedor</th><th>NIT</th><th class="sort-desc">Saldo 05/May</th><th>Saldo 18/Ago</th><th>Δ COP</th><th>Δ %</th><th>Pagos est.</th><th>Nueva fact. est.</th></tr></thead><tbody><tr>
+      <td class="tn" style="min-width:200px;">ULTRACEM SAS</td>
+      <td class="tv">900570964</td>
+      <td class="tv">$4.611,5M</td>
+      <td class="tv">$3.702,1M</td>
+      <td class="tv p" style="font-weight:700;">▼ $909,4M</td>
+      <td class="tv p">-19.7%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">CENTRAL DE HIERRO LTDA</td>
+      <td class="tv">800022450</td>
+      <td class="tv">$1.437,6M</td>
+      <td class="tv">$622,3M</td>
+      <td class="tv p" style="font-weight:700;">▼ $815,3M</td>
+      <td class="tv p">-56.7%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">G Y J FERRETERIA SA</td>
+      <td class="tv">800130426</td>
+      <td class="tv">$1.121,4M</td>
+      <td class="tv">$417,9M</td>
+      <td class="tv p" style="font-weight:700;">▼ $703,5M</td>
+      <td class="tv p">-62.7%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">EQUIPOS DEL NORTE SA EQUINORTE SA</td>
+      <td class="tv">802001223</td>
+      <td class="tv">$1.115,2M</td>
+      <td class="tv">$599,4M</td>
+      <td class="tv p" style="font-weight:700;">▼ $515,7M</td>
+      <td class="tv p">-46.2%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">STECKERL ACEROS SAS</td>
+      <td class="tv">900499032</td>
+      <td class="tv">$747,8M</td>
+      <td class="tv">$0,0M</td>
+      <td class="tv p" style="font-weight:700;">▼ $747,8M</td>
+      <td class="tv p">-100.0%</td>
+      <td class="tv p">▼ $15,7M</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">ATENAS SEGURIDAD PRIVADA LTDA</td>
+      <td class="tv">802002765</td>
+      <td class="tv">$621,3M</td>
+      <td class="tv">$128,3M</td>
+      <td class="tv p" style="font-weight:700;">▼ $493,0M</td>
+      <td class="tv p">-79.4%</td>
+      <td class="tv p">▼ $196,0M</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">DISLOGICA II SAS</td>
+      <td class="tv">901361250</td>
+      <td class="tv">$447,3M</td>
+      <td class="tv">$192,4M</td>
+      <td class="tv p" style="font-weight:700;">▼ $254,9M</td>
+      <td class="tv p">-57.0%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">FERROSVEL SAS</td>
+      <td class="tv">890910715</td>
+      <td class="tv">$390,7M</td>
+      <td class="tv">$0,0M</td>
+      <td class="tv p" style="font-weight:700;">▼ $390,7M</td>
+      <td class="tv p">-100.0%</td>
+      <td class="tv p">▼ $57,5M</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">CEMENTOS ARGOS SA</td>
+      <td class="tv">890100251</td>
+      <td class="tv">$360,6M</td>
+      <td class="tv">$0,0M</td>
+      <td class="tv p" style="font-weight:700;">▼ $360,6M</td>
+      <td class="tv p">-100.0%</td>
+      <td class="tv p">▼ $33,1M</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">CENTRALQUIPOS S.A.S.</td>
+      <td class="tv">801001676</td>
+      <td class="tv">$312,4M</td>
+      <td class="tv">$366,9M</td>
+      <td class="tv n" style="font-weight:700;">▲ +$54,5M</td>
+      <td class="tv n">+17.5%</td>
+      <td class="tv p">▼ $6,8M</td>
+      <td class="tv w">▲ $61,4M</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">AMGO CONSTRUCCIONES SAS</td>
+      <td class="tv">900353914</td>
+      <td class="tv">$304,9M</td>
+      <td class="tv">$0,0M</td>
+      <td class="tv p" style="font-weight:700;">▼ $304,9M</td>
+      <td class="tv p">-100.0%</td>
+      <td class="tv p">▼ $199,0M</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">FERRETERIA METROPOLIS</td>
+      <td class="tv">802004266</td>
+      <td class="tv">$203,5M</td>
+      <td class="tv">$261,7M</td>
+      <td class="tv n" style="font-weight:700;">▲ +$58,1M</td>
+      <td class="tv n">+28.6%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">TRANSPORTES AMGO SAS</td>
+      <td class="tv">901868156</td>
+      <td class="tv">$70,3M</td>
+      <td class="tv">$0,0M</td>
+      <td class="tv p" style="font-weight:700;">▼ $70,3M</td>
+      <td class="tv p">-100.0%</td>
+      <td class="tv p">▼ $59,5M</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">MM EQUIPOS SAS</td>
+      <td class="tv">901905608</td>
+      <td class="tv">$64,2M</td>
+      <td class="tv">$0,0M</td>
+      <td class="tv p" style="font-weight:700;">▼ $64,2M</td>
+      <td class="tv p">-100.0%</td>
+      <td class="tv p">▼ $1,9M</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">GALLARDO`S &amp; ASOCIADOS S.A</td>
+      <td class="tv">900083001</td>
+      <td class="tv">$0,0M</td>
+      <td class="tv">$614,8M</td>
+      <td class="tv n" style="font-weight:700;">▲ +$614,8M</td>
+      <td class="tv n">+0.0%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">DURMAN COLOMBIA SAS</td>
+      <td class="tv">800033159</td>
+      <td class="tv">$0,0M</td>
+      <td class="tv">$465,0M</td>
+      <td class="tv n" style="font-weight:700;">▲ +$465,0M</td>
+      <td class="tv n">+0.0%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">▲ $103,3M</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">FIBRATECH INTERNATIONAL S.A.S.</td>
+      <td class="tv">901380825</td>
+      <td class="tv">$0,0M</td>
+      <td class="tv">$334,4M</td>
+      <td class="tv n" style="font-weight:700;">▲ +$334,4M</td>
+      <td class="tv n">+0.0%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">▲ $151,2M</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">UNISPAN COLOMBIA SAS</td>
+      <td class="tv">805012977</td>
+      <td class="tv">$0,0M</td>
+      <td class="tv">$275,2M</td>
+      <td class="tv n" style="font-weight:700;">▲ +$275,2M</td>
+      <td class="tv n">+0.0%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">▲ $275,2M</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">RETRI SAS</td>
+      <td class="tv">901617482</td>
+      <td class="tv">$0,0M</td>
+      <td class="tv">$109,2M</td>
+      <td class="tv n" style="font-weight:700;">▲ +$109,2M</td>
+      <td class="tv n">+0.0%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">—</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">POLYUPROTEC SOCIEDAD ANONIMA</td>
+      <td class="tv">830015914</td>
+      <td class="tv">$0,0M</td>
+      <td class="tv">$65,9M</td>
+      <td class="tv n" style="font-weight:700;">▲ +$65,9M</td>
+      <td class="tv n">+0.0%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">▲ $12,9M</td>
+    </tr><tr>
+      <td class="tn" style="min-width:200px;">DIRECCION DE IMPUESTOS Y ADUANAS DIAN</td>
+      <td class="tv">800197268</td>
+      <td class="tv">$0,0M</td>
+      <td class="tv">$6,5M</td>
+      <td class="tv n" style="font-weight:700;">▲ +$6,5M</td>
+      <td class="tv n">+0.0%</td>
+      <td class="tv p">—</td>
+      <td class="tv w">—</td>
+    </tr></tbody></table></div></div>
+  <p class="note">Reducción en Contabilizado = el saldo registrado en SincoERP para pago disminuyó (se cancelaron obligaciones). Reducción en Sin Contabilizar = las facturas pendientes de registro bajaron (se procesaron o contabilizaron). Aumento en Sin Contabilizar = ingresaron nuevas facturas sin procesar. La variación total combina ambos movimientos.</p>
 </div>
 
-<!-- ════════ TAB 3: POR PROYECTO ════════ -->
-<div class="panel" id="p-proyectos">
-  <div style="margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-    <span style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Proyecto:</span>
-    <button class="ppill" id="pill-todos" onclick="toggleTodos()" style="background: rgb(42, 42, 44); color: rgb(255, 255, 255); border-color: rgb(42, 42, 44);">Quitar todos</button>
-    <div class="proj-pills" id="projPills" style="margin-bottom:0;"><button class="ppill on" onclick="toggleProj('Metro')">Metro</button><button class="ppill" onclick="toggleProj('Colegios')">Colegios</button><button class="ppill" onclick="toggleProj('Vías')">Vías</button><button class="ppill" onclick="toggleProj('Playas')">Playas</button><button class="ppill" onclick="toggleProj('Calle 2')">Calle 2</button><button class="ppill" onclick="toggleProj('Hospital Pto.')">Hospital Pto.</button><button class="ppill" onclick="toggleProj('Escenarios')">Escenarios</button><button class="ppill" onclick="toggleProj('Magangué')">Magangué</button></div>
-  </div>
-
-  <div class="kpi-row" id="proj-kpis">
-    <div class="kpi kb"><div class="kl">Total CxP Actual</div><div class="kv b">$15572.6M</div><div class="ks">Semana más reciente</div></div>
-    <div class="kpi kt"><div class="kl">Contabilizado</div><div class="kv t">$9781.0M</div><div class="ks">En SincoERP</div></div>
-    <div class="kpi kw"><div class="kl">Sin Contabilizar</div><div class="kv w">$5791.6M</div><div class="ks">Sin asociar</div></div>
-    <div class="kpi kn"><div class="kl">Variación semanal</div><div class="kv n">▲ +$1141.2M</div><div class="ks">vs 10/Ago</div></div>
-  </div>
-
-  <div class="g1 cc">
-    <h3 id="proj-chart-title">Evolución semanal — Metro</h3>
-    <p class="sub">Total CxP, Contabilizado y Sin Contabilizar (COP Billones/Millones)</p>
-    <div class="leg" id="proj-legend">
-    <div class="li"><div class="ld" style="background:#2A2A2C;border-radius:50%"></div>Total</div>
-    <div class="li"><div class="ld" style="background:#16505C;border-radius:50%"></div>Contabilizado</div>
-    <div class="li"><div class="ld" style="background:#D97706;border-radius:50%"></div>Sin Contabilizar</div></div>
-    <div style="position:relative;height:260px"><canvas id="c6" role="img" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div>
-  </div>
-
-  <div class="st" id="proj-table-title">Detalle por semana — Metro</div>
-  <div class="tw"><div class="ts"><table id="proj-tbl"><thead><tr><th class="tl">Semana</th><th>Total CxP</th><th>Contabilizado</th><th>Sin Contabilizar</th><th>30 días</th><th>60 días</th><th>90+ días</th><th>Δ vs anterior</th></tr></thead><tbody><tr><td class="tn">05 may 2026</td><td class="tv">$9950.2M</td><td class="tv">$8232.1M</td><td class="tv w">$1718.1M</td><td class="tv">$6240.8M</td><td class="tv">$1333.3M</td><td class="tv w">$658.0M</td><td class="tv ">—</td></tr><tr><td class="tn">12 may 2026</td><td class="tv">$14301.6M</td><td class="tv">$9946.7M</td><td class="tv w">$4355.0M</td><td class="tv">$2522.6M</td><td class="tv">$501.9M</td><td class="tv w">$0.1M</td><td class="tv n">▲ +$4351.4M</td></tr><tr><td class="tn">19 may 2026</td><td class="tv">$11445.4M</td><td class="tv">$10550.7M</td><td class="tv w">$894.6M</td><td class="tv">$6966.6M</td><td class="tv">$3241.6M</td><td class="tv w">$342.5M</td><td class="tv p">▼ $2856.3M</td></tr><tr><td class="tn">25 may 2026</td><td class="tv">$9455.9M</td><td class="tv">$8510.6M</td><td class="tv w">$945.3M</td><td class="tv">$3714.0M</td><td class="tv">$4357.3M</td><td class="tv w">$439.4M</td><td class="tv p">▼ $1989.5M</td></tr><tr><td class="tn">02 jun 2026</td><td class="tv">$15373.3M</td><td class="tv">$13798.7M</td><td class="tv w">$1574.7M</td><td class="tv">$8683.9M</td><td class="tv">$4267.0M</td><td class="tv w">$847.8M</td><td class="tv n">▲ +$5917.4M</td></tr><tr><td class="tn">10 jun 2026</td><td class="tv">$14995.5M</td><td class="tv">$8724.0M</td><td class="tv w">$6271.5M</td><td class="tv">$6095.5M</td><td class="tv">$2379.7M</td><td class="tv w">$248.7M</td><td class="tv p">▼ $377.9M</td></tr><tr><td class="tn">17 jun 2026</td><td class="tv">$20763.0M</td><td class="tv">$14634.0M</td><td class="tv w">$6128.9M</td><td class="tv">$12130.1M</td><td class="tv">$2105.1M</td><td class="tv w">$398.9M</td><td class="tv n">▲ +$5767.5M</td></tr><tr><td class="tn">23 jun 2026</td><td class="tv">$15069.9M</td><td class="tv">$8148.4M</td><td class="tv w">$6921.5M</td><td class="tv">—</td><td class="tv">$5719.5M</td><td class="tv n">$2428.9M</td><td class="tv p">▼ $5693.1M</td></tr><tr><td class="tn">01 jul 2026</td><td class="tv">$9707.4M</td><td class="tv">$6784.1M</td><td class="tv w">$2923.3M</td><td class="tv">$3342.1M</td><td class="tv">$3058.7M</td><td class="tv w">$383.3M</td><td class="tv p">▼ $5362.5M</td></tr><tr><td class="tn">07 jul 2026</td><td class="tv">$10063.3M</td><td class="tv">$6272.3M</td><td class="tv w">$3791.0M</td><td class="tv">$2117.0M</td><td class="tv">$3972.0M</td><td class="tv w">$183.3M</td><td class="tv n">▲ +$355.9M</td></tr><tr><td class="tn">14 jul 2026</td><td class="tv">$10567.4M</td><td class="tv">$7139.8M</td><td class="tv w">$3427.7M</td><td class="tv">$3791.1M</td><td class="tv">$3270.1M</td><td class="tv w">$78.5M</td><td class="tv n">▲ +$504.1M</td></tr><tr><td class="tn">22 jul 2026</td><td class="tv">$10390.5M</td><td class="tv">$5179.3M</td><td class="tv w">$5211.2M</td><td class="tv">$3117.5M</td><td class="tv">$2030.3M</td><td class="tv w">$31.5M</td><td class="tv p">▼ $177.0M</td></tr><tr><td class="tn">28 jul 2026</td><td class="tv">$9094.0M</td><td class="tv">$4951.4M</td><td class="tv w">$4142.6M</td><td class="tv">$3134.9M</td><td class="tv">$1808.8M</td><td class="tv w">$7.7M</td><td class="tv p">▼ $1296.5M</td></tr><tr><td class="tn">04 ago 2026</td><td class="tv">$10625.7M</td><td class="tv">$6244.3M</td><td class="tv w">$4381.4M</td><td class="tv">$3474.8M</td><td class="tv">$1817.2M</td><td class="tv w">$952.3M</td><td class="tv n">▲ +$1531.7M</td></tr><tr><td class="tn">10 ago 2026</td><td class="tv">$14431.4M</td><td class="tv">$7963.8M</td><td class="tv w">$6467.6M</td><td class="tv">$5163.8M</td><td class="tv">$2547.9M</td><td class="tv w">$252.1M</td><td class="tv n">▲ +$3805.7M</td></tr><tr><td class="tn">18 ago 2026</td><td class="tv">$15572.6M</td><td class="tv">$9781.0M</td><td class="tv w">$5791.6M</td><td class="tv">$6320.7M</td><td class="tv">$3194.4M</td><td class="tv w">$265.9M</td><td class="tv n">▲ +$1141.2M</td></tr></tbody></table></div></div>
-</div>
-
-<!-- ════════ TAB 4: PROVEEDORES CRÍTICOS ════════ -->
-<div class="panel" id="p-criticos">
-  <div style="margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-    <span style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Semana:</span>
-    <div class="week-pills" id="critWeekPills" style="margin-bottom:0;"><button class="wpill" onclick="selectCritWeek(0)">05/May</button><button class="wpill" onclick="selectCritWeek(1)">12/May</button><button class="wpill" onclick="selectCritWeek(2)">19/May</button><button class="wpill" onclick="selectCritWeek(3)">25/May</button><button class="wpill" onclick="selectCritWeek(4)">02/Jun</button><button class="wpill" onclick="selectCritWeek(5)">10/Jun</button><button class="wpill" onclick="selectCritWeek(6)">17/Jun</button><button class="wpill" onclick="selectCritWeek(7)">23/Jun</button><button class="wpill" onclick="selectCritWeek(8)">01/Jul</button><button class="wpill" onclick="selectCritWeek(9)">07/Jul</button><button class="wpill" onclick="selectCritWeek(10)">14/Jul</button><button class="wpill" onclick="selectCritWeek(11)">22/Jul</button><button class="wpill" onclick="selectCritWeek(12)">28/Jul</button><button class="wpill" onclick="selectCritWeek(13)">04/Ago</button><button class="wpill" onclick="selectCritWeek(14)">10/Ago</button><button class="wpill on" onclick="selectCritWeek(15)">18/Ago</button></div>
-  </div>
-
+<!-- ════════ TAB 3: PROVEEDORES ════════ -->
+<div class="panel" id="p-proveedores">
   <div class="st">Proveedores críticos — semana seleccionada</div>
   <div class="g1 cc">
     <h3>Total CxP por proveedor crítico (COP Millones)</h3>
-    <p class="sub" id="sub-c7">15 proveedores críticos — semana 18/Ago — Total: $8162.0M</p>
+    <p class="sub" id="sub-c7">15 proveedores críticos — semana 18/Ago — Total: $8.162,0M</p>
     <div style="position:relative;height:320px"><canvas id="c7" role="img" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div>
   </div>
-
-  <div class="tw"><div class="ts"><table id="crit-tbl"><thead><tr><th>Rank</th><th class="tl">Proveedor</th><th>NIT</th><th>Total CxP</th><th>Contabilizado</th><th>Sin Contabilizar</th></tr></thead><tbody><tr><td style="text-align:center;font-weight:700;">1</td><td class="tn">ULTRACEM SAS</td><td class="tv">900570964</td><td class="tv">$3702.1M</td><td class="tv">$2840.1M</td><td class="tv w">$862.0M</td></tr><tr><td style="text-align:center;font-weight:700;">2</td><td class="tn">CENTRAL DE HIERRO LTDA</td><td class="tv">800022450</td><td class="tv">$622.3M</td><td class="tv">$431.9M</td><td class="tv w">$190.4M</td></tr><tr><td style="text-align:center;font-weight:700;">3</td><td class="tn">GALLARDO`S &amp; ASOCIADOS S.A</td><td class="tv">900083001</td><td class="tv">$614.8M</td><td class="tv">$614.8M</td><td class="tv w">—</td></tr><tr><td style="text-align:center;font-weight:700;">4</td><td class="tn">EQUIPOS DEL NORTE SA EQUINORTE SA</td><td class="tv">802001223</td><td class="tv">$599.4M</td><td class="tv">$570.2M</td><td class="tv w">$29.2M</td></tr><tr><td style="text-align:center;font-weight:700;">5</td><td class="tn">DURMAN COLOMBIA SAS</td><td class="tv">800033159</td><td class="tv">$465.0M</td><td class="tv">$361.8M</td><td class="tv w">$103.3M</td></tr><tr><td style="text-align:center;font-weight:700;">6</td><td class="tn">G Y J FERRETERIA SA</td><td class="tv">800130426</td><td class="tv">$417.9M</td><td class="tv">$226.8M</td><td class="tv w">$191.1M</td></tr><tr><td style="text-align:center;font-weight:700;">7</td><td class="tn">CENTRALQUIPOS S.A.S.</td><td class="tv">801001676</td><td class="tv">$366.9M</td><td class="tv">$117.8M</td><td class="tv w">$249.2M</td></tr><tr><td style="text-align:center;font-weight:700;">8</td><td class="tn">FIBRATECH INTERNATIONAL S.A.S.</td><td class="tv">901380825</td><td class="tv">$334.4M</td><td class="tv">$183.1M</td><td class="tv w">$151.2M</td></tr><tr><td style="text-align:center;font-weight:700;">9</td><td class="tn">UNISPAN COLOMBIA SAS</td><td class="tv">805012977</td><td class="tv">$275.2M</td><td class="tv">$0.0M</td><td class="tv w">$275.2M</td></tr><tr><td style="text-align:center;font-weight:700;">10</td><td class="tn">FERRETERIA METROPOLIS</td><td class="tv">802004266</td><td class="tv">$261.7M</td><td class="tv">$203.7M</td><td class="tv w">$57.9M</td></tr><tr><td style="text-align:center;font-weight:700;">11</td><td class="tn">DISLOGICA II SAS</td><td class="tv">901361250</td><td class="tv">$192.4M</td><td class="tv">$191.5M</td><td class="tv w">$0.9M</td></tr><tr><td style="text-align:center;font-weight:700;">12</td><td class="tn">ATENAS SEGURIDAD PRIVADA LTDA</td><td class="tv">802002765</td><td class="tv">$128.3M</td><td class="tv">$84.9M</td><td class="tv w">$43.3M</td></tr><tr><td style="text-align:center;font-weight:700;">13</td><td class="tn">RETRI SAS</td><td class="tv">901617482</td><td class="tv">$109.2M</td><td class="tv">$109.2M</td><td class="tv w">—</td></tr><tr><td style="text-align:center;font-weight:700;">14</td><td class="tn">POLYUPROTEC SOCIEDAD ANONIMA</td><td class="tv">830015914</td><td class="tv">$65.9M</td><td class="tv">$53.0M</td><td class="tv w">$12.9M</td></tr><tr><td style="text-align:center;font-weight:700;">15</td><td class="tn">DIRECCION DE IMPUESTOS Y ADUANAS DIAN</td><td class="tv">800197268</td><td class="tv">$6.5M</td><td class="tv">$6.5M</td><td class="tv w">—</td></tr></tbody></table></div></div>
+  <div class="tw" style="margin-bottom:24px;"><div class="ts"><table id="crit-tbl" class="sortable" data-sortable-init="1"><thead><tr><th>Rank</th><th class="tl">Proveedor</th><th>NIT</th><th>Total CxP</th><th>Contabilizado</th><th>Sin Contabilizar</th></tr></thead><tbody><tr><td style="text-align:center;font-weight:700;">1</td><td class="tn">ULTRACEM SAS</td><td class="tv">900570964</td><td class="tv">$3.702,1M</td><td class="tv">$2.840,1M</td><td class="tv w">$862,0M</td></tr><tr><td style="text-align:center;font-weight:700;">2</td><td class="tn">CENTRAL DE HIERRO LTDA</td><td class="tv">800022450</td><td class="tv">$622,3M</td><td class="tv">$431,9M</td><td class="tv w">$190,4M</td></tr><tr><td style="text-align:center;font-weight:700;">3</td><td class="tn">GALLARDO`S &amp; ASOCIADOS S.A</td><td class="tv">900083001</td><td class="tv">$614,8M</td><td class="tv">$614,8M</td><td class="tv w">—</td></tr><tr><td style="text-align:center;font-weight:700;">4</td><td class="tn">EQUIPOS DEL NORTE SA EQUINORTE SA</td><td class="tv">802001223</td><td class="tv">$599,4M</td><td class="tv">$570,2M</td><td class="tv w">$29,2M</td></tr><tr><td style="text-align:center;font-weight:700;">5</td><td class="tn">DURMAN COLOMBIA SAS</td><td class="tv">800033159</td><td class="tv">$465,0M</td><td class="tv">$361,8M</td><td class="tv w">$103,3M</td></tr><tr><td style="text-align:center;font-weight:700;">6</td><td class="tn">G Y J FERRETERIA SA</td><td class="tv">800130426</td><td class="tv">$417,9M</td><td class="tv">$226,8M</td><td class="tv w">$191,1M</td></tr><tr><td style="text-align:center;font-weight:700;">7</td><td class="tn">CENTRALQUIPOS S.A.S.</td><td class="tv">801001676</td><td class="tv">$366,9M</td><td class="tv">$117,8M</td><td class="tv w">$249,2M</td></tr><tr><td style="text-align:center;font-weight:700;">8</td><td class="tn">FIBRATECH INTERNATIONAL S.A.S.</td><td class="tv">901380825</td><td class="tv">$334,4M</td><td class="tv">$183,1M</td><td class="tv w">$151,2M</td></tr><tr><td style="text-align:center;font-weight:700;">9</td><td class="tn">UNISPAN COLOMBIA SAS</td><td class="tv">805012977</td><td class="tv">$275,2M</td><td class="tv">$0,0M</td><td class="tv w">$275,2M</td></tr><tr><td style="text-align:center;font-weight:700;">10</td><td class="tn">FERRETERIA METROPOLIS</td><td class="tv">802004266</td><td class="tv">$261,7M</td><td class="tv">$203,7M</td><td class="tv w">$57,9M</td></tr><tr><td style="text-align:center;font-weight:700;">11</td><td class="tn">DISLOGICA II SAS</td><td class="tv">901361250</td><td class="tv">$192,4M</td><td class="tv">$191,5M</td><td class="tv w">$0,9M</td></tr><tr><td style="text-align:center;font-weight:700;">12</td><td class="tn">ATENAS SEGURIDAD PRIVADA LTDA</td><td class="tv">802002765</td><td class="tv">$128,3M</td><td class="tv">$84,9M</td><td class="tv w">$43,3M</td></tr><tr><td style="text-align:center;font-weight:700;">13</td><td class="tn">RETRI SAS</td><td class="tv">901617482</td><td class="tv">$109,2M</td><td class="tv">$109,2M</td><td class="tv w">—</td></tr><tr><td style="text-align:center;font-weight:700;">14</td><td class="tn">POLYUPROTEC SOCIEDAD ANONIMA</td><td class="tv">830015914</td><td class="tv">$65,9M</td><td class="tv">$53,0M</td><td class="tv w">$12,9M</td></tr><tr><td style="text-align:center;font-weight:700;">15</td><td class="tn">DIRECCION DE IMPUESTOS Y ADUANAS DIAN</td><td class="tv">800197268</td><td class="tv">$6,5M</td><td class="tv">$6,5M</td><td class="tv w">—</td></tr></tbody></table></div></div>
   <p class="note">Los proveedores críticos son aquellos clasificados estratégicamente por su alta dependencia en múltiples proyectos o alto volumen de saldo pendiente.</p>
-</div>
 
-<!-- ════════ TAB: DETALLE POR PROVEEDOR ════════ -->
-<div class="panel" id="p-provdet">
-  <div style="margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-    <span style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Semana:</span>
-    <div class="week-pills" id="provWeekPills" style="margin-bottom:0;"><button class="wpill" onclick="selectProvWeek(0)">05/May</button><button class="wpill" onclick="selectProvWeek(1)">12/May</button><button class="wpill" onclick="selectProvWeek(2)">19/May</button><button class="wpill" onclick="selectProvWeek(3)">25/May</button><button class="wpill" onclick="selectProvWeek(4)">02/Jun</button><button class="wpill" onclick="selectProvWeek(5)">10/Jun</button><button class="wpill" onclick="selectProvWeek(6)">17/Jun</button><button class="wpill" onclick="selectProvWeek(7)">23/Jun</button><button class="wpill" onclick="selectProvWeek(8)">01/Jul</button><button class="wpill" onclick="selectProvWeek(9)">07/Jul</button><button class="wpill" onclick="selectProvWeek(10)">14/Jul</button><button class="wpill" onclick="selectProvWeek(11)">22/Jul</button><button class="wpill" onclick="selectProvWeek(12)">28/Jul</button><button class="wpill" onclick="selectProvWeek(13)">04/Ago</button><button class="wpill" onclick="selectProvWeek(14)">10/Ago</button><button class="wpill on" onclick="selectProvWeek(15)">18/Ago</button></div>
-  </div>
-
+  <div class="st">Buscar un proveedor puntual</div>
   <div class="tb" style="margin-bottom:18px;background:var(--white);border:1px solid var(--line);border-radius:10px;">
     <button class="ppill on" id="provAllBtn" onclick="selectProvAll()" style="margin-bottom:0;">★ Todos los proveedores</button>
     <label>o busca uno puntual:</label>
@@ -295,331 +597,16 @@ tr.tot td{font-weight:700;background:var(--pale2);border-top:2px solid var(--lin
   <div id="provResult" style="display: block;">
     <div class="kpi-row" id="prov-kpis">
     <div class="kpi kb"><div class="kl">Proveedor</div><div class="kv b" style="font-size:14px;line-height:1.3;">Todos los proveedores</div><div class="ks">Consolidado de la semana</div></div>
-    <div class="kpi kt"><div class="kl">Total CxP</div><div class="kv t">$20517.7M</div><div class="ks">Semana 18/Ago</div></div>
-    <div class="kpi kw"><div class="kl">Sin Contabilizar</div><div class="kv w">$8020.2M</div><div class="ks">Sin asociar</div></div>
-    <div class="kpi kb"><div class="kl">Contabilizado</div><div class="kv b">$12497.4M</div><div class="ks">En SincoERP</div></div>
-    <div class="kpi kn"><div class="kl">Cartera 90+ días</div><div class="kv n">$310.1M</div><div class="ks">8 proyectos con saldo</div></div>
+    <div class="kpi kt"><div class="kl">Total CxP</div><div class="kv t">$20.517,7M</div><div class="ks">Semana 18/Ago</div></div>
+    <div class="kpi kw"><div class="kl">Sin Contabilizar</div><div class="kv w">$8.020,2M</div><div class="ks">Sin asociar</div></div>
+    <div class="kpi kb"><div class="kl">Contabilizado</div><div class="kv b">$12.497,4M</div><div class="ks">En SincoERP</div></div>
+    <div class="kpi kn"><div class="kl">Cartera 90+ días</div><div class="kv n">$310,1M</div><div class="ks">8 proyectos con saldo</div></div>
   </div>
     <div class="st">Cartera por proyecto — semana seleccionada</div>
-    <div class="tw"><div class="ts"><table id="prov-proj-tbl"><thead><tr><th class="tl">Proyecto</th><th>Total</th><th>Sin Contabilizar</th><th class="th-c">Contabilizado</th><th class="th-c">30 días</th><th class="th-c">60 días</th><th class="th-c">90 días</th><th class="th-c">120 días</th><th class="th-c">150 días</th><th class="th-c">180+ días</th></tr></thead><tbody><tr><td class="tn">Metro</td><td class="tv" style="font-weight:700;">$15572.6M</td><td class="tv w">$5791.6M</td><td class="tv td-c">$9781.0M</td><td class="tv td-c">$6320.7M</td><td class="tv td-c">$3194.4M</td><td class="tv td-c">$265.9M</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c ">—</td></tr><tr><td class="tn">Colegios</td><td class="tv" style="font-weight:700;">$2216.4M</td><td class="tv w">$1019.6M</td><td class="tv td-c">$1196.8M</td><td class="tv td-c">$700.6M</td><td class="tv td-c">$486.6M</td><td class="tv td-c">$9.4M</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c ">—</td></tr><tr><td class="tn">Vías</td><td class="tv" style="font-weight:700;">$1994.5M</td><td class="tv w">$674.8M</td><td class="tv td-c">$1319.7M</td><td class="tv td-c">$994.0M</td><td class="tv td-c">$325.7M</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c ">—</td></tr><tr><td class="tn">Escenarios</td><td class="tv" style="font-weight:700;">$288.2M</td><td class="tv w">$261.1M</td><td class="tv td-c">$27.1M</td><td class="tv td-c">$27.1M</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c ">—</td></tr><tr><td class="tn">Calle 2</td><td class="tv" style="font-weight:700;">$166.9M</td><td class="tv w">$112.4M</td><td class="tv td-c">$54.5M</td><td class="tv td-c">$25.8M</td><td class="tv td-c">$0.0M</td><td class="tv td-c">$0.2M</td><td class="tv td-c">$3.8M</td><td class="tv td-c">$24.7M</td><td class="tv td-c ">—</td></tr><tr><td class="tn">Hospital Pto.</td><td class="tv" style="font-weight:700;">$135.2M</td><td class="tv w">$60.8M</td><td class="tv td-c">$74.5M</td><td class="tv td-c">$32.4M</td><td class="tv td-c">$35.9M</td><td class="tv td-c">$5.0M</td><td class="tv td-c">$1.1M</td><td class="tv td-c">—</td><td class="tv td-c ">—</td></tr><tr><td class="tn">Playas</td><td class="tv" style="font-weight:700;">$73.2M</td><td class="tv w">$43.2M</td><td class="tv td-c">$30.0M</td><td class="tv td-c">$28.2M</td><td class="tv td-c">$1.7M</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c ">—</td></tr><tr><td class="tn">Magangué</td><td class="tv" style="font-weight:700;">$70.6M</td><td class="tv w">$56.7M</td><td class="tv td-c">$13.9M</td><td class="tv td-c">$13.6M</td><td class="tv td-c">$0.3M</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c ">—</td></tr><tr class="tot"><td class="tn">TOTAL</td><td class="tv">$20517.7M</td><td class="tv w">$8020.2M</td><td class="tv td-c">$12497.4M</td><td class="tv td-c">$8142.6M</td><td class="tv td-c">$4044.6M</td><td class="tv td-c">$280.5M</td><td class="tv td-c">$4.9M</td><td class="tv td-c">$24.7M</td><td class="tv td-c n">—</td></tr></tbody></table></div></div>
+    <div class="tw"><div class="ts"><table id="prov-proj-tbl" class="sortable" data-sortable-init="1"><thead><tr><th class="tl">Proyecto</th><th>Total</th><th>Sin Contabilizar</th><th class="th-c">Contabilizado</th><th class="th-c">30 días</th><th class="th-c">60 días</th><th class="th-c">90 días</th><th class="th-c">120 días</th><th class="th-c">150 días</th><th class="th-c">180+ días</th></tr></thead><tbody><tr><td class="tn">Metro</td><td class="tv" style="font-weight:700;">$15.572,6M</td><td class="tv w">$5.791,6M</td><td class="tv td-c">$9.781,0M</td><td class="tv td-c">$6.320,7M</td><td class="tv td-c">$3.194,4M</td><td class="tv td-c">$265,9M</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c ">—</td></tr><tr><td class="tn">Colegios</td><td class="tv" style="font-weight:700;">$2.216,4M</td><td class="tv w">$1.019,6M</td><td class="tv td-c">$1.196,8M</td><td class="tv td-c">$700,6M</td><td class="tv td-c">$486,6M</td><td class="tv td-c">$9,4M</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c ">—</td></tr><tr><td class="tn">Vías</td><td class="tv" style="font-weight:700;">$1.994,5M</td><td class="tv w">$674,8M</td><td class="tv td-c">$1.319,7M</td><td class="tv td-c">$994,0M</td><td class="tv td-c">$325,7M</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c ">—</td></tr><tr><td class="tn">Escenarios</td><td class="tv" style="font-weight:700;">$288,2M</td><td class="tv w">$261,1M</td><td class="tv td-c">$27,1M</td><td class="tv td-c">$27,1M</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c ">—</td></tr><tr><td class="tn">Calle 2</td><td class="tv" style="font-weight:700;">$166,9M</td><td class="tv w">$112,4M</td><td class="tv td-c">$54,5M</td><td class="tv td-c">$25,8M</td><td class="tv td-c">$0,0M</td><td class="tv td-c">$0,2M</td><td class="tv td-c">$3,8M</td><td class="tv td-c">$24,7M</td><td class="tv td-c ">—</td></tr><tr><td class="tn">Hospital Pto.</td><td class="tv" style="font-weight:700;">$135,2M</td><td class="tv w">$60,8M</td><td class="tv td-c">$74,5M</td><td class="tv td-c">$32,4M</td><td class="tv td-c">$35,9M</td><td class="tv td-c">$5,0M</td><td class="tv td-c">$1,1M</td><td class="tv td-c">—</td><td class="tv td-c ">—</td></tr><tr><td class="tn">Playas</td><td class="tv" style="font-weight:700;">$73,2M</td><td class="tv w">$43,2M</td><td class="tv td-c">$30,0M</td><td class="tv td-c">$28,2M</td><td class="tv td-c">$1,7M</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c ">—</td></tr><tr><td class="tn">Magangué</td><td class="tv" style="font-weight:700;">$70,6M</td><td class="tv w">$56,7M</td><td class="tv td-c">$13,9M</td><td class="tv td-c">$13,6M</td><td class="tv td-c">$0,3M</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c">—</td><td class="tv td-c ">—</td></tr><tr class="tot"><td class="tn">TOTAL</td><td class="tv">$20.517,7M</td><td class="tv w">$8.020,2M</td><td class="tv td-c">$12.497,4M</td><td class="tv td-c">$8.142,6M</td><td class="tv td-c">$4.044,6M</td><td class="tv td-c">$280,5M</td><td class="tv td-c">$4,9M</td><td class="tv td-c">$24,7M</td><td class="tv td-c n">—</td></tr></tbody></table></div></div>
     <p class="sub" style="margin:8px 0 0;">Las columnas resaltadas en color (Contabilizado y sus tramos de antigüedad) indican que la edad solo se calcula sobre el saldo ya contabilizado en SincoERP.</p>
-    <p class="note">"Sin Contabilizar" corresponde a facturas pendientes de asociar en SincoERP; no tienen tramo de edad asignado hasta que se contabilizan.</p>
+    <p class="note">"Sin Contabilizar" corresponde a facturas pendientes de asociar en SincoERP; no tienen tramo de edad asignado hasta que se contabilizan. El buscador de proveedores no se filtra por el selector global de proyecto — siempre muestra la cartera completa del proveedor en todos los proyectos donde tiene saldo.</p>
   </div>
-</div>
-
-<!-- ════════ TAB 5: COMPARATIVO DE PERÍODOS ════════ -->
-<div class="panel" id="p-comparativo">
-  <div style="background:var(--white);border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
-    <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Comparar:</span>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <label style="font-size:11px;color:var(--muted);font-weight:600;">Desde</label>
-      <select id="cmp-desde" onchange="renderComparativo()" style="font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;font-family:inherit;"><option value="0">05 may 2026</option><option value="1">12 may 2026</option><option value="2">19 may 2026</option><option value="3">25 may 2026</option><option value="4">02 jun 2026</option><option value="5">10 jun 2026</option><option value="6">17 jun 2026</option><option value="7">23 jun 2026</option><option value="8">01 jul 2026</option><option value="9">07 jul 2026</option><option value="10">14 jul 2026</option><option value="11">22 jul 2026</option><option value="12">28 jul 2026</option><option value="13">04 ago 2026</option><option value="14">10 ago 2026</option><option value="15">18 ago 2026</option></select>
-    </div>
-    <div style="font-size:18px;color:var(--soft);">→</div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <label style="font-size:11px;color:var(--muted);font-weight:600;">Hasta</label>
-      <select id="cmp-hasta" onchange="renderComparativo()" style="font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;font-family:inherit;"><option value="0">05 may 2026</option><option value="1">12 may 2026</option><option value="2">19 may 2026</option><option value="3">25 may 2026</option><option value="4">02 jun 2026</option><option value="5">10 jun 2026</option><option value="6">17 jun 2026</option><option value="7">23 jun 2026</option><option value="8">01 jul 2026</option><option value="9">07 jul 2026</option><option value="10">14 jul 2026</option><option value="11">22 jul 2026</option><option value="12">28 jul 2026</option><option value="13">04 ago 2026</option><option value="14">10 ago 2026</option><option value="15">18 ago 2026</option></select>
-    </div>
-    <span style="font-size:11px;color:var(--soft);margin-left:auto;">▼ verde = baja CxP (bueno) · ▲ rojo = sube CxP (alerta)</span>
-  </div>
-
-  <!-- Resumen ejecutivo del período -->
-  <div class="kpi-row" id="cmp-kpis">
-    <div class="kpi kb">
-      <div class="kl">Saldo Inicial</div>
-      <div class="kv b">$19.20B</div>
-      <div class="ks">05 may 2026</div>
-    </div>
-    <div class="kpi kb">
-      <div class="kl">Saldo Final</div>
-      <div class="kv b">$20.52B</div>
-      <div class="ks">18 ago 2026</div>
-    </div>
-    <div class="kpi kn">
-      <div class="kl">Variación Total CxP</div>
-      <div class="kv n" style="font-size:18px;">▲ +$1317.2M</div>
-      <div class="ks">6.9% en 15 semanas</div>
-    </div>
-    <div class="kpi kp">
-      <div class="kl">Reducción en Contabilizado</div>
-      <div class="kv p">▼ $1703.1M</div>
-      <div class="ks">Saldo contabilizado liberado</div>
-    </div>
-    <div class="kpi kw">
-      <div class="kl">Aumento en Sin Contabilizar</div>
-      <div class="kv w">▲ $3020.2M</div>
-      <div class="ks">Sin contabilizar creció</div>
-    </div>
-  </div>
-
-  <!-- Gráfico comparativo por proyecto -->
-  <div class="g1 cc" style="margin-bottom:20px;">
-    <h3 id="cmp-chart-title">Variación por proyecto — 05/May → 18/Ago</h3>
-    <p class="sub">Δ en COP Millones — barras verdes = baja (positivo), rojas = sube (alerta)</p>
-    <div style="position:relative;height:260px"><canvas id="c8" role="img" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div>
-  </div>
-
-  <!-- Tabla por proyecto -->
-  <div class="st">Detalle por proyecto</div>
-  <div class="tw" style="margin-bottom:24px;"><div class="ts"><table id="cmp-proj-tbl"><thead><tr><th class="tl">Proyecto</th><th>Saldo 05/May</th><th>Saldo 18/Ago</th><th>Δ COP</th><th>Δ %</th><th>Pagos est.</th><th>Nueva fact. est.</th></tr></thead><tbody><tr>
-      <td class="tn">Metro</td>
-      <td class="tv">$9950.2M</td>
-      <td class="tv">$15572.6M</td>
-      <td class="tv n" style="font-weight:700;">▲ +$5622.3M</td>
-      <td class="tv n">+56.5%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">▲ $4073.5M</td>
-    </tr><tr>
-      <td class="tn">Colegios</td>
-      <td class="tv">$4315.3M</td>
-      <td class="tv">$2216.4M</td>
-      <td class="tv p" style="font-weight:700;">▼ $2098.9M</td>
-      <td class="tv p">-48.6%</td>
-      <td class="tv p">▼ $1453.7M</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn">Vías</td>
-      <td class="tv">$2777.3M</td>
-      <td class="tv">$1994.5M</td>
-      <td class="tv p" style="font-weight:700;">▼ $782.8M</td>
-      <td class="tv p">-28.2%</td>
-      <td class="tv p">▼ $940.4M</td>
-      <td class="tv w">▲ $157.5M</td>
-    </tr><tr>
-      <td class="tn">Playas</td>
-      <td class="tv">$254.8M</td>
-      <td class="tv">$73.2M</td>
-      <td class="tv p" style="font-weight:700;">▼ $181.6M</td>
-      <td class="tv p">-71.3%</td>
-      <td class="tv p">▼ $107.8M</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn">Calle 2</td>
-      <td class="tv">$758.2M</td>
-      <td class="tv">$166.9M</td>
-      <td class="tv p" style="font-weight:700;">▼ $591.3M</td>
-      <td class="tv p">-78.0%</td>
-      <td class="tv p">▼ $551.3M</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn">Hospital Pto.</td>
-      <td class="tv">$712.4M</td>
-      <td class="tv">$135.2M</td>
-      <td class="tv p" style="font-weight:700;">▼ $577.2M</td>
-      <td class="tv p">-81.0%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn">Escenarios</td>
-      <td class="tv">$386.1M</td>
-      <td class="tv">$288.2M</td>
-      <td class="tv p" style="font-weight:700;">▼ $97.9M</td>
-      <td class="tv p">-25.4%</td>
-      <td class="tv p">▼ $204.6M</td>
-      <td class="tv w">▲ $106.7M</td>
-    </tr><tr>
-      <td class="tn">Magangué</td>
-      <td class="tv">$46.0M</td>
-      <td class="tv">$70.6M</td>
-      <td class="tv n" style="font-weight:700;">▲ +$24.6M</td>
-      <td class="tv n">+53.5%</td>
-      <td class="tv p">▼ $9.0M</td>
-      <td class="tv w">▲ $33.6M</td>
-    </tr><tr class="tot"><td class="tn">TOTAL EMPRESA</td><td class="tv">$19.20B</td><td class="tv">$20.52B</td><td class="tv n" style="font-weight:700;">▲ +$1317.2M</td><td class="tv n">+6.9%</td><td class="tv p">▼ $1703.1M</td><td class="tv w">▲ $3020.2M</td></tr></tbody></table></div></div>
-
-  <!-- Tabla por proveedor crítico -->
-  <div class="st">Proveedores críticos — evolución en el período</div>
-  <div class="tw"><div class="ts"><table id="cmp-crit-tbl"><thead><tr><th class="tl">Proveedor</th><th>NIT</th><th>Saldo 05/May</th><th>Saldo 18/Ago</th><th>Δ COP</th><th>Δ %</th><th>Pagos est.</th><th>Nueva fact. est.</th></tr></thead><tbody><tr>
-      <td class="tn" style="min-width:200px;">ULTRACEM SAS</td>
-      <td class="tv">900570964</td>
-      <td class="tv">$4611.5M</td>
-      <td class="tv">$3702.1M</td>
-      <td class="tv p" style="font-weight:700;">▼ $909.4M</td>
-      <td class="tv p">-19.7%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">CENTRAL DE HIERRO LTDA</td>
-      <td class="tv">800022450</td>
-      <td class="tv">$1437.6M</td>
-      <td class="tv">$622.3M</td>
-      <td class="tv p" style="font-weight:700;">▼ $815.3M</td>
-      <td class="tv p">-56.7%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">STECKERL ACEROS SAS</td>
-      <td class="tv">900499032</td>
-      <td class="tv">$747.8M</td>
-      <td class="tv">$0.0M</td>
-      <td class="tv p" style="font-weight:700;">▼ $747.8M</td>
-      <td class="tv p">-100.0%</td>
-      <td class="tv p">▼ $15.7M</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">G Y J FERRETERIA SA</td>
-      <td class="tv">800130426</td>
-      <td class="tv">$1121.4M</td>
-      <td class="tv">$417.9M</td>
-      <td class="tv p" style="font-weight:700;">▼ $703.5M</td>
-      <td class="tv p">-62.7%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">GALLARDO`S &amp; ASOCIADOS S.A</td>
-      <td class="tv">900083001</td>
-      <td class="tv">$0.0M</td>
-      <td class="tv">$614.8M</td>
-      <td class="tv n" style="font-weight:700;">▲ +$614.8M</td>
-      <td class="tv n">+0.0%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">EQUIPOS DEL NORTE SA EQUINORTE SA</td>
-      <td class="tv">802001223</td>
-      <td class="tv">$1115.2M</td>
-      <td class="tv">$599.4M</td>
-      <td class="tv p" style="font-weight:700;">▼ $515.7M</td>
-      <td class="tv p">-46.2%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">ATENAS SEGURIDAD PRIVADA LTDA</td>
-      <td class="tv">802002765</td>
-      <td class="tv">$621.3M</td>
-      <td class="tv">$128.3M</td>
-      <td class="tv p" style="font-weight:700;">▼ $493.0M</td>
-      <td class="tv p">-79.4%</td>
-      <td class="tv p">▼ $196.0M</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">DURMAN COLOMBIA SAS</td>
-      <td class="tv">800033159</td>
-      <td class="tv">$0.0M</td>
-      <td class="tv">$465.0M</td>
-      <td class="tv n" style="font-weight:700;">▲ +$465.0M</td>
-      <td class="tv n">+0.0%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">▲ $103.3M</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">FERROSVEL SAS</td>
-      <td class="tv">890910715</td>
-      <td class="tv">$390.7M</td>
-      <td class="tv">$0.0M</td>
-      <td class="tv p" style="font-weight:700;">▼ $390.7M</td>
-      <td class="tv p">-100.0%</td>
-      <td class="tv p">▼ $57.5M</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">CEMENTOS ARGOS SA</td>
-      <td class="tv">890100251</td>
-      <td class="tv">$360.6M</td>
-      <td class="tv">$0.0M</td>
-      <td class="tv p" style="font-weight:700;">▼ $360.6M</td>
-      <td class="tv p">-100.0%</td>
-      <td class="tv p">▼ $33.1M</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">FIBRATECH INTERNATIONAL S.A.S.</td>
-      <td class="tv">901380825</td>
-      <td class="tv">$0.0M</td>
-      <td class="tv">$334.4M</td>
-      <td class="tv n" style="font-weight:700;">▲ +$334.4M</td>
-      <td class="tv n">+0.0%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">▲ $151.2M</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">AMGO CONSTRUCCIONES SAS</td>
-      <td class="tv">900353914</td>
-      <td class="tv">$304.9M</td>
-      <td class="tv">$0.0M</td>
-      <td class="tv p" style="font-weight:700;">▼ $304.9M</td>
-      <td class="tv p">-100.0%</td>
-      <td class="tv p">▼ $199.0M</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">UNISPAN COLOMBIA SAS</td>
-      <td class="tv">805012977</td>
-      <td class="tv">$0.0M</td>
-      <td class="tv">$275.2M</td>
-      <td class="tv n" style="font-weight:700;">▲ +$275.2M</td>
-      <td class="tv n">+0.0%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">▲ $275.2M</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">DISLOGICA II SAS</td>
-      <td class="tv">901361250</td>
-      <td class="tv">$447.3M</td>
-      <td class="tv">$192.4M</td>
-      <td class="tv p" style="font-weight:700;">▼ $254.9M</td>
-      <td class="tv p">-57.0%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">RETRI SAS</td>
-      <td class="tv">901617482</td>
-      <td class="tv">$0.0M</td>
-      <td class="tv">$109.2M</td>
-      <td class="tv n" style="font-weight:700;">▲ +$109.2M</td>
-      <td class="tv n">+0.0%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">TRANSPORTES AMGO SAS</td>
-      <td class="tv">901868156</td>
-      <td class="tv">$70.3M</td>
-      <td class="tv">$0.0M</td>
-      <td class="tv p" style="font-weight:700;">▼ $70.3M</td>
-      <td class="tv p">-100.0%</td>
-      <td class="tv p">▼ $59.5M</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">POLYUPROTEC SOCIEDAD ANONIMA</td>
-      <td class="tv">830015914</td>
-      <td class="tv">$0.0M</td>
-      <td class="tv">$65.9M</td>
-      <td class="tv n" style="font-weight:700;">▲ +$65.9M</td>
-      <td class="tv n">+0.0%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">▲ $12.9M</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">MM EQUIPOS SAS</td>
-      <td class="tv">901905608</td>
-      <td class="tv">$64.2M</td>
-      <td class="tv">$0.0M</td>
-      <td class="tv p" style="font-weight:700;">▼ $64.2M</td>
-      <td class="tv p">-100.0%</td>
-      <td class="tv p">▼ $1.9M</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">FERRETERIA METROPOLIS</td>
-      <td class="tv">802004266</td>
-      <td class="tv">$203.5M</td>
-      <td class="tv">$261.7M</td>
-      <td class="tv n" style="font-weight:700;">▲ +$58.1M</td>
-      <td class="tv n">+28.6%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">—</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">CENTRALQUIPOS S.A.S.</td>
-      <td class="tv">801001676</td>
-      <td class="tv">$312.4M</td>
-      <td class="tv">$366.9M</td>
-      <td class="tv n" style="font-weight:700;">▲ +$54.5M</td>
-      <td class="tv n">+17.5%</td>
-      <td class="tv p">▼ $6.8M</td>
-      <td class="tv w">▲ $61.4M</td>
-    </tr><tr>
-      <td class="tn" style="min-width:200px;">DIRECCION DE IMPUESTOS Y ADUANAS DIAN</td>
-      <td class="tv">800197268</td>
-      <td class="tv">$0.0M</td>
-      <td class="tv">$6.5M</td>
-      <td class="tv n" style="font-weight:700;">▲ +$6.5M</td>
-      <td class="tv n">+0.0%</td>
-      <td class="tv p">—</td>
-      <td class="tv w">—</td>
-    </tr></tbody></table></div></div>
-  <p class="note">Reducción en Contabilizado = el saldo registrado en SincoERP para pago disminuyó (se cancelaron obligaciones). Reducción en Sin Contabilizar = las facturas pendientes de registro bajaron (se procesaron o contabilizaron). Aumento en Sin Contabilizar = ingresaron nuevas facturas sin procesar. La variación total combina ambos movimientos.</p>
 </div>
 
 
@@ -636,304 +623,400 @@ const PROJ_ORDER=['Metro','Colegios','Vías','Playas','Calle 2','Hospital Pto.',
 const PROJ_COLORS={'Metro':'#993556','Colegios':'#854F0B','Vías':'#58595B','Playas':'#533AB7','Calle 2':'#1D6FB8','Hospital Pto.':'#3B6D11','Escenarios':'#16505C','Magangué':'#B08900'};
 const EDAD_COLORS={'30':'#16505C','60':'#2E7D8C','90':'#D97706','120':'#B45309','150':'#DC2626','180':'#9B1C1C','270':'#6B1414','360':'#3D0000','361>':'#1A0000','<0':'#ABA9A7'};
 const EDAD_LABELS=['30','60','90','120','150','180','270','360','361>'];
+// Tramos agrupados (0-30/31-60/61-90/90+) usados en los gráficos de edad —
+// antes eran 9 tramos con 9 colores, ilegibles en barra apilada y en dona.
+const EDAD_BUCKETS=[
+  {key:'0-30',label:'0–30 días',color:'#16505C',keys:['<0','30']},
+  {key:'31-60',label:'31–60 días',color:'#2E7D8C',keys:['60']},
+  {key:'61-90',label:'61–90 días',color:'#D97706',keys:['90']},
+  {key:'90+',label:'90+ días',color:'#DC2626',keys:['120','150','180','270','360','361>']}
+];
+function edadBucketSum(edades,keys){ return keys.reduce((a,k)=>a+((edades&&edades[k])||0),0); }
 
 const charts={};
 function destroyChart(id){ if(charts[id]){charts[id].destroy();charts[id]=null;} }
 
-function fB(v){ if(!v&&v!==0)return '—'; const s=Math.abs(v)/1e9; return (v<0?'−':'')+'$'+s.toFixed(2)+'B'; }
-function fM(v){ if(!v&&v!==0)return '—'; const s=Math.abs(v)/1e6; return (v<0?'−':'')+'$'+s.toFixed(1)+'M'; }
+/* Unidad única en todo el reporte: COP millones (M), con separador de miles.
+   Antes convivían "$19904.0M" (sin separador) y "$19.90B" (misma cifra, otra
+   unidad) para el mismo dato. Se retira "B" por completo: en español
+   colombiano "billón" = 10^12, y usarlo aquí para 10^9 (como hacía el
+   reporte) es una fuente de error de lectura para gerencia, no solo un
+   tema de estilo. fB queda como alias de fM para no romper referencias. */
+function fM(v){ if(!v&&v!==0)return '—'; const s=Math.abs(v)/1e6; const str=s.toLocaleString('es-CO',{minimumFractionDigits:1,maximumFractionDigits:1}); return (v<0?'−':'')+'$'+str+'M'; }
+function fB(v){ return fM(v); }
 function fPct(v){ return (v*100).toFixed(1)+'%'; }
 function fDate(d){ const [y,m,dy]=d.split('-'); const ms=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']; return dy+' '+ms[+m-1]+' '+y; }
 function shortDate(d){ const [y,m,dy]=d.split('-'); const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']; return dy+'/'+ms[+m-1]; }
+// "90 o más días" real (incluye el tramo exacto "90"), NO confundir con el
+// bucket "90+" de EDAD_BUCKETS que para el gráfico de 4 tramos agrupa el
+// tramo "90" dentro de "61-90" — son dos cosas distintas a propósito.
+function sum90plus(edades){ return ['90','120','150','180','270','360','361>'].reduce((a,k)=>a+((edades&&edades[k])||0),0); }
 
-const TAB_LABELS = {evolucion:'Evolución Semanal',semana:'Semana Actual',proyectos:'Por Proyecto',criticos:'Proveedores Críticos',provdet:'Detalle Proveedor',comparativo:'Comparativo de Períodos'};
-let currentTab = 'evolucion';
-function go(id,btn){
+const TAB_LABELS = {situacion:'Situación',evolucion:'Evolución',proveedores:'Proveedores'};
+let currentTab = 'situacion';
+let G_WEEK = 0;      // índice de semana seleccionada (selector global)
+let G_PROJ = 'ALL';  // 'ALL' o nombre de proyecto (selector global)
+let G_GRAN = 'proyecto'; // granularidad de la tabla en Situación: 'proyecto' | 'proveedor'
+let currentProvKey='ALL';
+
+function goTab(id,btn){
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.getElementById('p-'+id).classList.add('on');
   currentTab = id;
   const lbl = document.getElementById('iaTabLbl'); if(lbl) lbl.textContent = TAB_LABELS[id]||id;
 }
 
-// ────────────────────────────────────────────────────────────────
-// TAB 1: EVOLUCIÓN SEMANAL
-// ────────────────────────────────────────────────────────────────
-function renderEvolucion(){
-  const H=HISTORY;
-  if(!H||!H.length) return;
-  const last=H[H.length-1], prev=H.length>1?H[H.length-2]:null;
-  const labels=H.map(d=>shortDate(d.fecha));
+// Slice de un corte semanal para "Todos los proyectos" o un proyecto puntual —
+// esto es lo que permite que un solo selector de proyecto alimente Situación
+// y Evolución sin duplicar tablas ni pestañas como antes.
+function projSlice(d, proj){
+  if(proj==='ALL') return {total:d.total||0, cont:d.contabilizado||0, sinCont:d.sinCont||0, edades:d.edades||{}};
+  const pd=(d.proyectos||{})[proj];
+  if(!pd) return {total:0,cont:0,sinCont:0,edades:{}};
+  return {total:pd.total||0, cont:pd.cont||0, sinCont:pd.sinCont||0, edades:pd.edades||{}};
+}
 
-  // KPIs
-  document.getElementById('kpi-total').textContent=fB(last.total);
-  document.getElementById('kpi-cont').textContent=fB(last.contabilizado);
-  document.getElementById('kpi-sinc').textContent=fB(last.sinCont);
-  document.getElementById('kpi-90').textContent=fM((last.edades['90']||0)+(last.edades['120']||0)+(last.edades['150']||0)+(last.edades['180']||0)+(last.edades['270']||0)+(last.edades['360']||0)+(last.edades['361>']||0));
-  document.getElementById('kpi-nweeks').textContent=H.length;
-  if(prev){
-    const delta=last.total-prev.total;
-    const pct=(delta/prev.total*100).toFixed(1);
+// Filas por proveedor de una semana, opcionalmente acotadas a un proyecto.
+function providerRowsForWeek(d, proj){
+  const provs=d.proveedores||{};
+  const rows=[];
+  for(const p of Object.values(provs)){
+    let cont=0,sinCont=0; const edades={};
+    for(const [pj,pd] of Object.entries(p.proyectos||{})){
+      if(proj!=='ALL' && pj!==proj) continue;
+      cont+=pd.cont||0; sinCont+=pd.sinCont||0;
+      for(const [k,v] of Object.entries(pd.edades||{})) edades[k]=(edades[k]||0)+v;
+    }
+    const total=cont+sinCont;
+    if(total<=0) continue;
+    rows.push({nit:p.nit,nombre:p.nombre,total,cont,sinCont,edades});
+  }
+  rows.sort((a,b)=>b.total-a.total);
+  return rows;
+}
+
+// ────────────────────────────────────────────────────────────────
+// Tablas ordenables por columna (click en encabezado)
+// ────────────────────────────────────────────────────────────────
+function parseCellValue(text){
+  const t=(text||'').trim();
+  if(t===''||t==='—') return -Infinity;
+  let cleaned=t.replace(/[▲▼]/g,'').trim();
+  cleaned=cleaned.replace(/−/g,'-').replace(/\$/g,'').replace(/%/g,'').replace(/M$/,'').replace(/\s+/g,'');
+  if(/^[+-]?[\d.,]+$/.test(cleaned)){
+    const n=cleaned.replace(/^\+/,'').replace(/\./g,'').replace(',','.');
+    const f=parseFloat(n);
+    if(!isNaN(f)) return f;
+  }
+  return t.toLowerCase();
+}
+const SORT_STATE={};
+function makeTableSortable(tableId){
+  const table=document.getElementById(tableId);
+  if(!table) return;
+  table.classList.add('sortable');
+  if(table.dataset.sortableInit) return;
+  table.dataset.sortableInit='1';
+  table.addEventListener('click', e=>{
+    const th=e.target.closest('th');
+    if(!th || !table.contains(th)) return;
+    const ths=[...th.parentElement.children];
+    const idx=ths.indexOf(th);
+    const tbody=table.querySelector('tbody');
+    if(!tbody) return;
+    const allRows=[...tbody.querySelectorAll('tr')];
+    const totRows=allRows.filter(r=>r.classList.contains('tot'));
+    const dataRows=allRows.filter(r=>!r.classList.contains('tot'));
+    if(dataRows.length<2) return;
+    const key=tableId+':'+idx;
+    const dir = SORT_STATE[key]===1 ? -1 : 1;
+    SORT_STATE[key]=dir;
+    ths.forEach(h=>h.classList.remove('sort-asc','sort-desc'));
+    th.classList.add(dir===1?'sort-asc':'sort-desc');
+    dataRows.sort((a,b)=>{
+      const av=parseCellValue(a.children[idx]?.textContent);
+      const bv=parseCellValue(b.children[idx]?.textContent);
+      if(typeof av==='number' && typeof bv==='number') return (av-bv)*dir;
+      return String(av).localeCompare(String(bv),'es')*dir;
+    });
+    dataRows.forEach(r=>tbody.appendChild(r));
+    totRows.forEach(r=>tbody.appendChild(r));
+  });
+}
+
+// ────────────────────────────────────────────────────────────────
+// Controles globales (semana + proyecto)
+// ────────────────────────────────────────────────────────────────
+function buildGlobalControls(){
+  const wEl=document.getElementById('gWeekSelect');
+  wEl.innerHTML=HISTORY.map((d,i)=>`<option value="${i}"${i===G_WEEK?' selected':''}>${shortDate(d.fecha)}${i===HISTORY.length-1?' (última)':''}</option>`).join('');
+  updateWeekArrows();
+  const projs=[...new Set(HISTORY.flatMap(d=>Object.keys(d.proyectos||{})))].sort((a,b)=>{const oa=PROJ_ORDER.indexOf(a),ob=PROJ_ORDER.indexOf(b);return (oa<0?99:oa)-(ob<0?99:ob);});
+  const pEl=document.getElementById('gProjPills');
+  pEl.innerHTML=`<button class="ppill${G_PROJ==='ALL'?' on':''}" onclick="setProj('ALL')">Todos los proyectos</button>`+
+    projs.map(p=>`<button class="ppill${G_PROJ===p?' on':''}" onclick="setProj('${p}')">${p}</button>`).join('');
+}
+function setWeek(idx){
+  G_WEEK=idx;
+  document.getElementById('gWeekSelect').value=idx;
+  updateWeekArrows();
+  renderAllTabs();
+}
+function stepWeek(delta){
+  const idx=Math.min(HISTORY.length-1,Math.max(0,G_WEEK+delta));
+  if(idx!==G_WEEK) setWeek(idx);
+}
+function updateWeekArrows(){
+  const prev=document.getElementById('wk-prev'), next=document.getElementById('wk-next');
+  if(prev) prev.disabled = G_WEEK<=0;
+  if(next) next.disabled = G_WEEK>=HISTORY.length-1;
+}
+function setProj(proj){
+  G_PROJ=proj;
+  document.querySelectorAll('#gProjPills .ppill').forEach(b=>b.classList.toggle('on', b.textContent===(proj==='ALL'?'Todos los proyectos':proj)));
+  setGranularidadInternal(proj!=='ALL' ? 'proveedor' : G_GRAN);
+  renderAllTabs();
+}
+function setGranularidad(g){
+  if(g==='proyecto' && G_PROJ!=='ALL') return; // no aplica con un proyecto puntual seleccionado
+  setGranularidadInternal(g);
+  renderSituacion();
+}
+function setGranularidadInternal(g){
+  G_GRAN=g;
+  const bp=document.getElementById('gran-proyecto-btn'), bv=document.getElementById('gran-proveedor-btn');
+  bp.classList.toggle('on',g==='proyecto');
+  bv.classList.toggle('on',g==='proveedor');
+  bp.style.opacity = G_PROJ==='ALL' ? '1' : '.4';
+  bp.style.cursor = G_PROJ==='ALL' ? 'pointer' : 'not-allowed';
+}
+
+function renderAllTabs(){
+  renderSituacion();
+  renderEvolucionTab();
+  renderProveedoresTab();
+}
+
+// ────────────────────────────────────────────────────────────────
+// PESTAÑA 1: SITUACIÓN
+// ────────────────────────────────────────────────────────────────
+function renderSituacion(){
+  const H=HISTORY;
+  const d=H[G_WEEK], prev=G_WEEK>0?H[G_WEEK-1]:null;
+  const s=projSlice(d,G_PROJ), sPrev=prev?projSlice(prev,G_PROJ):null;
+  const etiqueta = G_PROJ==='ALL' ? '' : ' — '+G_PROJ;
+
+  document.getElementById('kpi-total-label').textContent = G_PROJ==='ALL' ? 'Total CxP Actual' : 'Total CxP — '+G_PROJ;
+  document.getElementById('kpi-total').textContent=fM(s.total);
+  document.getElementById('kpi-total-s').textContent='Semana '+shortDate(d.fecha);
+  document.getElementById('kpi-cont').textContent=fM(s.cont);
+  document.getElementById('kpi-90').textContent=fM(sum90plus(s.edades));
+
+  document.getElementById('kpi-nweeks-note').textContent=H.length+' semanas de historial cargadas ('+shortDate(H[0].fecha)+' — '+shortDate(H[H.length-1].fecha)+' '+H[H.length-1].fecha.slice(0,4)+').';
+
+  if(sPrev){
+    const delta=s.total-sPrev.total;
+    const pct=sPrev.total?Math.abs(delta/sPrev.total*100).toFixed(1):'0.0';
     const el=document.getElementById('kpi-delta');
-    el.textContent=(delta>=0?'▲ +':'▼ ')+fM(Math.abs(delta));
-    el.className='kv '+(delta>=0?'n':'p');
-    document.getElementById('kpi-delta-s').textContent=(Math.abs(pct))+'% vs '+shortDate(prev.fecha);
+    el.textContent=(delta>=0?'+':'−')+fM(Math.abs(delta));
+    el.className='kv b';
+    document.getElementById('kpi-delta-s').textContent=pct+'% vs '+shortDate(prev.fecha);
   } else {
     document.getElementById('kpi-delta').textContent='—';
+    document.getElementById('kpi-delta-s').textContent='—';
   }
-  document.getElementById('kpi-total-s').textContent='Semana '+shortDate(last.fecha);
-  document.getElementById('corteLabel').textContent='Corte: '+fDate(last.fecha)+' · Confidencial';
+
+  const sincPct=s.total?s.sinCont/s.total*100:0;
+  document.getElementById('kpi-sincpct').textContent=sincPct.toFixed(1)+'%';
+  document.getElementById('kpi-hallazgo-card').className='kpi '+(sincPct>=40?'kn':'kw');
+  document.getElementById('kpi-sincpct').className='kv '+(sincPct>=40?'n':'w');
+  document.getElementById('kpi-sincpct').style.fontSize='22px';
+  destroyChart('c3');
+  const pctSerie=H.map(h=>{const hs=projSlice(h,G_PROJ); return hs.total?+(hs.sinCont/hs.total*100).toFixed(1):0;});
+  charts.c3=new Chart(document.getElementById('c3'),{type:'line',data:{labels:H.map(h=>shortDate(h.fecha)),datasets:[
+    {data:pctSerie,borderColor:'#D97706',backgroundColor:'rgba(217,119,6,.12)',fill:true,borderWidth:1.5,pointRadius:0,tension:.3}
+  ]},options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.parsed.y.toFixed(1)+'% sin contabilizar'}}},
+    scales:{x:{display:false},y:{display:false,min:0}}}});
+
+  document.getElementById('kpi-top1-label').textContent = G_PROJ==='ALL' ? 'Concentración top-1 proveedor' : 'Top-1 proveedor en '+G_PROJ;
+  let top1=null;
+  if(G_PROJ==='ALL'){
+    const crits=(d.criticos||[]).slice().sort((a,b)=>b.total-a.total);
+    if(crits.length) top1={nombre:crits[0].nombre,total:crits[0].total};
+  } else {
+    const rows=providerRowsForWeek(d,G_PROJ);
+    if(rows.length) top1={nombre:rows[0].nombre,total:rows[0].total};
+  }
+  if(top1 && s.total){
+    document.getElementById('kpi-top1').textContent=(top1.total/s.total*100).toFixed(1)+'%';
+    document.getElementById('kpi-top1-s').textContent=top1.nombre+' — '+fM(top1.total);
+  } else {
+    document.getElementById('kpi-top1').textContent='—';
+    document.getElementById('kpi-top1-s').textContent=G_PROJ==='ALL'?'del total de la semana':'sin datos de proveedor para este proyecto';
+  }
+
+  // c4: barra horizontal apilada por tramo de edad agrupado
+  destroyChart('c4');
+  const bucketsSemana=EDAD_BUCKETS.filter(b=>edadBucketSum(s.edades,b.keys)>0);
+  charts.c4=new Chart(document.getElementById('c4'),{type:'bar',data:{labels:['Cartera contabilizada'+etiqueta],datasets:bucketsSemana.map(b=>({label:b.label,data:[+(edadBucketSum(s.edades,b.keys)/1e6).toFixed(1)],backgroundColor:b.color,stack:'s'}))},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10}},tooltip:{callbacks:{label:c=>' '+c.dataset.label+': '+fM(c.raw*1e6)}}},scales:{x:{ticks:{color:TC,font:{size:10},callback:v=>'$'+v.toLocaleString('es-CO')+'M'},grid:{color:GC},border:{display:false},stacked:true},y:{ticks:{display:false},grid:{display:false},border:{display:false},stacked:true}}}});
+
+  // c5: barra horizontal por proyecto — solo tiene sentido con "Todos"
+  destroyChart('c5');
+  if(G_PROJ==='ALL'){
+    document.getElementById('c5-chart-wrap').style.display='';
+    document.getElementById('c5-placeholder').style.display='none';
+    const projs=Object.entries(d.proyectos||{}).sort((a,b)=>b[1].total-a[1].total);
+    charts.c5=new Chart(document.getElementById('c5'),{type:'bar',data:{labels:projs.map(p=>p[0]),datasets:[{data:projs.map(p=>+(p[1].total/1e6).toFixed(1)),backgroundColor:projs.map(p=>PROJ_COLORS[p[0]]||'#8A8B8D'),borderRadius:2}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fM(c.raw*1e6)+' ('+(d.total?(c.raw*1e6/d.total*100).toFixed(1):0)+'% del total)'}}},scales:{x:{ticks:{color:TC,font:{size:10},callback:v=>'$'+v.toLocaleString('es-CO')+'M'},grid:{color:GC},border:{display:false}},y:{ticks:{color:TC,font:{size:10}},grid:{display:false},border:{display:false}}}}});
+  } else {
+    document.getElementById('c5-chart-wrap').style.display='none';
+    document.getElementById('c5-placeholder').style.display='block';
+  }
+
+  // Tabla única con selector de granularidad
+  const tbl=document.getElementById('sit-tbl');
+  if(G_GRAN==='proyecto' && G_PROJ==='ALL'){
+    document.getElementById('sit-tbl-title').textContent='Detalle por proyecto — semana seleccionada';
+    const projs=Object.entries(d.proyectos||{}).sort((a,b)=>b[1].total-a[1].total);
+    let h='<thead><tr><th class="tl">Proyecto</th><th>Total CxP</th><th>Contabilizado</th><th>Sin Contabilizar</th><th>0-30 días</th><th>31-60 días</th><th>61-90 días</th><th>90+ días</th></tr></thead><tbody>';
+    projs.forEach(([nombre,pd])=>{
+      const b0=edadBucketSum(pd.edades,EDAD_BUCKETS[0].keys), b1=edadBucketSum(pd.edades,EDAD_BUCKETS[1].keys), b2=edadBucketSum(pd.edades,EDAD_BUCKETS[2].keys), b3=edadBucketSum(pd.edades,EDAD_BUCKETS[3].keys);
+      h+=`<tr><td class="tn">${nombre}</td><td class="tv">${fM(pd.total)}</td><td class="tv">${fM(pd.cont)}</td><td class="tv w">${pd.sinCont>0?fM(pd.sinCont):'—'}</td><td class="tv">${b0>0?fM(b0):'—'}</td><td class="tv">${b1>0?fM(b1):'—'}</td><td class="tv">${b2>0?fM(b2):'—'}</td><td class="tv ${b3>0?'n':''}">${b3>0?fM(b3):'—'}</td></tr>`;
+    });
+    const tot={total:0,cont:0,sinCont:0,edades:{}};
+    Object.values(d.proyectos||{}).forEach(pd=>{ tot.total+=pd.total||0; tot.cont+=pd.cont||0; tot.sinCont+=pd.sinCont||0; for(const [k,v] of Object.entries(pd.edades||{})) tot.edades[k]=(tot.edades[k]||0)+v; });
+    const tb0=edadBucketSum(tot.edades,EDAD_BUCKETS[0].keys), tb1=edadBucketSum(tot.edades,EDAD_BUCKETS[1].keys), tb2=edadBucketSum(tot.edades,EDAD_BUCKETS[2].keys), tb3=edadBucketSum(tot.edades,EDAD_BUCKETS[3].keys);
+    h+=`<tr class="tot"><td class="tn">TOTAL</td><td class="tv">${fM(tot.total)}</td><td class="tv">${fM(tot.cont)}</td><td class="tv w">${fM(tot.sinCont)}</td><td class="tv">${fM(tb0)}</td><td class="tv">${fM(tb1)}</td><td class="tv">${fM(tb2)}</td><td class="tv n">${fM(tb3)}</td></tr>`;
+    h+='</tbody>';
+    tbl.innerHTML=h;
+  } else {
+    document.getElementById('sit-tbl-title').textContent = G_PROJ==='ALL' ? 'Detalle por proveedor — semana seleccionada' : 'Detalle por proveedor — '+G_PROJ+' — semana seleccionada';
+    const rows=providerRowsForWeek(d,G_PROJ);
+    let h='<thead><tr><th class="tl">Proveedor</th><th>NIT</th><th>Total CxP</th><th>Contabilizado</th><th>Sin Contabilizar</th><th>0-30 días</th><th>31-60 días</th><th>61-90 días</th><th>90+ días</th></tr></thead><tbody>';
+    if(!rows.length){
+      h+='<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted);">Sin proveedores con cartera esta semana'+etiqueta+'</td></tr>';
+    } else {
+      rows.forEach(r=>{
+        const b0=edadBucketSum(r.edades,EDAD_BUCKETS[0].keys), b1=edadBucketSum(r.edades,EDAD_BUCKETS[1].keys), b2=edadBucketSum(r.edades,EDAD_BUCKETS[2].keys), b3=edadBucketSum(r.edades,EDAD_BUCKETS[3].keys);
+        h+=`<tr><td class="tn">${r.nombre}</td><td class="tv">${r.nit||'—'}</td><td class="tv">${fM(r.total)}</td><td class="tv">${fM(r.cont)}</td><td class="tv w">${r.sinCont>0?fM(r.sinCont):'—'}</td><td class="tv">${b0>0?fM(b0):'—'}</td><td class="tv">${b1>0?fM(b1):'—'}</td><td class="tv">${b2>0?fM(b2):'—'}</td><td class="tv ${b3>0?'n':''}">${b3>0?fM(b3):'—'}</td></tr>`;
+      });
+      const tot=rows.reduce((a,r)=>({total:a.total+r.total,cont:a.cont+r.cont,sinCont:a.sinCont+r.sinCont}),{total:0,cont:0,sinCont:0});
+      const totEdades={};
+      rows.forEach(r=>{ for(const [k,v] of Object.entries(r.edades||{})) totEdades[k]=(totEdades[k]||0)+v; });
+      const tb0=edadBucketSum(totEdades,EDAD_BUCKETS[0].keys), tb1=edadBucketSum(totEdades,EDAD_BUCKETS[1].keys), tb2=edadBucketSum(totEdades,EDAD_BUCKETS[2].keys), tb3=edadBucketSum(totEdades,EDAD_BUCKETS[3].keys);
+      h+=`<tr class="tot"><td class="tn">TOTAL (${rows.length} proveedores)</td><td class="tv">—</td><td class="tv">${fM(tot.total)}</td><td class="tv">${fM(tot.cont)}</td><td class="tv w">${fM(tot.sinCont)}</td><td class="tv">${fM(tb0)}</td><td class="tv">${fM(tb1)}</td><td class="tv">${fM(tb2)}</td><td class="tv n">${fM(tb3)}</td></tr>`;
+    }
+    h+='</tbody>';
+    tbl.innerHTML=h;
+  }
+  makeTableSortable('sit-tbl');
+}
+
+// ────────────────────────────────────────────────────────────────
+// PESTAÑA 2: EVOLUCIÓN
+// ────────────────────────────────────────────────────────────────
+function renderEvolucionTab(){
+  const H=HISTORY;
+  const proj=G_PROJ;
+  const weeks = proj==='ALL' ? H : H.filter(d=>d.proyectos && d.proyectos[proj]);
+  if(!weeks.length) return;
+  const labels=weeks.map(d=>shortDate(d.fecha));
+  const series=weeks.map(d=>projSlice(d,proj));
+
+  document.getElementById('evo-title').textContent = proj==='ALL'
+    ? 'CxP total, Contabilizado y Sin Contabilizar (COP Millones)'
+    : 'CxP total, Contabilizado y Sin Contabilizar — '+proj+' (COP Millones)';
 
   const boLine={responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:c=>' '+c.dataset.label+': '+fB(c.raw*1e9)}}},
+    plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:c=>' '+c.dataset.label+': '+fM(c.raw*1e6)}}},
     scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC},border:{display:false}},
-            y:{ticks:{color:TC,font:{size:10},callback:v=>'$'+v+'B'},grid:{color:GC},border:{display:false}}}};
-
-  // c1: total / cont / sinCont
+            y:{ticks:{color:TC,font:{size:10},callback:v=>'$'+v.toLocaleString('es-CO')+'M'},grid:{color:GC},border:{display:false}}}};
   destroyChart('c1');
   charts.c1=new Chart(document.getElementById('c1'),{type:'line',data:{labels,datasets:[
-    {label:'Total CxP',data:H.map(d=>+(d.total/1e9).toFixed(2)),borderColor:'#2A2A2C',backgroundColor:'rgba(42,42,44,.06)',fill:true,borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#2A2A2C',tension:.3},
-    {label:'Contabilizado',data:H.map(d=>+(d.contabilizado/1e9).toFixed(2)),borderColor:'#16505C',borderWidth:2,pointRadius:4,pointBackgroundColor:'#16505C',fill:false,tension:.3},
-    {label:'Sin Contabilizar',data:H.map(d=>+(d.sinCont/1e9).toFixed(2)),borderColor:'#D97706',borderWidth:2,borderDash:[5,3],pointRadius:4,pointBackgroundColor:'#D97706',fill:false,tension:.3}
-  ]},options:{...boLine,onClick:(e,els)=>{ if(els.length){ const idx=els[0].index; document.getElementById('sub-c1').textContent='Semana seleccionada: '+fDate(H[idx].fecha)+' — Total: '+fB(H[idx].total); } }}});
+    {label:'Total CxP',data:series.map(s=>+(s.total/1e6).toFixed(1)),borderColor:'#2A2A2C',backgroundColor:'rgba(42,42,44,.06)',fill:true,borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#2A2A2C',tension:.3},
+    {label:'Contabilizado',data:series.map(s=>+(s.cont/1e6).toFixed(1)),borderColor:'#16505C',borderWidth:2,pointRadius:4,pointBackgroundColor:'#16505C',fill:false,tension:.3},
+    {label:'Sin Contabilizar',data:series.map(s=>+(s.sinCont/1e6).toFixed(1)),borderColor:'#D97706',borderWidth:2,borderDash:[5,3],pointRadius:4,pointBackgroundColor:'#D97706',fill:false,tension:.3}
+  ]},options:{...boLine,onClick:(e,els)=>{ if(els.length){ const idx=els[0].index; document.getElementById('sub-c1').textContent='Semana seleccionada: '+fDate(weeks[idx].fecha)+' — Total: '+fM(series[idx].total); } }}});
 
-  // c2: barras apiladas por edad (contabilizado)
-  const edadDatasets=EDAD_LABELS.filter(e=>H.some(d=>d.edades[e]>0)).map(e=>({
-    label:e+' días',data:H.map(d=>+((d.edades[e]||0)/1e9).toFixed(3)),
-    backgroundColor:EDAD_COLORS[e]||(EDAD_COLORS['90']),borderRadius:1,stack:'edades'
+  const edadDatasets=EDAD_BUCKETS.filter(b=>series.some(s=>edadBucketSum(s.edades,b.keys)>0)).map(b=>({
+    label:b.label,data:series.map(s=>+(edadBucketSum(s.edades,b.keys)/1e6).toFixed(1)),
+    backgroundColor:b.color,borderRadius:1,stack:'edades'
   }));
-  const legEl=document.getElementById('leg-c2');
-  legEl.innerHTML=edadDatasets.map(ds=>`<div class="li"><div class="ld" style="background:${ds.backgroundColor}"></div>${ds.label}</div>`).join('');
+  document.getElementById('leg-c2').innerHTML=edadDatasets.map(ds=>`<div class="li"><div class="ld" style="background:${ds.backgroundColor}"></div>${ds.label}</div>`).join('');
   destroyChart('c2');
   charts.c2=new Chart(document.getElementById('c2'),{type:'bar',data:{labels,datasets:edadDatasets},options:{responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{mode:'index',callbacks:{label:c=>c.dataset.label+': '+fB(c.raw*1e9)}}},
+    plugins:{legend:{display:false},tooltip:{mode:'index',callbacks:{label:c=>c.dataset.label+': '+fM(c.raw*1e6)}}},
     scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC},border:{display:false},stacked:true},
-            y:{ticks:{color:TC,font:{size:10},callback:v=>'$'+v+'B'},grid:{color:GC},border:{display:false},stacked:true}}}});
+            y:{ticks:{color:TC,font:{size:10},callback:v=>'$'+v.toLocaleString('es-CO')+'M'},grid:{color:GC},border:{display:false},stacked:true}}}});
 
-  // c3: % sin contabilizar
-  destroyChart('c3');
-  charts.c3=new Chart(document.getElementById('c3'),{type:'line',data:{labels,datasets:[
-    {label:'% Sin Contabilizar',data:H.map(d=>+(d.sinCont/d.total*100).toFixed(1)),borderColor:'#D97706',backgroundColor:'rgba(217,119,6,.08)',fill:true,borderWidth:2,pointRadius:4,pointBackgroundColor:H.map(d=>d.sinCont/d.total>0.4?'#DC2626':'#D97706'),tension:.3}
+  const pctSerie=series.map(s=>s.total?+(s.sinCont/s.total*100).toFixed(1):0);
+  destroyChart('c9');
+  charts.c9=new Chart(document.getElementById('c9'),{type:'line',data:{labels,datasets:[
+    {label:'% Sin Contabilizar',data:pctSerie,borderColor:'#D97706',backgroundColor:'rgba(217,119,6,.08)',fill:true,borderWidth:2,pointRadius:4,pointBackgroundColor:series.map(s=>s.total&&s.sinCont/s.total>0.4?'#DC2626':'#D97706'),tension:.3}
   ]},options:{responsive:true,maintainAspectRatio:false,
     plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.parsed.y.toFixed(1)+'% sin contabilizar'}}},
     scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC},border:{display:false}},
             y:{ticks:{color:TC,font:{size:10},callback:v=>v+'%'},grid:{color:GC},border:{display:false},min:0}}}});
-}
 
-// ────────────────────────────────────────────────────────────────
-// TAB 2: SEMANA ACTUAL
-// ────────────────────────────────────────────────────────────────
-let selWeekIdx=null;
-function buildWeekPills(pillsId, selId, callback){
-  const el=document.getElementById(pillsId);
-  el.innerHTML=HISTORY.map((d,i)=>`<button class="wpill${i===selId?' on':''}" onclick="selectWeek(${i},'${pillsId}','${selId}')">${shortDate(d.fecha)}</button>`).join('');
-}
-function selectWeek(idx, pillsId, selId){
-  selWeekIdx=idx;
-  document.querySelectorAll('#'+pillsId+' .wpill').forEach((b,i)=>b.classList.toggle('on',i===idx));
-  renderSemana(idx);
-}
-function renderSemana(idx){
-  const d=HISTORY[idx], prev=idx>0?HISTORY[idx-1]:null;
-  document.getElementById('sw-total').textContent=fB(d.total);
-  document.getElementById('sw-cont').textContent=fB(d.contabilizado);
-  document.getElementById('sw-sinc').textContent=fB(d.sinCont);
-  document.getElementById('sw-fecha').textContent=fDate(d.fecha);
-  if(prev){
-    const delta=d.total-prev.total;
-    const el=document.getElementById('sw-delta');
-    el.textContent=(delta>=0?'▲ +':'▼ ')+fM(Math.abs(delta));
-    el.className='kv '+(delta>=0?'n':'p');
-    document.getElementById('sw-delta-s').textContent=(Math.abs(delta/prev.total*100)).toFixed(1)+'% vs '+shortDate(prev.fecha);
-  } else { document.getElementById('sw-delta').textContent='—'; }
-
-  // c4: donut edades
-  const edadesActivas=EDAD_LABELS.filter(e=>(d.edades[e]||0)>0);
-  destroyChart('c4');
-  charts.c4=new Chart(document.getElementById('c4'),{type:'doughnut',data:{labels:edadesActivas.map(e=>e+' días'),datasets:[{data:edadesActivas.map(e=>d.edades[e]),backgroundColor:edadesActivas.map(e=>EDAD_COLORS[e]),borderWidth:1,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:9,padding:5}},tooltip:{callbacks:{label:c=>' '+c.label+': '+fM(c.parsed)}}}}});
-
-  // c5: donut proyectos
-  const projs=Object.entries(d.proyectos).sort((a,b)=>b[1].total-a[1].total);
-  destroyChart('c5');
-  charts.c5=new Chart(document.getElementById('c5'),{type:'doughnut',data:{labels:projs.map(p=>p[0]),datasets:[{data:projs.map(p=>p[1].total),backgroundColor:projs.map(p=>PROJ_COLORS[p[0]]||'#8A8B8D'),borderWidth:1,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:9,padding:5}},tooltip:{callbacks:{label:c=>' '+c.label+': '+fM(c.parsed)}}}}});
-
-  // tabla
-  let h='<thead><tr><th class="tl">Proyecto</th><th>Total CxP</th><th>Contabilizado</th><th>Sin Contabilizar</th><th>30 días</th><th>60 días</th><th>90+ días</th></tr></thead><tbody>';
-  projs.forEach(([nombre,pd])=>{
-    const e90p=(pd.edades['90']||0)+(pd.edades['120']||0)+(pd.edades['150']||0)+(pd.edades['180']||0)+(pd.edades['270']||0)+(pd.edades['360']||0)+(pd.edades['361>']||0);
-    const cls90=e90p>1e9?'n':e90p>0?'w':'';
-    h+=`<tr><td class="tn">${nombre}</td><td class="tv">${fM(pd.total)}</td><td class="tv">${fM(pd.cont)}</td><td class="tv w">${pd.sinCont>0?fM(pd.sinCont):'—'}</td><td class="tv">${pd.edades['30']>0?fM(pd.edades['30']):'—'}</td><td class="tv">${pd.edades['60']>0?fM(pd.edades['60']):'—'}</td><td class="tv ${cls90}">${e90p>0?fM(e90p):'—'}</td></tr>`;
-  });
-  const totalSinc=Object.values(d.proyectos).reduce((a,p)=>a+p.sinCont,0);
-  h+=`<tr class="tot"><td class="tn">TOTAL</td><td class="tv">${fM(d.total)}</td><td class="tv">${fM(d.contabilizado)}</td><td class="tv w">${fM(totalSinc)}</td><td class="tv">${fM(d.edades['30']||0)}</td><td class="tv">${fM(d.edades['60']||0)}</td><td class="tv n">${fM((d.edades['90']||0)+(d.edades['120']||0)+(d.edades['150']||0)+(d.edades['180']||0)+(d.edades['270']||0)+(d.edades['360']||0)+(d.edades['361>']||0))}</td></tr>`;
-  h+='</tbody>';
-  document.getElementById('sw-tbl').innerHTML=h;
-}
-
-// ────────────────────────────────────────────────────────────────
-// TAB 3: POR PROYECTO
-// ────────────────────────────────────────────────────────────────
-let selProj=null;
-let projModo='single'; // 'single' | 'todos'
-let activeProjSet=new Set();
-
-function buildProjPills(){
-  const projs=[...new Set(HISTORY.flatMap(d=>Object.keys(d.proyectos)))].sort((a,b)=>{const oa=PROJ_ORDER.indexOf(a),ob=PROJ_ORDER.indexOf(b);return (oa<0?99:oa)-(ob<0?99:ob);});
-  const el=document.getElementById('projPills');
-  el.innerHTML=projs.map(p=>`<button class="ppill" onclick="toggleProj('${p}')">${p}</button>`).join('');
-  selectProj(projs[0]);
-}
-function toggleTodos(){
-  const todos=document.getElementById('pill-todos');
-  const pills=[...document.querySelectorAll('#projPills .ppill')];
-  if(projModo==='todos'){
-    // quitar todos → volver al primero
-    projModo='single';
-    todos.style.background=''; todos.style.color=''; todos.style.borderColor='';
-    todos.textContent='Todos';
-    activeProjSet.clear();
-    if(pills.length) selectProj(pills[0].textContent);
+  // Detalle semana a semana — solo cuando hay un proyecto puntual seleccionado
+  // (con "Todos" esta vista se cubre con el Comparativo de Períodos de abajo,
+  // que ya trae el desglose por proyecto entre dos fechas).
+  const detailBox=document.getElementById('evo-proj-detail');
+  if(proj==='ALL'){
+    detailBox.style.display='none';
   } else {
-    // seleccionar todos
-    projModo='todos';
-    todos.style.background='#2A2A2C'; todos.style.color='#fff'; todos.style.borderColor='#2A2A2C';
-    todos.textContent='Quitar todos';
-    const projs=pills.map(b=>b.textContent);
-    projs.forEach(p=>activeProjSet.add(p));
-    pills.forEach(b=>b.classList.add('on'));
-    selProj='__todos__';
-    renderProjTodos(projs);
+    detailBox.style.display='block';
+    document.getElementById('evo-proj-detail-title').textContent='Detalle por semana — '+proj;
+    let h='<thead><tr><th class="tl">Semana</th><th>Total CxP</th><th>Contabilizado</th><th>Sin Contabilizar</th><th>0-30 días</th><th>31-60 días</th><th>61-90 días</th><th>90+ días</th><th>Δ vs anterior</th></tr></thead><tbody>';
+    series.forEach((s,i)=>{
+      const prevS=i>0?series[i-1]:null;
+      const dlt=prevS?s.total-prevS.total:null;
+      const b0=edadBucketSum(s.edades,EDAD_BUCKETS[0].keys), b1=edadBucketSum(s.edades,EDAD_BUCKETS[1].keys), b2=edadBucketSum(s.edades,EDAD_BUCKETS[2].keys), b3=edadBucketSum(s.edades,EDAD_BUCKETS[3].keys);
+      h+=`<tr><td class="tn">${fDate(weeks[i].fecha)}</td><td class="tv">${fM(s.total)}</td><td class="tv">${fM(s.cont)}</td><td class="tv w">${s.sinCont>0?fM(s.sinCont):'—'}</td><td class="tv">${b0>0?fM(b0):'—'}</td><td class="tv">${b1>0?fM(b1):'—'}</td><td class="tv">${b2>0?fM(b2):'—'}</td><td class="tv ${b3>0?'n':''}">${b3>0?fM(b3):'—'}</td><td class="tv">${dlt===null?'—':(dlt>=0?'+':'−')+fM(Math.abs(dlt))}</td></tr>`;
+    });
+    h+='</tbody>';
+    document.getElementById('evo-proj-tbl').innerHTML=h;
+    makeTableSortable('evo-proj-tbl');
   }
-}
-function toggleProj(proj){
-  if(projModo==='todos'){
-    // salir de modo todos al hacer clic individual
-    projModo='single';
-    const todos=document.getElementById('pill-todos');
-    todos.style.background=''; todos.style.color=''; todos.style.borderColor='';
-    todos.textContent='Todos';
-    activeProjSet.clear();
-    document.querySelectorAll('#projPills .ppill').forEach(b=>b.classList.remove('on'));
-  }
-  selectProj(proj);
-}
-function selectProj(proj){
-  selProj=proj;
-  document.querySelectorAll('#projPills .ppill').forEach(b=>b.classList.toggle('on',b.textContent===proj));
-  renderProj(proj);
-}
-function renderProjTodos(projs){
-  const labels=HISTORY.map(d=>shortDate(d.fecha));
-  document.getElementById('proj-chart-title').textContent='Evolución semanal — Todos los proyectos';
-  document.getElementById('proj-table-title').textContent='Resumen comparativo — Todos los proyectos';
-  // KPIs: totales de la última semana
-  const last=HISTORY[HISTORY.length-1];
-  const prev=HISTORY.length>1?HISTORY[HISTORY.length-2]:null;
-  const totalLast=Object.values(last.proyectos).reduce((a,p)=>a+p.total,0);
-  const totalPrev=prev?Object.values(prev.proyectos).reduce((a,p)=>a+p.total,0):null;
-  const delta=totalPrev?totalLast-totalPrev:null;
-  document.getElementById('proj-kpis').innerHTML=`
-    <div class="kpi kb"><div class="kl">Total CxP (todos)</div><div class="kv b">${fB(totalLast)}</div><div class="ks">Semana más reciente</div></div>
-    <div class="kpi ${delta!==null&&delta>=0?'kn':'kp'}"><div class="kl">Variación semanal</div><div class="kv ${delta!==null&&delta>=0?'n':'p'}">${delta!==null?(delta>=0?'▲ +':'▼ ')+fM(Math.abs(delta)):'—'}</div><div class="ks">${prev?'vs '+shortDate(prev.fecha):'—'}</div></div>
-    <div class="kpi kb"><div class="kl">Proyectos mostrados</div><div class="kv b">${projs.length}</div><div class="ks">de ${PROJ_ORDER.length}</div></div>
-  `;
-  // c6: multi-línea por proyecto
-  destroyChart('c6');
-  const legEl=document.getElementById('proj-legend');
-  legEl.innerHTML=projs.map(p=>`<div class="li"><div class="ld" style="background:${PROJ_COLORS[p]||'#8A8B8D'};border-radius:50%"></div>${p}</div>`).join('');
-  charts.c6=new Chart(document.getElementById('c6'),{type:'line',data:{labels,datasets:
-    projs.map(p=>({label:p,data:HISTORY.map(d=>+((d.proyectos[p]?.total||0)/1e6).toFixed(1)),borderColor:PROJ_COLORS[p]||'#8A8B8D',backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:.3,fill:false}))
-  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',callbacks:{label:c=>' '+c.dataset.label+': $'+c.raw.toFixed(1)+'M'}}},scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC},border:{display:false}},y:{ticks:{color:TC,font:{size:10},callback:v=>'$'+v+'M'},grid:{color:GC},border:{display:false}}}}});
-  // tabla comparativa todos los proyectos
-  const lastD=HISTORY[HISTORY.length-1], prevD=HISTORY.length>1?HISTORY[HISTORY.length-2]:null;
-  let h='<thead><tr><th class="tl">Proyecto</th>'+HISTORY.map(d=>'<th>'+shortDate(d.fecha)+'</th>').join('')+'<th>Δ Total</th></tr></thead><tbody>';
-  projs.forEach(p=>{
-    const vals=HISTORY.map(d=>d.proyectos[p]?.total||0);
-    const deltaT=vals[vals.length-1]-vals[0];
-    h+=`<tr><td class="tn">${p}</td>${vals.map(v=>'<td class="tv">'+fM(v)+'</td>').join('')}<td class="tv ${deltaT>=0?'n':'p'}">${(deltaT>=0?'▲ +':'▼ ')+fM(Math.abs(deltaT))}</td></tr>`;
-  });
-  h+='</tbody>';
-  document.getElementById('proj-tbl').innerHTML=h;
-}
-function renderProj(proj){
-  projModo='single';
-  document.getElementById('proj-legend').innerHTML=`
-    <div class="li"><div class="ld" style="background:#2A2A2C;border-radius:50%"></div>Total</div>
-    <div class="li"><div class="ld" style="background:#16505C;border-radius:50%"></div>Contabilizado</div>
-    <div class="li"><div class="ld" style="background:#D97706;border-radius:50%"></div>Sin Contabilizar</div>`;
-  const weeks=HISTORY.filter(d=>d.proyectos[proj]);
-  const labels=weeks.map(d=>shortDate(d.fecha));
-  const last=weeks[weeks.length-1]?.proyectos[proj];
-  const prev=weeks.length>1?weeks[weeks.length-2]?.proyectos[proj]:null;
-  document.getElementById('proj-chart-title').textContent='Evolución semanal — '+proj;
-  document.getElementById('proj-table-title').textContent='Detalle por semana — '+proj;
-  const delta=last&&prev?last.total-prev.total:null;
-  document.getElementById('proj-kpis').innerHTML=`
-    <div class="kpi kb"><div class="kl">Total CxP Actual</div><div class="kv b">${last?fM(last.total):'—'}</div><div class="ks">Semana más reciente</div></div>
-    <div class="kpi kt"><div class="kl">Contabilizado</div><div class="kv t">${last?fM(last.cont):'—'}</div><div class="ks">En SincoERP</div></div>
-    <div class="kpi kw"><div class="kl">Sin Contabilizar</div><div class="kv w">${last?fM(last.sinCont):'—'}</div><div class="ks">Sin asociar</div></div>
-    <div class="kpi ${delta!==null&&delta>=0?'kn':'kp'}"><div class="kl">Variación semanal</div><div class="kv ${delta!==null&&delta>=0?'n':'p'}">${delta!==null?(delta>=0?'▲ +':'▼ ')+fM(Math.abs(delta)):'—'}</div><div class="ks">${prev?'vs '+shortDate(weeks[weeks.length-2].fecha):'—'}</div></div>
-  `;
-  destroyChart('c6');
-  charts.c6=new Chart(document.getElementById('c6'),{type:'line',data:{labels,datasets:[
-    {label:'Total',data:weeks.map(d=>+((d.proyectos[proj]?.total||0)/1e6).toFixed(1)),borderColor:'#2A2A2C',backgroundColor:'rgba(42,42,44,.06)',fill:true,borderWidth:2,pointRadius:4,tension:.3},
-    {label:'Contabilizado',data:weeks.map(d=>+((d.proyectos[proj]?.cont||0)/1e6).toFixed(1)),borderColor:'#16505C',borderWidth:2,pointRadius:4,fill:false,tension:.3},
-    {label:'Sin Contabilizar',data:weeks.map(d=>+((d.proyectos[proj]?.sinCont||0)/1e6).toFixed(1)),borderColor:'#D97706',borderWidth:2,borderDash:[5,3],pointRadius:4,fill:false,tension:.3}
-  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',callbacks:{label:c=>' '+c.dataset.label+': $'+c.raw.toFixed(1)+'M'}}},scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC},border:{display:false}},y:{ticks:{color:TC,font:{size:10},callback:v=>'$'+v+'M'},grid:{color:GC},border:{display:false}}}}});
-  let h='<thead><tr><th class="tl">Semana</th><th>Total CxP</th><th>Contabilizado</th><th>Sin Contabilizar</th><th>30 días</th><th>60 días</th><th>90+ días</th><th>Δ vs anterior</th></tr></thead><tbody>';
-  weeks.forEach((d,i)=>{
-    const pd=d.proyectos[proj]; const pp=i>0?weeks[i-1].proyectos[proj]:null;
-    const dlt=pp?pd.total-pp.total:null;
-    const e90p=(pd.edades['90']||0)+(pd.edades['120']||0)+(pd.edades['150']||0)+(pd.edades['180']||0)+(pd.edades['270']||0)+(pd.edades['360']||0)+(pd.edades['361>']||0);
-    h+=`<tr><td class="tn">${fDate(d.fecha)}</td><td class="tv">${fM(pd.total)}</td><td class="tv">${fM(pd.cont)}</td><td class="tv w">${pd.sinCont>0?fM(pd.sinCont):'—'}</td><td class="tv">${pd.edades['30']>0?fM(pd.edades['30']):'—'}</td><td class="tv">${pd.edades['60']>0?fM(pd.edades['60']):'—'}</td><td class="tv ${e90p>1e9?'n':e90p>0?'w':''}">${e90p>0?fM(e90p):'—'}</td><td class="tv ${dlt===null?'':dlt>=0?'n':'p'}">${dlt===null?'—':(dlt>=0?'▲ +':'▼ ')+fM(Math.abs(dlt))}</td></tr>`;
-  });
-  h+='</tbody>';
-  document.getElementById('proj-tbl').innerHTML=h;
 }
 
 // ────────────────────────────────────────────────────────────────
-// TAB 4: PROVEEDORES CRÍTICOS
+// PESTAÑA 3: PROVEEDORES (críticos + buscador — no se filtran por el
+// selector global de proyecto: un proveedor siempre muestra su cartera
+// completa en todos los proyectos donde tiene saldo)
 // ────────────────────────────────────────────────────────────────
-let selCritWeek=null;
-function selectCritWeek(idx){
-  selCritWeek=idx;
-  document.querySelectorAll('#critWeekPills .wpill').forEach((b,i)=>b.classList.toggle('on',i===idx));
-  renderCriticos(idx);
-}
-function renderCriticos(idx){
-  const d=HISTORY[idx];
+function renderProveedoresTab(){
+  const d=HISTORY[G_WEEK];
   const crits=d.criticos||[];
-  if(!crits.length){ document.getElementById('crit-tbl').innerHTML='<thead></thead><tbody><tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">No se encontraron proveedores críticos en esta semana</td></tr></tbody>'; return; }
-  const sorted=[...crits].sort((a,b)=>b.total-a.total);
-  destroyChart('c7');
-  charts.c7=new Chart(document.getElementById('c7'),{type:'bar',data:{labels:sorted.map(c=>c.nombre.length>28?c.nombre.slice(0,28)+'…':c.nombre),datasets:[
-    {label:'Sin Contabilizar',data:sorted.map(c=>+(c.sinCont/1e6).toFixed(1)),backgroundColor:'#D97706',stack:'s',borderRadius:2,barPercentage:.7},
-    {label:'Contabilizado',data:sorted.map(c=>+(c.cont/1e6).toFixed(1)),backgroundColor:'#58595B',stack:'s',borderRadius:2,barPercentage:.7}
-  ]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10}},tooltip:{mode:'index',callbacks:{label:c=>' '+c.dataset.label+': $'+c.raw.toFixed(1)+'M'}}},scales:{x:{ticks:{color:TC,font:{size:10},callback:v=>'$'+v+'M'},grid:{color:GC},border:{display:false},stacked:true},y:{ticks:{color:TC,font:{size:9}},grid:{display:false},border:{display:false},stacked:true}}}});
-  document.getElementById('sub-c7').textContent=sorted.length+' proveedores críticos — semana '+shortDate(d.fecha)+' — Total: '+fM(sorted.reduce((a,c)=>a+c.total,0));
-  let h='<thead><tr><th>Rank</th><th class="tl">Proveedor</th><th>NIT</th><th>Total CxP</th><th>Contabilizado</th><th>Sin Contabilizar</th></tr></thead><tbody>';
-  sorted.forEach((c,i)=>{
-    h+=`<tr><td style="text-align:center;font-weight:700;">${i+1}</td><td class="tn">${c.nombre}</td><td class="tv">${c.nit}</td><td class="tv">${fM(c.total)}</td><td class="tv">${fM(c.cont)}</td><td class="tv w">${c.sinCont>0?fM(c.sinCont):'—'}</td></tr>`;
-  });
-  h+='</tbody>';
-  document.getElementById('crit-tbl').innerHTML=h;
+  if(!crits.length){
+    destroyChart('c7');
+    document.getElementById('crit-tbl').innerHTML='<thead></thead><tbody><tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">No se encontraron proveedores críticos en esta semana</td></tr></tbody>';
+  } else {
+    const sorted=[...crits].sort((a,b)=>b.total-a.total);
+    destroyChart('c7');
+    charts.c7=new Chart(document.getElementById('c7'),{type:'bar',data:{labels:sorted.map(c=>c.nombre.length>28?c.nombre.slice(0,28)+'…':c.nombre),datasets:[
+      {label:'Sin Contabilizar',data:sorted.map(c=>+(c.sinCont/1e6).toFixed(1)),backgroundColor:'#D97706',stack:'s',borderRadius:2,barPercentage:.7},
+      {label:'Contabilizado',data:sorted.map(c=>+(c.cont/1e6).toFixed(1)),backgroundColor:'#58595B',stack:'s',borderRadius:2,barPercentage:.7}
+    ]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10}},tooltip:{mode:'index',callbacks:{label:c=>' '+c.dataset.label+': '+fM(c.raw*1e6)}}},scales:{x:{ticks:{color:TC,font:{size:10},callback:v=>'$'+v.toLocaleString('es-CO')+'M'},grid:{color:GC},border:{display:false},stacked:true},y:{ticks:{color:TC,font:{size:9}},grid:{display:false},border:{display:false},stacked:true}}}});
+    document.getElementById('sub-c7').textContent=sorted.length+' proveedores críticos — semana '+shortDate(d.fecha)+' — Total: '+fM(sorted.reduce((a,c)=>a+c.total,0));
+    let h='<thead><tr><th>Rank</th><th class="tl">Proveedor</th><th>NIT</th><th>Total CxP</th><th>Contabilizado</th><th>Sin Contabilizar</th></tr></thead><tbody>';
+    sorted.forEach((c,i)=>{
+      h+=`<tr><td style="text-align:center;font-weight:700;">${i+1}</td><td class="tn">${c.nombre}</td><td class="tv">${c.nit}</td><td class="tv">${fM(c.total)}</td><td class="tv">${fM(c.cont)}</td><td class="tv w">${c.sinCont>0?fM(c.sinCont):'—'}</td></tr>`;
+    });
+    h+='</tbody>';
+    document.getElementById('crit-tbl').innerHTML=h;
+  }
+  makeTableSortable('crit-tbl');
+
+  buildProvDatalist(G_WEEK);
+  renderProveedorDetalle(currentProvKey||'ALL');
 }
 
-// ────────────────────────────────────────────────────────────────
-// TAB: DETALLE POR PROVEEDOR
-// ────────────────────────────────────────────────────────────────
-let selProvWeek=null;
-let currentProvKey='ALL';
 function selectProvAll(){
   currentProvKey='ALL';
   document.getElementById('provSearch').value='';
   document.getElementById('provAllBtn').classList.add('on');
   renderProveedorDetalle('ALL');
-}
-function selectProvWeek(idx){
-  selProvWeek=idx;
-  document.querySelectorAll('#provWeekPills .wpill').forEach((b,i)=>b.classList.toggle('on',i===idx));
-  buildProvDatalist(idx);
-  renderProveedorDetalle(currentProvKey||'ALL');
 }
 function buildProvDatalist(idx){
   const d=HISTORY[idx];
@@ -951,7 +1034,7 @@ function onProvInput(){
   if(opt){ currentProvKey=opt.key; document.getElementById('provAllBtn').classList.remove('on'); renderProveedorDetalle(opt.key); }
 }
 function renderProveedorDetalle(key){
-  const d=HISTORY[selProvWeek];
+  const d=HISTORY[G_WEEK];
   let p;
   if(key==='ALL'){
     p={nit:null,nombre:'Todos los proveedores',proyectos:Object.fromEntries(Object.entries(d.proyectos||{}).map(([proj,pd])=>[proj,{cont:pd.cont||0,sinCont:pd.sinCont||0,edades:pd.edades||{}}]))};
@@ -993,8 +1076,11 @@ function renderProveedorDetalle(key){
   }
   h+='</tbody>';
   document.getElementById('prov-proj-tbl').innerHTML=h;
+  makeTableSortable('prov-proj-tbl');
 }
 
+// ────────────────────────────────────────────────────────────────
+// COMPARATIVO DE PERÍODOS (ahora vive dentro de la pestaña Evolución)
 // ────────────────────────────────────────────────────────────────
 // TAB 5: COMPARATIVO DE PERÍODOS
 // ────────────────────────────────────────────────────────────────
@@ -1036,10 +1122,10 @@ function renderComparativo(){
       <div class="kv b">${fB(dB.total)}</div>
       <div class="ks">${fDate(dB.fecha)}</div>
     </div>
-    <div class="kpi ${deltaTotal>=0?'kn':'kp'}">
+    <div class="kpi kb">
       <div class="kl">Variación Total CxP</div>
-      <div class="kv ${deltaTotal>=0?'n':'p'}" style="font-size:18px;">${(deltaTotal>=0?'▲ +':'▼ ')+fM(Math.abs(deltaTotal))}</div>
-      <div class="ks">${(Math.abs(pctVar)*100).toFixed(1)}% en ${semanas} semana${semanas>1?'s':''}</div>
+      <div class="kv b" style="font-size:18px;">${(deltaTotal>=0?'+':'−')+fM(Math.abs(deltaTotal))}</div>
+      <div class="ks">${(Math.abs(pctVar)*100).toFixed(1)}% en ${semanas} semana${semanas>1?'s':''} — el signo por sí solo no indica mejora o deterioro, ver desglose contabilizado/sin contabilizar abajo</div>
     </div>
     <div class="kpi kp">
       <div class="kl">Reducción en Contabilizado</div>
@@ -1089,6 +1175,7 @@ function renderComparativo(){
   h+=`<tr class="tot"><td class="tn">TOTAL EMPRESA</td><td class="tv">${fB(dA.total)}</td><td class="tv">${fB(dB.total)}</td><td class="tv ${dltTot>=0?'n':'p'}" style="font-weight:700;">${(dltTot>=0?'▲ +':'▼ ')+fM(Math.abs(dltTot))}</td><td class="tv ${dltTot>=0?'n':'p'}">${(pctTot>=0?'+':'')+(pctTot*100).toFixed(1)}%</td><td class="tv p">${pagosRealizados>0?'▼ '+fM(pagosRealizados):'—'}</td><td class="tv w">${nuevaFacturacion>0?'▲ '+fM(nuevaFacturacion):'—'}</td></tr>`;
   h+='</tbody>';
   document.getElementById('cmp-proj-tbl').innerHTML=h;
+  makeTableSortable('cmp-proj-tbl');
 
   // ── Tabla de críticos ──
   const critsA=Object.fromEntries((dA.criticos||[]).map(c=>[c.nit,c]));
@@ -1118,22 +1205,17 @@ function renderComparativo(){
   });
   h2+='</tbody>';
   document.getElementById('cmp-crit-tbl').innerHTML=h2;
+  makeTableSortable('cmp-crit-tbl');
 }
 function renderAll(){
   if(!HISTORY||!HISTORY.length) return;
   HISTORY.sort((a,b)=>a.fecha.localeCompare(b.fecha));
-  renderEvolucion();
-  // week pills
-  ['weekPills','critWeekPills','provWeekPills'].forEach(pid=>{
-    const el=document.getElementById(pid);
-    const fn=pid==='weekPills'?(i=>'selectWeek('+i+',\'weekPills\',\'semana\')'):pid==='critWeekPills'?(i=>'selectCritWeek('+i+')'):(i=>'selectProvWeek('+i+')');
-    el.innerHTML=HISTORY.map((d,i)=>`<button class="wpill" onclick="${fn(i)}">${shortDate(d.fecha)}</button>`).join('');
-  });
-  const lastIdx=HISTORY.length-1;
-  selectWeek(lastIdx,'weekPills','semana');
-  selectCritWeek(lastIdx);
-  selectProvWeek(lastIdx);
-  buildProjPills();
+  G_WEEK=HISTORY.length-1;
+  G_PROJ='ALL';
+  G_GRAN='proyecto';
+  buildGlobalControls();
+  setGranularidadInternal('proyecto');
+  renderAllTabs();
   buildCmpSelectors();
   renderComparativo();
 }
@@ -1403,30 +1485,21 @@ function iaResumenBase(){
 
 function iaContextoPestaña(){
   if(!HISTORY || !HISTORY.length) return '';
-  const last = HISTORY[HISTORY.length-1];
+  const d = HISTORY[G_WEEK] || HISTORY[HISTORY.length-1];
+  const projTxt = G_PROJ==='ALL' ? 'todos los proyectos' : G_PROJ;
   switch(currentTab){
+    case 'situacion': {
+      const s = projSlice(d,G_PROJ);
+      const edades = EDAD_BUCKETS.map(b=>b.label+': '+fB(edadBucketSum(s.edades,b.keys))).join(', ');
+      return 'SITUACIÓN — semana '+d.fecha+', proyecto: '+projTxt+'. Total '+fB(s.total)+', contabilizado '+fB(s.cont)+', sin contabilizar '+fB(s.sinCont)+'. Antigüedad: '+edades+'.';
+    }
     case 'evolucion': {
-      const serie = HISTORY.map(h=>h.fecha+': '+fB(h.total)).join(' | ');
-      return 'SERIE HISTÓRICA DE CARTERA TOTAL POR SEMANA: '+serie+'.';
+      const serie = HISTORY.map(h=>{ const s=projSlice(h,G_PROJ); return h.fecha+': '+fB(s.total); }).join(' | ');
+      return 'SERIE HISTÓRICA DE CARTERA ('+projTxt+') POR SEMANA: '+serie+'.';
     }
-    case 'semana': {
-      const edades = EDAD_LABELS.map(k=>k+': '+fB(last.edades[k]||0)).join(', ');
-      return 'DESGLOSE POR ANTIGÜEDAD DE LA SEMANA ACTUAL ('+last.fecha+'): '+edades+'.';
-    }
-    case 'proyectos': {
-      const projs = Object.entries(last.proyectos||{}).map(([n,d])=>n+': '+fB(d.total)).join(', ');
-      return 'CARTERA POR PROYECTO (semana '+last.fecha+'): '+projs+'.';
-    }
-    case 'criticos': {
-      const crit = (last.criticos||[]).map(c=>c.nombre+' — total '+fB(c.total)+', sin contrato '+fB(c.sinCont)).join(' | ');
-      return 'PROVEEDORES CRÍTICOS COMPLETOS (semana '+last.fecha+'): '+crit+'.';
-    }
-    case 'provdet':
-      return 'El usuario está en la pestaña de búsqueda de un proveedor específico. Si pregunta por un proveedor puntual, indica que puede buscarlo en esa pestaña por nombre o NIT; si lo menciona por nombre y aparece en los proveedores críticos, usa esos datos.';
-    case 'comparativo': {
-      if(HISTORY.length<2) return 'Solo hay una semana de historial, no hay comparativo posible aún.';
-      const a = HISTORY[HISTORY.length-2], b = HISTORY[HISTORY.length-1];
-      return 'COMPARATIVO ÚLTIMOS 2 PERÍODOS: '+a.fecha+' → '+fB(a.total)+' vs '+b.fecha+' → '+fB(b.total)+' (variación '+(b.total-a.total>=0?'+':'')+fB(b.total-a.total)+').';
+    case 'proveedores': {
+      const crit = (d.criticos||[]).map(c=>c.nombre+' — total '+fB(c.total)+', sin contabilizar '+fB(c.sinCont)).join(' | ');
+      return 'PROVEEDORES CRÍTICOS (semana '+d.fecha+'): '+crit+'. El usuario también puede estar buscando un proveedor puntual por nombre o NIT en el buscador de esta misma pestaña; si lo menciona por nombre y aparece en los críticos, usa esos datos.';
     }
     default: return '';
   }
@@ -1458,7 +1531,7 @@ async function iaSend(){
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({messages:[
-        {role:'system', content:'Sos un analista senior de cuentas por pagar (CxP) de una constructora de obras públicas en Colombia. Respondé de forma concisa, directa y en español, usando COP en millones o billones según corresponda (formato $X.XXB o $XXX MM). Máximo 4-5 oraciones, sin markdown, un solo párrafo. Si la pregunta se refiere a datos que no están en el contexto proporcionado, dilo explícitamente en vez de inventar cifras — no asumas datos de proveedores o proyectos que no aparezcan en el contexto. Cuando comentes sobre concentración de cartera o proveedores críticos, describe la situación (montos, tendencia) sin dar instrucciones tajantes de negociación; deja la decisión a criterio de gerencia.'},
+        {role:'system', content:'Sos un analista senior de cuentas por pagar (CxP) de una constructora de obras públicas en Colombia. Respondé de forma concisa, directa y en español, usando siempre COP en millones, formato $X.XXX,X M con separador de miles. Máximo 4-5 oraciones, sin markdown, un solo párrafo. Si la pregunta se refiere a datos que no están en el contexto proporcionado, dilo explícitamente en vez de inventar cifras — no asumas datos de proveedores o proyectos que no aparezcan en el contexto. Cuando comentes sobre concentración de cartera o proveedores críticos, describe la situación (montos, tendencia) sin dar instrucciones tajantes de negociación; deja la decisión a criterio de gerencia.'},
         {role:'user', content: contexto+' PREGUNTA: '+q}
       ]})
     });
@@ -1484,7 +1557,7 @@ async function iaSend(){
 
 <div class="ia-panel" id="iaPanel">
   <div class="ia-head">
-    <div><b>Asistente del portal</b><span>CxP por Edades · <span id="iaTabLbl">Evolución Semanal</span></span></div>
+    <div><b>Asistente del portal</b><span>CxP por Edades · <span id="iaTabLbl">Situación</span></span></div>
     <button class="ia-close" onclick="iaToggle()">✕</button>
   </div>
   <div class="ia-body" id="iaBody">
